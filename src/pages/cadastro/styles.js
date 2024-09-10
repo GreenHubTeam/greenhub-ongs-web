@@ -23,6 +23,13 @@ export const Content = styled.div`
 
     display:flex
     flex-direction column;
-
+    gap: 1rem;
 `;
+
+export const ColumnInputs = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+`;
+
 

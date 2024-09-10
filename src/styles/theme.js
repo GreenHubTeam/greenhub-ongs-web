@@ -1,8 +1,8 @@
-export default{
-    colors:{
+export default {
+    colors: {
 
         green: '#3a914d',
-        
+
         green2: '#2F5A3A',
 
         green3: '#22703E',

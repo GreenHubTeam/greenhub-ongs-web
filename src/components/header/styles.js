@@ -2,7 +2,8 @@ import styled from 'styled-components';
 
 export const Container = styled.header`
     grid-area: header;
-    
+    font-family: Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif, ;
+    font-weight: 700;
     height: 105px;
     width: 100%;
 
@@ -10,8 +11,8 @@ export const Container = styled.header`
     align-items: center;
     padding:0px;
 
-    display: flex;
-    align-items: center;
+    justify-content: center;
+
     gap: 1rem;
 
     >img{
@@ -20,7 +21,7 @@ export const Container = styled.header`
         
     }
     
-    
-
-    
+    > p {
+        font-size: 1.5rem;
+    }
 `;
