@@ -1,4 +1,6 @@
-export default {
+import { createTheme } from '@mui/material/styles';
+
+const theme = createTheme({
     colors: {
 
         green: '#3a914d',
@@ -22,4 +24,6 @@ export default {
         white: '#DFDEDE',
 
     }
-}
+});
+
+export { theme }

@@ -1,10 +1,20 @@
-import { Contained } from './styles';
+import { Paper, Typography } from '@mui/material';
 
-export function Cardcontained({ title, description }) {
+export function CardContained({ title, description }) {
     return (
-        <Contained>
-            <h1>{title}</h1>
-            <p>{description}</p>
-        </Contained>
+        <Paper
+            sx={{
+                marginBottom: '25px',
+                borderRadius: '8px',
+                color: '#22703E',
+                padding: '2rem'
+            }}
+            variant='outlined' >
+            <Typography
+                variant='h3'
+                fontWeight='500'
+            >{title}</Typography>
+            <Typography>{description}</Typography>
+        </Paper >
     )
 }
