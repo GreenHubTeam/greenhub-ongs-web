@@ -7,26 +7,33 @@ export const Container = styled.div`
     gap: 0.4rem;
     
     margin-bottom: 8px;
+    
     div>input{
-        height:42px;
-        width:100%;
-        padding:12px;
-        background-color: #A3A2A2;
-        border:0;
-        border-radius:5px;
-
         &:placeholder{
             color: white;
         }
+        background-color:transparent;
+        flex:1;
+        border: none;
+        padding:12px ;
     }
 
     div> svg{
-        margin-left:16px;
+       margin:0;
+       margin-left:8px;
+       
     }
 
     
     > div {
         display: flex;
         align-items: center;
+        height:42px;
+        width:100%;
+        background-color: #f1f1f1;
+        border:0;
+        border-radius:5px;
+        gap:0.5rem;
     }
+
 `;

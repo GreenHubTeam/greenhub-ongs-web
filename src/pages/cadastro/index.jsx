@@ -13,34 +13,34 @@ export function Cadastro() {
         <Content>
           <div>
             <Cardcontained
-              title="Dados pessoais"
-              description="lorem impsun"
+              title="Dados pessoais:"
+              description="Preencha com as informações da empresa."
             />
 
             <Input
               label='Documento'
               placeholder='CNPJ'
               type='text'
-              icons={AiOutlineUser}
+              icon={AiOutlineUser}
             />
 
             <Input
               placeholder="Nome"
-              text=""
+              text="text"
               label="Nome Social"
               icon={FaPen}
             />
 
             <Input
               placeholder="Descrição da ONG"
-              label="Descrição
-                "
+              label="Descrição"
+              type="text"
             />
           </div>
           <div>
             <Cardcontained
-              title="Localização "
-              description="lorem impsun"
+              title="Localização: "
+              description="Insira a localização da sua empresa"
             />
 
             <Input />

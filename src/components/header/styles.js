@@ -11,8 +11,6 @@ export const Container = styled.header`
     align-items: center;
     padding:0px;
 
-    justify-content: center;
-
     gap: 1rem;
 
     >img{

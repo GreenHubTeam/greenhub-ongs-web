@@ -15,6 +15,8 @@ export const Container = styled.div`
         overflow-y: scroll;
         padding: 64px 0;
     }
+
+   
 `;
 
 export const Content = styled.div`
@@ -23,7 +25,7 @@ export const Content = styled.div`
 
     display:flex
     flex-direction column;
-    gap: 1rem;
+    
 `;
 
 export const ColumnInputs = styled.div`
