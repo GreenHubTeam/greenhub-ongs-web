@@ -1,16 +1,38 @@
-import { Box, Divider, InputAdornment, TextField, Button, Paper, Typography, Link, Grid2, } from "@mui/material";
+import { z } from "zod";
+import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import KeyIcon from '@mui/icons-material/Key';
 import { Header } from "../../components/header";
 import PersonIcon from '@mui/icons-material/Person';
-import KeyIcon from '@mui/icons-material/Key';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Box, Divider, InputAdornment, TextField, Button, Typography, Link as MLink, } from "@mui/material";
+import { api } from "../../libs/axios";
+import { useContext } from "react";
+import { AuthContext } from "../../context/authContext";
 
-
-
+const formularioLogin = z.object({
+    email: z.string().min(4, "Minimo de 4 caracteres").email("Email invalido"),
+    password: z.string().min(4, "Minimo de 4 caracteres").max(30)
+});
 
 export function LoginPage() {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors }
+    } = useForm({
+        resolver: zodResolver(formularioLogin),
+        mode: 'onChange'
+    });
+
+    const { loginUser } = useContext(AuthContext);
+
+    function handleLogin(data) {
+        loginUser(data.email, data.password);
+    }
+
     return (
         <Box sx={{ display: "flex", minHeight: '100vh' }}>
-
-
             <Box sx={{ width: '500px', overflowY: 'auto' }}>
                 <Box
                     sx={{
@@ -21,11 +43,11 @@ export function LoginPage() {
                         justifyContent: 'space-between',
                         height: '100%'
                     }}>
-                       
+
                     <Box>
 
-                       <Header/>
-                       
+                        <Header />
+
                         <Typography
                             variant="h4"
                             sx={{ marginLeft: '2rem', fontWeight: 700 }}
@@ -41,9 +63,14 @@ export function LoginPage() {
                                 gap: '2rem',
                                 padding: '2rem',
                             }}
+                            component='form'
+                            onSubmit={handleSubmit(handleLogin)}
                         >
 
                             <TextField
+                                helperText={errors?.email?.message}
+                                error={!!errors.email}
+                                {...register("email")}
                                 fullWidth
                                 required
                                 type='email'
@@ -68,6 +95,9 @@ export function LoginPage() {
                             />
 
                             <TextField
+                                helperText={errors?.password?.message}
+                                error={!!errors.password}
+                                {...register('password')}
                                 fullWidth
                                 required
                                 type='password'
@@ -91,7 +121,18 @@ export function LoginPage() {
                                 label="Senha"
                             />
 
+                            <Box
+                                component={Link}
+                                to='/registro'
+                                sx={{
+                                    color: '#22703E'
+                                }}
+                            >
+                                não tem conta? registre-se
+                            </Box>
+
                             <Button
+                                type="submit"
                                 variant='contained'
                                 sx={{
                                     backgroundColor: '#22703E',
@@ -100,15 +141,17 @@ export function LoginPage() {
                                     margin: '0 auto',
                                 }}
                             >
-                                Confirmar
+                                Entrar
                             </Button>
 
                         </Box>
-                       <Box sx={{
+                        <Box sx={{
                             marginTop: '5rem',
-                            marginRight: '1rem',
-                       }}>
-                       <Link 
+                            display: 'flex',
+                            justifyContent: 'center',
+                            gap: '1rem'
+                        }}>
+                            <MLink
                                 href="#"
                                 sx={{
                                     color: '#22703E',
@@ -116,9 +159,9 @@ export function LoginPage() {
                                 }}
                             >
                                 Termos de Uso
-                            </Link>
+                            </MLink>
 
-                            <Link 
+                            <MLink
                                 href="#"
                                 sx={{
                                     color: '#22703E',
@@ -127,8 +170,8 @@ export function LoginPage() {
                                 }}
                             >
                                 LGPD
-                            </Link>
-                       </Box>
+                            </MLink>
+                        </Box>
                     </Box>
 
                 </Box>
@@ -139,14 +182,10 @@ export function LoginPage() {
                 src='/paraguaio.png'
                 alt='Imagem de floresta'
                 sx={{
-                    objectFit: 'hover',
+                    objectFit: 'cover',
                     flex: '1',
                 }}
-            >
-
-            </Box>
-
+            />
         </Box>
-
     )
 }
