@@ -1,5 +1,5 @@
-import { Box, Divider, Grid2, InputAdornment, TextField,Button } from "@mui/material";
-import { Header } from "../../components/header";
+import { Box, Divider, Grid2, InputAdornment, TextField, Button } from "@mui/material";
+import { HeaderComponent } from "../../components/header";
 import { CardContained } from "../../components/cardcontained";
 import PersonIcon from '@mui/icons-material/Person';
 import BadgeIcon from '@mui/icons-material/Badge';
@@ -10,7 +10,7 @@ import EmailIcon from '@mui/icons-material/Email';
 export function CadastroPage() {
   return (
     <Box>
-      <Header />
+      <HeaderComponent />
 
       <Box
         sx={{
@@ -270,23 +270,23 @@ export function CadastroPage() {
               />
             </Grid2>
           </Grid2>
-          
+
         </Box>
 
         <Box
-         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1rem'
-        }}
-      >
-          
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem'
+          }}
+        >
+
           <CardContained
-              title="Informações de Acessso:"
-              description="Dados para acessar sua conta."
+            title="Informações de Acessso:"
+            description="Dados para acessar sua conta."
           />
 
-            <TextField
+          <TextField
             required
             slotProps={{
               input: {
@@ -330,7 +330,7 @@ export function CadastroPage() {
             label="E-mail de consulta"
           />
 
-<Grid2 container spacing={2}>
+          <Grid2 container spacing={2}>
             <Grid2 size={7}>
               <TextField
                 required
@@ -430,19 +430,19 @@ export function CadastroPage() {
               />
             </Grid2>
           </Grid2>
-          
+
         </Box>
 
-        <Button 
-          variant='contained' 
+        <Button
+          variant='contained'
           sx={{
             backgroundColor: '#22703E',
             height: '3.5rem',
-            width: '50%', 
-            margin: '0 auto',         
+            width: '50%',
+            margin: '0 auto',
           }}
         >
-         Confirmar
+          Confirmar
         </Button>
 
       </Box>

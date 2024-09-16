@@ -6,6 +6,11 @@ export function DashboardPage() {
             <Typography>
                 ESTOU DENTRO DO SISTEMA
             </Typography>
+
+
+            <Typography>
+                Hello world
+            </Typography>
         </Box>
     )
 }

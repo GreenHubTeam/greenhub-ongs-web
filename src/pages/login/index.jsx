@@ -2,7 +2,7 @@ import { z } from "zod";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import KeyIcon from '@mui/icons-material/Key';
-import { Header } from "../../components/header";
+import { HeaderComponent } from "../../components/header";
 import PersonIcon from '@mui/icons-material/Person';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Divider, InputAdornment, TextField, Button, Typography, Link as MLink, } from "@mui/material";
@@ -46,7 +46,7 @@ export function LoginPage() {
 
                     <Box>
 
-                        <Header />
+                        <HeaderComponent />
 
                         <Typography
                             variant="h4"

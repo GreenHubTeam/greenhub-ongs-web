@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 
-export function Header() {
+export function HeaderComponent() {
     return (
         <Box
             sx={{
