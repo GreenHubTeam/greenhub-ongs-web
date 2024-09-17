@@ -29,7 +29,7 @@ const linksNavs = [
         path: '/hub/users',
         icon: <AccountCircleIcon />
     },
-]   
+]
 
 export default function LayoutAppComponent({ children }) {
     const { pathname: pathName } = useLocation();
@@ -81,7 +81,7 @@ export default function LayoutAppComponent({ children }) {
                     </List>
                 </Box >
 
-                <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
+                <Box sx={{ flex: 1, overflowY: 'auto' }}>
                     {children}
                 </Box>
             </Box >
