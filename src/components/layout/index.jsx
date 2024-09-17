@@ -5,6 +5,8 @@ import { Dashboard, CorporateFare, AccountBox, Assessment } from "@mui/icons-mat
 import { Box, IconButton, List, ListItemButton, ListItemIcon, ListItemText, Tooltip } from "@mui/material";
 import { Link, useLocation } from 'react-router-dom';
 import { HeaderComponent } from '../header';
+import CampaignIcon from '@mui/icons-material/Campaign';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const linksNavs = [
     {
@@ -13,21 +15,21 @@ const linksNavs = [
         icon: <Dashboard />
     },
     {
-        name: 'ONGs',
-        path: '/hub/ongs',
-        icon: <CorporateFare />
+        name: 'Post',
+        path: '/post',
+        icon: <CampaignIcon />
     },
     {
-        name: 'Usuarios',
+        name: 'Post',
+        path: '/post/editar',
+        icon: <CampaignIcon />
+    },
+    {
+        name: 'Perfil',
         path: '/hub/users',
-        icon: <AccountBox />
+        icon: <AccountCircleIcon />
     },
-    {
-        name: 'Projetos',
-        path: '/hub/projects',
-        icon: <Assessment />
-    },
-]
+]   
 
 export default function LayoutAppComponent({ children }) {
     const { pathname: pathName } = useLocation();
@@ -51,7 +53,7 @@ export default function LayoutAppComponent({ children }) {
                     <List sx={{ marginTop: '1rem' }}>
                         {
                             linksNavs.map((link, index) => (
-                                <Box key={index} component={Link} href={link.path} passHref sx={{
+                                <Box key={index} component={Link} to={link.path} sx={{
                                     textDecoration: 'none',
                                     color: "#6D6D6D",
                                     fontSize: '.9rem',
