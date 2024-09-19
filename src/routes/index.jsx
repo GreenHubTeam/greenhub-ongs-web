@@ -12,7 +12,7 @@ export function RoutesMain() {
 
     return (
         <BrowserRouter>
-            {<AuthRoutes/>}
+            {<AppRoutes/>}
         </BrowserRouter>
     )
 }
