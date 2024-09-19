@@ -34,7 +34,7 @@ export function CadastroPage() {
         type: "ONG"
       },
       ong: {
-        name: "Marcelo",
+        name: "Marcelo fnfiwaonfaiwofnawuifniwab",
         document: "123-123-123-23",
         about: data.ong.about,
         city: data.ong.city,
