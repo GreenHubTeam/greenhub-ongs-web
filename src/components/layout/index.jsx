@@ -21,7 +21,7 @@ const linksNavs = [
     },
     {
         name: 'Perfil',
-        path: '/hub/users',
+        path: '/perfil',
         icon: <AccountCircleIcon />
     },
 ]

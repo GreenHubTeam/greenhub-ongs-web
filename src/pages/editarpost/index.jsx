@@ -6,6 +6,7 @@ export function EditarPost() {
             display: 'flex',
             gap: '2rem',
             flexDirection: 'column',
+            justifyContent: 'space-between'
         }}>
             <Typography variant='h3' sx={{
                 padding: '40px',
@@ -30,15 +31,13 @@ export function EditarPost() {
                         objectFit: 'cover',
                         width: '100%',
                     }}
-                >
-
-                </Box>
-
+                />
             </Box>
             <Grid2>
 
                 <Grid2>
-                    <Box sx={{padding: '0 80px'}}>
+
+                    <Box sx={{ padding: '0 80px' }}>
                         <Typography variant='h6' sx={{
                             fonSize: '16px',
                             color: 'black',
@@ -55,6 +54,7 @@ export function EditarPost() {
                                 backgroundColor: '#E7E7E7',
                                 marginBottom: '1.5rem',
                                 borderRadius: '8px',
+                                border: '10px',
                             }}
                             slotProps={{
                                 input: {
