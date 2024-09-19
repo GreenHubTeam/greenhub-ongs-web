@@ -9,7 +9,7 @@ export function AppRoutes() {
         <Routes>
             <Route path="/" element={<AppPage />}>
                 <Route path="/" element={<DashboardPage />} />
-                <Route path="/post/editar" element={<EditarPost/>}/>
+                <Route path="/editar" element={<EditarPost/>}/>
                 <Route path="/post" element={<PostPage/>}/>
             </Route>
         </Routes>

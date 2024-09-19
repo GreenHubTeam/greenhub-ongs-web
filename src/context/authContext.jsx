@@ -18,12 +18,20 @@ export function AuthPai({ children }) {
         setUser(resposta.data.user);
     }
 
+    async function OngUser(data) {
+        const resposta = await api.post('/registro',data);
+
+        setToken(resposta.data.token);
+        setUser(resposta.data.user);
+    }
+
     return (
         <AuthContext.Provider
             value={{
                 token,
                 user,
-                loginUser
+                loginUser,
+                OngUser
             }}
         >
             {children}

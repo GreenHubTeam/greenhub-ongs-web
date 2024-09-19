@@ -20,11 +20,6 @@ const linksNavs = [
         icon: <CampaignIcon />
     },
     {
-        name: 'Post',
-        path: '/post/editar',
-        icon: <CampaignIcon />
-    },
-    {
         name: 'Perfil',
         path: '/hub/users',
         icon: <AccountCircleIcon />

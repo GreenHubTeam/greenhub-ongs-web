@@ -6,13 +6,47 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import FmdGoodIcon from '@mui/icons-material/FmdGood';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import EmailIcon from '@mui/icons-material/Email';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+const formularioschema = z.object({
+  documento: z.string().min(1, 'Documento é obrigatório'),
+  nomeSocial: z.string().min(1, 'Nome social é obrigatório'),
+  descricao: z.string().min(10, 'Descrição deve ter no mínimo 10 caracteres'),
+  cep: z.string().min(1, 'CEP é obrigatório'),
+  numero: z.string().min(1, 'Número é obrigatório'),
+  complemento: z.string().min(1, 'Complemento é obrigatório'),
+  bairro: z.string().min(1, 'Bairro é obrigatório'),
+  estado: z.string().min(1, 'Estado é obrigatório'),
+  telefone: z.string().min(1, 'Telefone é obrigatório'),
+  email: z.string().email('E-mail inválido'),
+  nomeResponsavel: z.string().min(1, 'Nome do responsável é obrigatório'),
+  cpfResponsavel: z.string().min(1, 'CPF do responsável é obrigatório'),
+  senha: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
+  confirmarSenha: z.string().min(6, 'Confirmação de senha deve ter no mínimo 6 caracteres'),
+});
 
 export function CadastroPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+} = useForm({
+    resolver: zodResolver(formularioschema),
+    mode: 'onChange'
+});
+
+  function HandleRegister(data) {
+    console.log(data);
+  };
+
   return (
     <Box>
       <HeaderComponent />
 
-      <Box
+      <Box component={'form'}
+      onSubmit={handleSubmit(HandleRegister)}
         sx={{
           display: 'flex',
           flexDirection: 'column',
@@ -35,6 +69,9 @@ export function CadastroPage() {
           />
 
           <TextField
+            error={!!errors.documento}
+            helperText={errors?.documento?.message}
+            {...register("documento")}
             required
             slotProps={{
               input: {
@@ -53,9 +90,12 @@ export function CadastroPage() {
                 ),
               },
             }}
-            label="Documento"
+            label= 'documento'
           />
           <TextField
+             error={!!errors.nomesocial}
+             helperText={errors?.nomesocial?.message}
+             {...register("nomesocial")}
             required
             slotProps={{
               input: {
@@ -77,6 +117,9 @@ export function CadastroPage() {
             label="Nome social"
           />
           <TextField
+             error={!!errors.descricao}
+             helperText={errors?.descricao?.message}
+             {...register("descricao")}
             required
             multiline
             rows={4}
@@ -99,6 +142,9 @@ export function CadastroPage() {
           />
 
           <TextField
+             error={!!errors.cep}
+             helperText={errors?.cep?.message}
+             {...register("cep")}
             required
             slotProps={{
               input: {
@@ -123,6 +169,9 @@ export function CadastroPage() {
           <Grid2 container spacing={2}>
             <Grid2 size={3}>
               <TextField
+                 error={!!errors.numero}
+                 helperText={errors?.numero?.message}
+                 {...register("numero")}
                 required
                 slotProps={{
                   input: {
@@ -147,6 +196,9 @@ export function CadastroPage() {
             </Grid2>
             <Grid2 size={9}>
               <TextField
+               error={!!errors.complemento}
+               helperText={errors?.complemento?.message}
+               {...register("complemento")}
                 fullWidth
                 required
                 slotProps={{
@@ -173,6 +225,9 @@ export function CadastroPage() {
 
             <Grid2 size={3}>
               <TextField
+                 error={!!errors.bairro}
+                 helperText={errors?.bairro?.message}
+                 {...register("bairro")}
                 fullWidth
                 required
                 slotProps={{
@@ -197,6 +252,9 @@ export function CadastroPage() {
             </Grid2>
             <Grid2 size={9}>
               <TextField
+               error={!!errors.complemento}
+               helperText={errors?.complemento?.message}
+               {...register("complemento")}
                 fullWidth
                 required
                 slotProps={{
@@ -222,6 +280,9 @@ export function CadastroPage() {
 
             <Grid2 size={3}>
               <TextField
+                 error={!!errors.estado}
+                 helperText={errors?.estado?.message}
+                 {...register("estado")}
                 fullWidth
                 required
                 slotProps={{
@@ -247,6 +308,9 @@ export function CadastroPage() {
 
             <Grid2 size={9}>
               <TextField
+                 error={!!errors.complemento}
+                 helperText={errors?.complemento?.message}
+                 {...register("complemento")}
                 fullWidth
                 required
                 slotProps={{
@@ -287,6 +351,9 @@ export function CadastroPage() {
           />
 
           <TextField
+             error={!!errors.telefone}
+             helperText={errors?.telefone?.message}
+             {...register('telefone')}
             required
             slotProps={{
               input: {
@@ -309,6 +376,9 @@ export function CadastroPage() {
           />
 
           <TextField
+             error={!!errors.email}
+             helperText={errors?.email?.message}
+             {...register('email')}
             required
             slotProps={{
               input: {
@@ -333,6 +403,9 @@ export function CadastroPage() {
           <Grid2 container spacing={2}>
             <Grid2 size={7}>
               <TextField
+                 error={!!errors.nomeResponsavel}
+                 helperText={errors?.nomeResponsavel?.message}
+                 {...register('nomeResponsavel')}
                 required
                 slotProps={{
                   input: {
@@ -357,6 +430,9 @@ export function CadastroPage() {
             </Grid2>
             <Grid2 size={5}>
               <TextField
+                 error={!!errors.cpfResponsavel}
+                 helperText={errors?.cpfResponsavel?.message}
+                 {...register('cpfResponsavel')}
                 fullWidth
                 required
                 slotProps={{
@@ -383,6 +459,10 @@ export function CadastroPage() {
 
             <Grid2 size={6}>
               <TextField
+                type='password'
+                 error={!!errors.senha}
+                 helperText={errors?.senha?.message}
+                 {...register('senha')}
                 fullWidth
                 required
                 slotProps={{
@@ -407,6 +487,10 @@ export function CadastroPage() {
             </Grid2>
             <Grid2 size={6}>
               <TextField
+                type='password'
+                 error={!!errors.confirmarSenha}
+                 helperText={errors?.confirmarSenha?.message}
+                 {...register('confirmarSenha')}
                 fullWidth
                 required
                 slotProps={{
@@ -441,6 +525,7 @@ export function CadastroPage() {
             width: '50%',
             margin: '0 auto',
           }}
+          onClick={handleSubmit(HandleRegister)}
         >
           Confirmar
         </Button>

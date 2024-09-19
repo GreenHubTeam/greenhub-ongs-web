@@ -1,45 +1,49 @@
 import { Box, Grid2, TextField, InputAdornment, Typography, Button } from '@mui/material';
-import { CardContained } from '../../components/cardcontained';
 
 export function EditarPost() {
     return (
         <Box sx={{
             display: 'flex',
-            gap: '4rem',
+            gap: '2rem',
             flexDirection: 'column',
         }}>
             <Typography variant='h3' sx={{
-                padding: '16px 48px ',
-                marginTop: '20px',
+                padding: '40px',
                 fontSize: '26px',
                 color: '#22703E',
             }}>
                 Editar
             </Typography>
 
-            <Box sx={{padding: '0 90px'}}>
-                <Box sx={{
-                    display: 'flex',
-                    gap: '1.5rem',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '250px',
-                    borderWidth: '2px',
-                    borderRadius: '8px',
-                    backgroundColor: '#E7E7E7',
-                }}
+            <Box sx={{ padding: '40px 120px' }}>
+                <Box component='img'
+                    src='/ecofuturo.png'
+                    alt='Logo da EcoFuturo'
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '400px',
+                        borderWidth: '2px',
+                        borderRadius: '8px',
+                        backgroundColor: '#E7E7E7',
+                        objectFit: 'cover',
+                        width: '100%',
+                    }}
                 >
 
                 </Box>
+
             </Box>
             <Grid2>
 
                 <Grid2>
-                    <Box>
+                    <Box sx={{padding: '0 80px'}}>
                         <Typography variant='h6' sx={{
                             fonSize: '16px',
-                            marginBottom: '0.5rem',
                             color: 'black',
+                            marginBottom: '0.55rem',
+                            padding: '0px ',
                         }}>
                             Nome do Projeto
                         </Typography>
@@ -73,6 +77,7 @@ export function EditarPost() {
                             fonSize: '16px',
                             marginBottom: '0.5rem',
                             color: 'black',
+                            padding: '0',
                         }}>
                             Descrição do projeto
                         </Typography>
@@ -108,6 +113,7 @@ export function EditarPost() {
                             fonSize: '16px',
                             marginBottom: '0.5rem',
                             color: 'black',
+                            padding: '0',
                         }}>
                             Categorias
                         </Typography>
