@@ -6,11 +6,14 @@ import { theme } from './theme';
 import { Box } from '@mui/material';
 import { RoutesMain } from './routes';
 import { AuthPai } from './context/authContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <ToastContainer />
       <Box sx={{ fontFamily: 'Inter ,sans-serif' }}>
         <AuthPai>
           <RoutesMain />
