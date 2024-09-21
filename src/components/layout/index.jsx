@@ -1,8 +1,7 @@
 'use client'
 
-import LogoutIcon from '@mui/icons-material/Logout';
-import { Dashboard, CorporateFare, AccountBox, Assessment } from "@mui/icons-material";
-import { Box, IconButton, List, ListItemButton, ListItemIcon, ListItemText, Tooltip } from "@mui/material";
+import { Dashboard, } from "@mui/icons-material";
+import { Box, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { Link, useLocation } from 'react-router-dom';
 import { HeaderComponent } from '../header';
 import CampaignIcon from '@mui/icons-material/Campaign';
@@ -21,6 +20,11 @@ const linksNavs = [
     },
     {
         name: 'Perfil',
+        path: '/perfil',
+        icon: <AccountCircleIcon />
+    },
+    {
+        name: 'Criação',
         path: '/criacao',
         icon: <AccountCircleIcon />
     },
