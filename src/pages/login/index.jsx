@@ -128,7 +128,7 @@ export function LoginPage() {
                                     color: '#22703E'
                                 }}
                             >
-                                não tem conta? registre-se
+                                Cadastre-se
                             </Box>
 
                             <Button

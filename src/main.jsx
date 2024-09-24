@@ -14,7 +14,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <ToastContainer />
-      <Box sx={{ fontFamily: 'Inter ,sans-serif' }}>
+      <Box sx={{ fontFamily: 'Roboto, sans-serif' }}>
         <AuthPai>
           <RoutesMain />
         </AuthPai>

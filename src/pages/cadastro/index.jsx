@@ -5,6 +5,15 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import EmailIcon from '@mui/icons-material/Email';
 import PersonIcon from '@mui/icons-material/Person';
 import FmdGoodIcon from '@mui/icons-material/FmdGood';
+import EditRoadIcon from '@mui/icons-material/EditRoad';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
+import ApartmentIcon from '@mui/icons-material/Apartment';
+import NumbersIcon from '@mui/icons-material/Numbers';
+import MapIcon from '@mui/icons-material/Map';
+import EditLocationIcon from '@mui/icons-material/EditLocation';
+import KeyIcon from '@mui/icons-material/Key';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HeaderComponent } from "../../components/header";
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
@@ -13,16 +22,34 @@ import { Box, Divider, Grid2, InputAdornment, TextField, Button } from "@mui/mat
 import { Link } from 'react-router-dom';
 import { api } from '../../libs/axios';
 import { toast } from 'react-toastify';
+import { useContext } from "react";
+import { AuthContext } from "../../context/authContext";
+import { isAxiosError } from 'axios';
 
 export function CadastroPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors }
   } = useForm({
     resolver: zodResolver(registerFormSchema),
     mode: 'onChange'
   });
+
+  const { registerUser } = useContext(AuthContext);
+
+  const checkCEP = (e) => {
+    const cep = e.target.value.replace(/\D/g, ''); 
+    console.log(cep);
+    fetch(`https://viacep.com.br/ws/${cep}/json/`).then(res => res.json()).then(data => {
+      console.log(data);
+      setValue("rua", data.logradouro); 
+      setValue("bairro", data.bairro); 
+      setValue("cidade", data.localidade); 
+      setValue("estado", data.uf); 
+    });
+}
 
   async function HandleRegister(data) {
     const body = {
@@ -34,20 +61,32 @@ export function CadastroPage() {
         type: "ONG"
       },
       ong: {
-        name: "Marcelo fnfiwaonfaiwofnawuifniwab",
-        document: "123-123-123-23",
-        about: data.ong.about,
-        city: data.ong.city,
-        district: data.ong.district,
-        number: data.ong.number,
-        state: data.ong.state,
-        street: data.ong.street,
-        zipcode: data.ong.zipcode,
-        telephone: data.ong.telephone,
-        complement: data.ong.complement,
+        name: data.nomeSocial,
+        document: data.documento,
+        about: data.descricao,
+        number: data.numero,
+        state: data.estado,
+        district: data.bairro,
+        zipcode: data.cep,
+        telephone: data.telefone,
+        complement: data.complemento,
+        street: data.rua,
+        city: data.cidade,
       }
     }
 
+    console.log(body)
+
+    try {
+      await registerUser(body);
+      toast.success("Cadastro realizado com sucesso!");
+    } catch (error) {
+      if (isAxiosError(error)) {
+        toast.error(error.response?.data.message);
+    } else {
+        toast.error("Error interno no servidor");
+      }
+    }
   };
 
   return (
@@ -103,8 +142,8 @@ export function CadastroPage() {
             label='documento'
           />
           <TextField
-            error={!!errors.nomesocial}
-            helperText={errors?.nomesocial?.message}
+            error={!!errors.nomeSocial}
+            helperText={errors?.nomeSocial?.message}
             {...register("nomeSocial")}
             required
             slotProps={{
@@ -155,6 +194,7 @@ export function CadastroPage() {
             error={!!errors.cep}
             helperText={errors?.cep?.message}
             {...register("cep")}
+            onBlur={checkCEP}
             required
             slotProps={{
               input: {
@@ -176,39 +216,12 @@ export function CadastroPage() {
             label="CEP"
           />
 
-          <Grid2 container spacing={2}>
-            <Grid2 size={3}>
+          <Grid2 container spacing={3}>
+          <Grid2 size={7}>
               <TextField
-                error={!!errors.numero}
-                helperText={errors?.numero?.message}
-                {...register("numero")}
-                required
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment
-                        position="start"
-                        sx={{
-                          display: 'flex',
-                          gap: '0.5rem'
-                        }}
-                      >
-                        <FmdGoodIcon />
-
-                        <Divider orientation="vertical" flexItem />
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-                fullWidth
-                label="Nº"
-              />
-            </Grid2>
-            <Grid2 size={9}>
-              <TextField
-                error={!!errors.complemento}
-                helperText={errors?.complemento?.message}
-                {...register("complemento")}
+                error={!!errors.cidade}
+                helperText={errors?.cidade?.message}
+                {...register("cidade")}
                 fullWidth
                 required
                 slotProps={{
@@ -221,19 +234,17 @@ export function CadastroPage() {
                           gap: '0.5rem'
                         }}
                       >
-                        <FmdGoodIcon />
+                        <LocationCityIcon />
 
                         <Divider orientation="vertical" flexItem />
                       </InputAdornment>
                     ),
                   },
                 }}
-                label="Complemento"
+                label="cidade"
               />
-
             </Grid2>
-
-            <Grid2 size={3}>
+            <Grid2 size={5}>
               <TextField
                 error={!!errors.bairro}
                 helperText={errors?.bairro?.message}
@@ -250,7 +261,7 @@ export function CadastroPage() {
                           gap: '0.5rem'
                         }}
                       >
-                        <FmdGoodIcon />
+                        <ApartmentIcon/>
 
                         <Divider orientation="vertical" flexItem />
                       </InputAdornment>
@@ -260,11 +271,11 @@ export function CadastroPage() {
                 label="Bairro"
               />
             </Grid2>
-            <Grid2 size={9}>
+            <Grid2 size={7}>
               <TextField
-                error={!!errors.complemento}
-                helperText={errors?.complemento?.message}
-                {...register("complemento")}
+                error={!!errors.rua}
+                helperText={errors?.rua?.message}
+                {...register("rua")}
                 fullWidth
                 required
                 slotProps={{
@@ -277,18 +288,44 @@ export function CadastroPage() {
                           gap: '0.5rem'
                         }}
                       >
-                        <FmdGoodIcon />
+                        <EditRoadIcon /> 
 
                         <Divider orientation="vertical" flexItem />
                       </InputAdornment>
                     ),
                   },
                 }}
-                label="Complemento"
+                label="rua"
               />
             </Grid2>
-
             <Grid2 size={3}>
+              <TextField
+                error={!!errors.numero}
+                helperText={errors?.numero?.message}
+                {...register("numero")}
+                required
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment
+                        position="start"
+                        sx={{
+                          display: 'flex',
+                          gap: '0.5rem'
+                        }}
+                      >
+                        <NumbersIcon />
+
+                        <Divider orientation="vertical" flexItem />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+                fullWidth
+                label="Nº"
+              />
+            </Grid2>
+            <Grid2 size={2}>
               <TextField
                 error={!!errors.estado}
                 helperText={errors?.estado?.message}
@@ -305,7 +342,7 @@ export function CadastroPage() {
                           gap: '0.5rem'
                         }}
                       >
-                        <FmdGoodIcon />
+                        <MapIcon />
 
                         <Divider orientation="vertical" flexItem />
                       </InputAdornment>
@@ -315,8 +352,7 @@ export function CadastroPage() {
                 label="Estado"
               />
             </Grid2>
-
-            <Grid2 size={9}>
+            <Grid2 size={12}>
               <TextField
                 error={!!errors.complemento}
                 helperText={errors?.complemento?.message}
@@ -333,7 +369,7 @@ export function CadastroPage() {
                           gap: '0.5rem'
                         }}
                       >
-                        <FmdGoodIcon />
+                        <EditLocationIcon />
 
                         <Divider orientation="vertical" flexItem />
                       </InputAdornment>
@@ -344,6 +380,7 @@ export function CadastroPage() {
               />
             </Grid2>
           </Grid2>
+          
 
         </Box>
 
@@ -455,7 +492,7 @@ export function CadastroPage() {
                           gap: '0.5rem'
                         }}
                       >
-                        <PersonIcon />
+                        <AssignmentIndIcon />
 
                         <Divider orientation="vertical" flexItem />
                       </InputAdornment>
@@ -485,7 +522,7 @@ export function CadastroPage() {
                           gap: '0.5rem'
                         }}
                       >
-                        <PersonIcon />
+                        <KeyIcon />
 
                         <Divider orientation="vertical" flexItem />
                       </InputAdornment>
@@ -513,7 +550,7 @@ export function CadastroPage() {
                           gap: '0.5rem'
                         }}
                       >
-                        <PersonIcon />
+                        <CheckCircleIcon />
 
                         <Divider orientation="vertical" flexItem />
                       </InputAdornment>
