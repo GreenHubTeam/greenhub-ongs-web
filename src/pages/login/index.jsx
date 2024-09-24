@@ -1,14 +1,13 @@
 import { z } from "zod";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import KeyIcon from '@mui/icons-material/Key';
-import { HeaderComponent } from "../../components/header";
 import PersonIcon from '@mui/icons-material/Person';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Divider, InputAdornment, TextField, Button, Typography, Link as MLink, } from "@mui/material";
-import { api } from "../../libs/axios";
-import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
+import { HeaderComponent } from "../../components/header";
+import { Box, Divider, InputAdornment, TextField, Button, Typography, Link as MLink, } from "@mui/material";
 
 const formularioLogin = z.object({
     email: z.string().min(4, "Minimo de 4 caracteres").email("Email invalido"),
