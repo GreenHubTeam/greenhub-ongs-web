@@ -37,7 +37,7 @@ export default function LayoutAppComponent({ children }) {
                         display: 'flex',
                         width: '300px',
                         flexDirection: 'column',
-                        borderRight: 1,
+                        borderRight: 2,
                         borderColor: '#F0F0F0',
                         padding: '1rem',
                         height: '100vh',

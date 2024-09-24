@@ -12,7 +12,7 @@ export function RoutesMain() {
 
     return (
         <BrowserRouter>
-            {<AppRoutes/>}
+             {token ? <AppRoutes /> : <AuthRoutes />}
         </BrowserRouter>
     )
 }
