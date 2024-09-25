@@ -23,11 +23,6 @@ const linksNavs = [
         path: '/perfil',
         icon: <AccountCircleIcon />
     },
-    {
-        name: 'Criação',
-        path: '/criacao',
-        icon: <AccountCircleIcon />
-    },
 ]
 
 export default function LayoutAppComponent({ children }) {

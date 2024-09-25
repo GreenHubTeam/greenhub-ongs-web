@@ -1,7 +1,8 @@
 import { z } from 'zod';
+import { validateBr } from 'js-brasil';
 
 export const registerFormSchema = z.object({
-        documento: z.string().min(1, (value => /^\d{14}$/.test(value), {message: 'CNPJ inválido',}), 'Documento é obrigatório'),
+        documento: z.string().min(1, 'Documento é obrigatório').refine((value) => validateBr.cnpj(value), { message: 'CNPJ inválido',}),      
         nomeSocial: z.string().min(1, 'Nome social é obrigatório'),
         descricao: z.string().min(10, 'Descrição deve ter no mínimo 10 caracteres'),
         cep: z.string().min(1, (value => /^\d{5}-?\d{3}$/.test(value), {message: 'CEP inválido',}), 'CEP é obrigatório'),

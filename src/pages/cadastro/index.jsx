@@ -11,12 +11,12 @@ import ApartmentIcon from '@mui/icons-material/Apartment';
 import NumbersIcon from '@mui/icons-material/Numbers';
 import MapIcon from '@mui/icons-material/Map';
 import EditLocationIcon from '@mui/icons-material/EditLocation';
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import KeyIcon from '@mui/icons-material/Key';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HeaderComponent } from "../../components/header";
-import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import { CardContained } from "../../components/cardcontained";
 import { Box, Divider, Grid2, InputAdornment, TextField, Button } from "@mui/material";
 import { Link } from 'react-router-dom';
@@ -171,7 +171,7 @@ export function CadastroPage() {
             {...register("descricao")}
             required
             multiline
-            rows={4}
+            rows={6}
             label="Descrição"
           />
 

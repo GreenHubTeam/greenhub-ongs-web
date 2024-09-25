@@ -24,13 +24,31 @@ export function AuthPai({ children }) {
         setToken(resposta.data.token);
     }
 
+    async function createPost(postData, ongId, imageFile) {
+        const formData = new FormData();
+    
+        for (const key in postData) {
+            formData.append(key, postData[key]);
+        }
+    
+        if (imageFile) {
+            formData.append('project-image', imageFile); 
+        }
+        const response = await api.post(`/project/create/${ongId}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',  
+            },
+        });
+    
+    }
     return (
         <AuthContext.Provider
             value={{
                 token,
                 user,
                 loginUser,
-                registerUser
+                registerUser,
+                createPost
             }}
         >
             {children}

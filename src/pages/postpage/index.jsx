@@ -1,5 +1,6 @@
-import { Box, Grid2, Typography, Button, Chip } from '@mui/material';
+import { Box, Grid2, Typography, Button, Chip, Link as MLink, } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+
 
 
 export function PostPage() {
@@ -11,6 +12,25 @@ export function PostPage() {
             flexDirection: 'column',
             padding: '2rem'
         }}>
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+            }}>
+
+                <MLink
+                    onClick={() => navigate('/criacao')}
+                    role="button"
+                    sx={{
+                        color: '#22703E',
+                        cursor: 'pointer',
+                        fontSize: '1.25rem',
+                        fontWeight: 'bold',
+                    }}
+                >
+                    Criar projeto
+                </MLink>
+            </Box>
+
             <Typography variant='h3' sx={{
                 color: '#22703E',
                 padding: '16px 48px ',
@@ -67,7 +87,7 @@ export function PostPage() {
                                 padding: '20px 15px',
                                 fontSize: '16px',
                             }}>
-                                A EcoFuturo é uma ONG dedicada à preservação do meio ambiente e à conscientização sobre a importância do reflorestamento. Focada em educar comunidades sobre o impacto das mudanças climáticas, promove campanhas de plantio de arvóres e redução de resíduo. 
+                                A EcoFuturo é uma ONG dedicada à preservação do meio ambiente e à conscientização sobre a importância do reflorestamento. Focada em educar comunidades sobre o impacto das mudanças climáticas, promove campanhas de plantio de arvóres e redução de resíduo.
                             </Typography>
 
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
