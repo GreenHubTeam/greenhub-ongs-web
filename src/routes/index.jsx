@@ -1,18 +1,15 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { LoginPage } from "../pages/login";
-import { CadastroPage } from "../pages/cadastro";
-import { DashboardPage } from "../pages/dashboard";
 import { useContext } from "react";
-import { AuthContext } from "../context/authContext";
 import { AppRoutes } from "./app.routes";
 import { AuthRoutes } from "./auth.routes";
+import { BrowserRouter } from "react-router-dom";
+import { AuthContext } from "../context/authContext";
 
 export function RoutesMain() {
     const { token } = useContext(AuthContext);
 
     return (
         <BrowserRouter>
-             {token ? <AppRoutes /> : <AuthRoutes />}
+            {token ? <AppRoutes /> : <AuthRoutes />}
         </BrowserRouter>
     )
 }

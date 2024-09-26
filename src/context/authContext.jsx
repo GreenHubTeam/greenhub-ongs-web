@@ -1,46 +1,62 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { api } from "../libs/axios";
-
+import { jwtDecode } from "jwt-decode";
+import { isAxiosError } from "axios";
+import { toast } from "react-toastify";
 
 export const AuthContext = createContext({});
 
-export function AuthPai({ children }) {
+// eslint-disable-next-line react/prop-types
+export function AuthProvider({ children }) {
     const [token, setToken] = useState("");
     const [user, setUser] = useState("");
 
     async function loginUser(email, password) {
-        const resposta = await api.post('/login', {
-            email: email,
-            password: password
-        });
+        try {
+            const resposta = await api.post('/login', {
+                email: email,
+                password: password
+            });
 
-        setToken(resposta.data.token);
-        setUser(resposta.data.user);
+            const decoded = jwtDecode(resposta.data.token);
+            setUser(decoded);
+
+            setToken(resposta.data.token);
+
+            localStorage.setItem('@greenhubONG:token', resposta.data.token);
+
+            toast.success("Login efetuado com sucesso, seja bem vindo!")
+        } catch (error) {
+            if (isAxiosError(error)) {
+                toast.error(error.response.data.message)
+            } else {
+                toast.error("Error interno no servidor");
+            }
+        }
     }
 
     async function registerUser(body) {
         const resposta = await api.post('/ong', body);
-            
+
         setToken(resposta.data.token);
     }
 
-    async function createPost(postData, ongId, imageFile) {
-        const formData = new FormData();
-    
-        for (const key in postData) {
-            formData.append(key, postData[key]);
+    useEffect(() => {
+        const token = localStorage.getItem('@greenhubONG:token');
+
+        if (token) {
+            setToken(token);
+            const decoded = jwtDecode(token);
+            setUser(decoded);
         }
-    
-        if (imageFile) {
-            formData.append('project-image', imageFile); 
-        }
-        const response = await api.post(`/project/create/${ongId}`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',  
-            },
-        });
-    
+    }, [])
+
+    function logout() {
+        setToken(null);
+        setUser(null);
+        localStorage.removeItem('@greenhubONG:token');
     }
+
     return (
         <AuthContext.Provider
             value={{
@@ -48,10 +64,19 @@ export function AuthPai({ children }) {
                 user,
                 loginUser,
                 registerUser,
-                createPost
+                logout
             }}
         >
             {children}
         </AuthContext.Provider>
     )
 }
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error("useAuth must be used within an AuthProvider");
+    }
+    return context;
+};

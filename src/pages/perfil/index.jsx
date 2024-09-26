@@ -1,44 +1,44 @@
-import { Box, Grid2, InputAdornment, TextField, Typography, Divider} from "@mui/material";
+import { Box, Grid2, InputAdornment, TextField, Typography, Divider } from "@mui/material";
 
 export function PerfilPage() {
     return (
-        <Box>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column'
+            }}
+        >
             <Box
-                fullwidthh
+                fullwidth
                 component='img'
                 src='/fundoperfil.png'
                 alt='imagem de fundo do perfil'
                 sx={{
                     height: '280px',
-                    width: '100%',
                     margin: '0',
                 }}
             />
 
-            <Box sx={{
-                display: 'flex',
-                margin: '-120px 90px',
-                alignItems: 'center',
-                gap: '2rem'
-            }}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    marginTop: '-90px'
+                }}>
                 <Box
-                    component='img' src='perfilong.png'
+                    component='img'
+                    src='perfilong.png'
                     alt='Foto de perfil da ONG'
                     sx={{
-                        height: '200px',
+                        height: '150px',
                     }}
                 />
 
                 <Typography
                     variant='h3'
-                    sx={{
-                        padding: '0',
-                        margin: '0',
-                        fontSize: '40px',
-                        marginBottom: '50px',
-                        marginTop: '50px',
-                    }}
-                >Guardiões da Amazônia
+                >
+                    Guardiões da Amazônia
                 </Typography>
             </Box>
 

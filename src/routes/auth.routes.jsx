@@ -1,5 +1,5 @@
-import { Route, Routes } from "react-router-dom";
 import { LoginPage } from "../pages/login";
+import { Route, Routes } from "react-router-dom";
 import { CadastroPage } from "../pages/cadastro";
 
 export function AuthRoutes() {
