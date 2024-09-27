@@ -1,17 +1,19 @@
 import { Box, Button, Typography, Chip, } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { env } from '../../env';
 
 
-export function CardProject({ name, description, status, imagePath }) {
+// eslint-disable-next-line react/prop-types
+export function CardProject({ name, description, status, imagePath, id }) {
     const navigate = useNavigate();
 
     const getStatusChip = (status) => {
         switch (status) {
-            case 'Aprovado':
+            case 'APPROVED':
                 return <Chip label='Aprovado' variant='filled' color='success' />;
-            case 'Rejeitado':
+            case 'REPROVED':
                 return <Chip label='Rejeitado' variant='filled' color='error' />;
-            case 'Pendente':
+            case 'WAITING':
                 return <Chip label='Pendente' variant='filled' color='warning' />;
             default:
                 return <Chip label='Status desconhecido' variant='filled' color='default' />;
@@ -20,9 +22,9 @@ export function CardProject({ name, description, status, imagePath }) {
 
     return (
         <Box sx={{
-            gap: '1.5rem',
             padding: '2rem',
             display: 'flex',
+            gap: '1.5rem',
             justifyContent: 'center',
             alignItems: 'center',
             flexDirection: 'column',
@@ -33,7 +35,9 @@ export function CardProject({ name, description, status, imagePath }) {
             <Box>
                 <Box
                     component='img'
-                    src={imagePath}
+                    // eslint-disable-next-line no-constant-binary-expression
+                    src={imagePath ? `${env.api_url}/${imagePath}` : "/ecofuturo.png"}
+                    alt='Logo da EcoFuturo'
                     sx={{
                         height: '250px',
                         width: '100%',
@@ -48,16 +52,18 @@ export function CardProject({ name, description, status, imagePath }) {
                     <Typography sx={{
                         padding: '0 15px',
                         fontSize: '28px',
+                        fontWeight: 'bold'
                     }}>
                         {name}
                     </Typography>
 
-                    {getStatusChip(status)}
+
                 </Box>
 
                 <Typography sx={{
                     padding: '20px 15px',
                     fontSize: '16px',
+                    fontWeight: 'bold'
                 }}>
                     {description}
                 </Typography>
@@ -66,14 +72,14 @@ export function CardProject({ name, description, status, imagePath }) {
                     <Button
                         variant='contained'
                         sx={{
-                            backgroundColor: '#22703E',
+                            backgroundColor: '#3A914D',
                             height: '3rem',
-                            borderRadius: '10px',
+                            borderRadius: '20px',
                             width: '200px'
                         }}
-                        onClick={() => navigate('/editar')}
+                        onClick={() => navigate(`/editar/${id}`)}
                     >
-                        Editar
+                        Saiba mais
                     </Button>
                 </Box>
             </Box>

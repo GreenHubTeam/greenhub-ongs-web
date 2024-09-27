@@ -1,5 +1,5 @@
-import { CardProject} from '../../components/cardproject'
-import { Box, Typography, Button } from '@mui/material';
+import { CardProject } from '../../components/cardproject'
+import { Box, Typography, Button, Grid2 } from '@mui/material';
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
@@ -8,15 +8,15 @@ import { api } from "../../libs/axios";
 
 export function ProjetosPage() {
     const navigate = useNavigate();
-    const [project, setProject] = useState([]);
+    const [projectData, setProjectData] = useState([]);
 
     const { user } = useAuth();
 
     const fetchProjects = async () => {
         try {
-            const response = await api.get(`/project/ong/${user.Ong.Id}`);
+            const response = await api.get(`/project/ong/${user.Ong.id}`);
             console.log("Projetos recebidos:", response.data);
-            setProject(response.data);
+            setProjectData(response.data);
         } catch (error) {
             console.error("Erro ao buscar os projetos:", error);
         }
@@ -56,20 +56,24 @@ export function ProjetosPage() {
                 </Button>
             </Box>
 
-            <>
+            <Grid2 container spacing={2}>
                 {
-                    project.map(
-                        (project) => (
-                            <CardProject
-                                name={project.name}
-                                description={project.description}
-                                imagePath={project.imagePath}
-                                status={project.status}
-                            />
+                    projectData.map(
+                        (project, index) => (
+                            <Grid2 key={index} size={6}>
+                                <CardProject
+                                    name={project.name}
+                                    description={project.description}
+                                    imagePath={project.imagePath}
+                                    status={project.status}
+                                    id={project.id}
+                                />
+                            </Grid2>
+
                         )
                     )
                 }
-            </>
+            </Grid2>
         </Box>
     )
 }

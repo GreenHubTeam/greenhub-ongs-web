@@ -31,7 +31,8 @@ export default function LayoutAppComponent({ children }) {
 
     return (
         <>
-            <Grid2 container>
+            <Grid2 container
+            >
                 <Grid2 size={2}>
                     <Box
                         sx={{
@@ -41,6 +42,7 @@ export default function LayoutAppComponent({ children }) {
                             borderColor: '#F0F0F0',
                             padding: '1rem',
                             height: '100vh',
+                            overflowY: 'auto',
                         }}>
                         <HeaderComponent />
 
@@ -79,7 +81,8 @@ export default function LayoutAppComponent({ children }) {
                     <Box
                         sx={{
                             display: 'flex',
-                            flexDirection: 'column'
+                            flexDirection: 'column',
+                            height: '100vh',
                         }}
                     >
                         <Box
@@ -106,7 +109,8 @@ export default function LayoutAppComponent({ children }) {
                         <Box
                             sx={{
                                 padding: '1rem',
-                                overflowY: 'auto'
+                                overflowY: 'auto',
+                                flex: 1
                             }}
                         >
                             {children}

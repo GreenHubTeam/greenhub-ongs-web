@@ -13,6 +13,7 @@ export function AppRoutes() {
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/projects" element={<ProjetosPage />} />
                 <Route path="/editar" element={<EditarProjetos />} />
+                <Route path="/editar/:id" element={<EditarProjetos />} />
                 <Route path="/criacao" element={<CriarProjetos />} />
                 <Route path="/perfil" element={<PerfilPage />} />
                 <Route path="/" element={<DashboardPage />} />
