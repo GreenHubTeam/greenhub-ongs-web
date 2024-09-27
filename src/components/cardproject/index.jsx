@@ -35,7 +35,6 @@ export function CardProject({ name, description, status, imagePath, id }) {
             <Box>
                 <Box
                     component='img'
-                    // eslint-disable-next-line no-constant-binary-expression
                     src={imagePath ? `${env.api_url}/${imagePath}` : "/ecofuturo.png"}
                     alt='Logo da EcoFuturo'
                     sx={{
@@ -79,7 +78,7 @@ export function CardProject({ name, description, status, imagePath, id }) {
                         }}
                         onClick={() => navigate(`/editar/${id}`)}
                     >
-                        Saiba mais
+                        Editar
                     </Button>
                 </Box>
             </Box>
