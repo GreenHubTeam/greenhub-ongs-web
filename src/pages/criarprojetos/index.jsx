@@ -3,10 +3,11 @@ import { toast } from "react-toastify";
 import { api } from "../../libs/axios";
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from "react";
+import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Box, Grid2, TextField, Typography, Button } from '@mui/material';
+import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, FormControl, InputLabel } from '@mui/material';
 
 const postFormSchema = z.object({
     projectName: z.string().min(1, "Nome do projeto é obrigatório"),
@@ -21,38 +22,52 @@ const postFormSchema = z.object({
         )
 });
 
-export function Criacaopost() {
+export function CriarProjetos() {
     const [image, setImage] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [category, setCategory] = useState([]);
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: zodResolver(postFormSchema),
+        defaultValues: {
+            categoryProjectId: '',
+        },
     });
     const navigate = useNavigate();
-
     const { user } = useAuth();
+
+    const fetchCategory = async () => {
+        try {
+            const response = await api.get('/category');
+            setCategory(response.data);
+        } catch (error) {
+            toast.error("Erro ao carregar categorias");
+        }
+    };
+
+    useEffect(() => {
+        fetchCategory();
+    }, []);
 
     async function handleCreateProject(data) {
         const formData = new FormData();
-
         formData.append("description", data.description);
         formData.append('name', data.projectName);
-        formData.append('categoryProjectId', null);
+        formData.append('categoryProjectId', data.categoryProjectId);
 
         if (data.file) {
             formData.append('project-image', data.file[0]);
         }
 
         try {
-            await api.post(`/project/create/${user.Ong.id}`, formData, {
+            const response = await api.post(`/project/create/${user.Ong.id}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
-            })
-
+            });
             navigate('/projects');
             toast.success("Projeto criado com sucesso, espere a aprovação de um administrador");
-            // eslint-disable-next-line no-unused-vars
         } catch (error) {
-            toast.error("Error ao criar o projeto");
+            toast.error("Erro ao criar o projeto");
         }
     };
 
@@ -67,18 +82,13 @@ export function Criacaopost() {
         }
     };
 
-    useEffect(() => {
-        console.log(user);
-    }, [user]);
-
     return (
         <Box sx={{
             display: 'flex',
             flexDirection: 'column',
             gap: '2rem',
             marginTop: '2rem'
-        }}
-        >
+        }}>
             <Typography variant='h3' sx={{
                 fontSize: '26px',
                 color: '#22703E',
@@ -88,60 +98,6 @@ export function Criacaopost() {
             </Typography>
 
             <Grid2 container spacing={2}>
-                {/* <Grid2 size={4} sx={{
-                    padding: '80px',
-                    marginLeft: '80px'
-                }}>
-                    <Box sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: '300px',
-                        borderWidth: '1px',
-                        borderStyle: 'solid',
-                        borderRadius: '50px',
-                        backgroundColor: '#E7E7E7',
-                        objectFit: 'cover',
-                        width: '100%',
-                        position: 'relative',
-                        padding: '150px',
-                        boxSizing: 'border-box',
-                    }}>
-                        {image ? (
-                            <img
-                                src={image}
-                                alt="Uploaded"
-                                style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    borderRadius: '50px',
-                                    objectFit: 'cover',
-                                    position: 'absolute',
-                                }}
-                            />
-                        ) : (
-                            <IconButton sx={{ position: 'absolute', zIndex: 1 }}>
-                                <PhotoCamera sx={{ fontSize: 50, color: 'black' }} />
-                            </IconButton>
-                        )}
-
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileChange}
-                            style={{
-                                position: 'absolute',
-                                width: '100%',
-                                height: '100%',
-                                opacity: 0,
-                                cursor: 'pointer',
-                                zIndex: 0,
-                            }}
-                        />
-
-                    </Box>
-                </Grid2> */}
-
                 <Grid2 size={12}>
                     <Box
                         component='img'
@@ -154,7 +110,6 @@ export function Criacaopost() {
                     />
                 </Grid2>
 
-
                 <Grid2 size={12}>
                     <Box
                         component='form'
@@ -165,25 +120,13 @@ export function Criacaopost() {
                             gap: '1rem'
                         }}
                     >
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column'
-                            }}
-                        >
-                            <TextField
-                                type="file"
-                                onChange={handleFileChange}
-                                {...register('file')}
-                            />
-                        </Box>
+                        <TextField
+                            type="file"
+                            onChange={handleFileChange}
+                            {...register('file')}
+                        />
 
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column'
-                            }}
-                        >
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                             <Typography
                                 variant='h6'
                                 component='label'
@@ -193,7 +136,6 @@ export function Criacaopost() {
                                     color: 'black',
                                     fontWeight: '700',
                                     marginBottom: '0.55rem',
-                                    padding: '0px ',
                                 }}>
                                 Nome do Projeto
                             </Typography>
@@ -210,12 +152,7 @@ export function Criacaopost() {
                             />
                         </Box>
 
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column'
-                            }}
-                        >
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                             <Typography
                                 variant='h6'
                                 component='label'
@@ -224,7 +161,6 @@ export function Criacaopost() {
                                     fontSize: '16px',
                                     marginBottom: '0.5rem',
                                     color: 'black',
-                                    padding: '0',
                                     fontWeight: '700',
                                 }}>
                                 Descrição do projeto
@@ -243,12 +179,8 @@ export function Criacaopost() {
                             />
                         </Box>
 
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column'
-                            }}
-                        >
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+
                             <Typography
                                 variant='h6'
                                 component='label'
@@ -257,16 +189,35 @@ export function Criacaopost() {
                                     fontSize: '16px',
                                     marginBottom: '0.5rem',
                                     color: 'black',
-                                    padding: '0',
                                     fontWeight: '700',
                                 }}>
-                                Categorias
+                                categorias
                             </Typography>
-
-
+                            <FormControl sx={{ width: '400px' }}>
+                                <InputLabel id="category-label"></InputLabel>
+                                <Select
+                                    labelId="category-label"
+                                    defaultValue=""
+                                    id="category"
+                                    {...register("categoryProjectId")}
+                                >
+                                    <MenuItem value="" disabled>
+                                        <em>Selecionar uma categoria</em>
+                                    </MenuItem>
+                                    {Array.isArray(category) && category.map((cat) => (
+                                        <MenuItem key={cat.id} value={cat.id}>
+                                            {cat.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            {errors.categoryProjectId && (
+                                <Typography color="error">{errors.categoryProjectId.message}</Typography>
+                            )}
                         </Box>
 
                         <Button
+                            disabled={loading}
                             type="submit"
                             variant='contained'
                             sx={{
@@ -276,12 +227,11 @@ export function Criacaopost() {
                                 borderRadius: '10px',
                             }}
                         >
-                            Salvar Mudanças
+                            {loading ? <CircularProgress size={24} /> : "Criar projeto"}
                         </Button>
                     </Box>
                 </Grid2>
-
             </Grid2>
-        </Box >
-    )
+        </Box>
+    );
 }

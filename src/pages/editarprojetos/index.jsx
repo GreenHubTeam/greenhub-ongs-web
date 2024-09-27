@@ -1,6 +1,6 @@
 import { Box, Grid2, TextField, InputAdornment, Typography, Button } from '@mui/material';
 
-export function EditarPost() {
+export function EditarProjetos() {
     return (
         <Box sx={{
             display: 'flex',

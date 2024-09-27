@@ -1,14 +1,15 @@
 import { z } from "zod";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import KeyIcon from '@mui/icons-material/Key';
+import { useAuth } from "../../context/authContext";
 import PersonIcon from '@mui/icons-material/Person';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from "../../context/authContext";
 import { HeaderComponent } from "../../components/header";
-import { Box, Divider, InputAdornment, TextField, Button, Typography, Link as MLink, IconButton, CircularProgress, } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Box, Divider, InputAdornment, TextField, Button, Typography, Link as MLink, IconButton, CircularProgress, } from "@mui/material";
 
 const formularioLogin = z.object({
     email: z.string().min(4, "Minimo de 4 caracteres").email("Email invalido"),
@@ -31,8 +32,14 @@ export function LoginPage() {
 
     async function handleLogin(data) {
         setLoading(true);
-        await loginUser(data.email, data.password);
-        setLoading(false);
+        try {
+            await loginUser(data.email, data.password);
+            toast.success("Login realizado com sucesso!");
+        } catch (error) {
+            toast.error("Erro ao fazer login. Verifique suas credenciais.");
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
