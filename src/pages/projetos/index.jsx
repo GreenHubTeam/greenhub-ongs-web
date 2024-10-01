@@ -15,7 +15,6 @@ export function ProjetosPage() {
     const fetchProjects = async () => {
         try {
             const response = await api.get(`/project/ong/${user.Ong.id}`);
-            console.log("Projetos recebidos:", response.data);
             setProjectData(response.data);
         } catch (error) {
             console.error("Erro ao buscar os projetos:", error);

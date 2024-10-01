@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, FormControl, InputLabel } from '@mui/material';
 
 const postFormSchema = z.object({
-    projectName: z.string().min(1, "Nome do projeto é obrigatório"),
+    name: z.string().min(1, "Nome do projeto é obrigatório"),
     description: z.string().min(1, "Descrição é obrigatória"),
     categoryProjectId: z.number().min(1,"Categoria é obrigatória"),
     file: z
@@ -27,7 +27,8 @@ export function EditarProjetos() {
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
     const [category, setCategory] = useState([]);
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const [projectData, setProjectData] = useState(null);
+    const { register, handleSubmit, formState: { errors }, reset} = useForm({
         resolver: zodResolver(postFormSchema),
         defaultValues: {
             categoryProjectId: '',
@@ -47,15 +48,36 @@ export function EditarProjetos() {
         }
     };
 
-    useEffect(() => {
+    const fetchProjects = async () => {
+        try {
+            const response = await api.get(`/project/one/${id}`)
+            setProjectData(response.data);
+            
+        } catch (error) {
+            console.log(error);
+            toast.error("Projeto não existe para ser editado");
+        }
+    };
+
+     useEffect(() => {
         fetchCategory();
+        fetchProjects();
     }, []);
+
+    useEffect(() => {
+        if (projectData) {
+            reset({
+                name: projectData.name || '',
+                description: projectData.description || '',
+            });
+        }
+    }, [projectData, reset]);
 
     async function handleEditProject(data) {
         console.log(data);
         const formData = new FormData();
         formData.append("description", data.description);
-        formData.append('name', data.projectName);
+        formData.append('name', data.name);
         formData.append('categoryProjectId', data.categoryProjectId);     
 
         if (data.file) {
@@ -65,10 +87,11 @@ export function EditarProjetos() {
         try {
             const response = await api.put(`/project/update/${id}`, formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    
                 },
             });
             navigate('/projects');
+            console.log(response)
             toast.success("Projeto atualizado com sucesso");
         } catch (error) {
             toast.error("Erro ao atualizar o projeto");
@@ -134,7 +157,7 @@ export function EditarProjetos() {
                             <Typography
                                 variant='h6'
                                 component='label'
-                                htmlFor="projectName"
+                                htmlFor="name"
                                 sx={{
                                     fontSize: '16px',
                                     color: 'black',
@@ -145,11 +168,11 @@ export function EditarProjetos() {
                             </Typography>
 
                             <TextField
-                                {...register("projectName")}
-                                error={!!errors.projectName}
-                                helperText={errors?.projectName?.message}
+                                {...register("name")}
+                                error={!!errors.name}
+                                helperText={errors?.name?.message}
                                 fullWidth
-                                id="projectName"
+                                id="name"
                                 required
                                 variant="outlined"
                                 placeholder='Nome do seu projeto'
