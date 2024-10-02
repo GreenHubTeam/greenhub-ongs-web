@@ -12,7 +12,7 @@ import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, Fo
 const postFormSchema = z.object({
     name: z.string().min(1, "Nome do projeto é obrigatório"),
     description: z.string().min(1, "Descrição é obrigatória"),
-    categoryProjectId: z.number().min(1,"Categoria é obrigatória"),
+    categoryProjectId: z.number().min(1, "Categoria é obrigatória"),
     file: z
         .instanceof(FileList)
         .refine((files) => files?.length > 0, "Arquivo é obrigatório")
@@ -28,7 +28,7 @@ export function EditarProjetos() {
     const [loading, setLoading] = useState(false);
     const [category, setCategory] = useState([]);
     const [projectData, setProjectData] = useState(null);
-    const { register, handleSubmit, formState: { errors }, reset} = useForm({
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({
         resolver: zodResolver(postFormSchema),
         defaultValues: {
             categoryProjectId: '',
@@ -52,14 +52,14 @@ export function EditarProjetos() {
         try {
             const response = await api.get(`/project/one/${id}`)
             setProjectData(response.data);
-            
+
         } catch (error) {
             console.log(error);
             toast.error("Projeto não existe para ser editado");
         }
     };
 
-     useEffect(() => {
+    useEffect(() => {
         fetchCategory();
         fetchProjects();
     }, []);
@@ -78,7 +78,7 @@ export function EditarProjetos() {
         const formData = new FormData();
         formData.append("description", data.description);
         formData.append('name', data.name);
-        formData.append('categoryProjectId', data.categoryProjectId);     
+        formData.append('categoryProjectId', Number(data.categoryProjectId));
 
         if (data.file) {
             formData.append('project-image', data.file[0]);
@@ -87,9 +87,10 @@ export function EditarProjetos() {
         try {
             const response = await api.put(`/project/update/${id}`, formData, {
                 headers: {
-                    
+                    'Content-Type': 'multipart/form-data',
                 },
             });
+
             navigate('/projects');
             console.log(response)
             toast.success("Projeto atualizado com sucesso");

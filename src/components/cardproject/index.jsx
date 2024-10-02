@@ -1,4 +1,4 @@
-import { Box, Button, Typography, Chip, } from '@mui/material';
+import { Box, Button, Typography, Chip, CardContent, Card, CardMedia, CardActions, Paper, } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { env } from '../../env';
 
@@ -21,67 +21,62 @@ export function CardProject({ name, description, status, imagePath, id }) {
     };
 
     return (
-        <Box sx={{
-            padding: '2rem',
-            display: 'flex',
-            gap: '1.5rem',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-            borderWidth: '2px',
-            borderRadius: '8px',
-            backgroundColor: '#E7E7E7',
-        }}>
-            <Box>
-                <Box
+        <Paper variant='outlined'>
+            <Card elevation={0}>
+                <CardMedia
                     component='img'
-                    src={imagePath ? `${env.api_url}/${imagePath}` : "/ecofuturo.png"}
-                    alt='Logo da EcoFuturo'
-                    sx={{
-                        height: '250px',
-                        width: '100%',
-                        objectFit: 'cover'
-                    }}
+                    alt='Project Image'
+                    sx={{ height: 200 }}
+                    image={imagePath ? `${env.api_url}/${imagePath}` : "/ecofuturo.png"}
+                    title='Project Image'
                 />
 
-                <Box sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                }}>
-                    <Typography sx={{
-                        padding: '0 15px',
-                        fontSize: '28px',
-                        fontWeight: 'bold'
-                    }}>
-                        {name}
+                <CardContent>
+                    <Box
+                        sx={{ display: 'flex', justifyContent: 'space-between' }}
+                    >
+                        <Typography
+                            sx={{
+                                fontWeight: '700',
+                                fontSize: '1.35rem',
+                                marginBottom: '.4rem',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}
+                        >
+                            {name}
+                        </Typography>
+
+                        {getStatusChip(status)}
+                    </Box>
+
+                    <Typography
+                        sx={{
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
+                        }}
+                    >
+                        {description}
                     </Typography>
+                </CardContent>
 
-
-                </Box>
-
-                <Typography sx={{
-                    padding: '20px 15px',
-                    fontSize: '16px',
-                    fontWeight: 'bold'
-                }}>
-                    {description}
-                </Typography>
-
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <CardActions>
                     <Button
                         variant='contained'
-                        sx={{
-                            backgroundColor: '#3A914D',
-                            height: '3rem',
-                            borderRadius: '20px',
-                            width: '200px'
-                        }}
                         onClick={() => navigate(`/editar/${id}`)}
+                        sx={{
+                            backgroundColor: 'green',
+                            borderRadius: '8px',
+                        }}
+                        size='medium'
                     >
                         Editar
                     </Button>
-                </Box>
-            </Box>
-        </Box>
+                </CardActions>
+            </Card>
+        </Paper>
+
     )
 }

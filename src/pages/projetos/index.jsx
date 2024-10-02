@@ -42,6 +42,7 @@ export function ProjetosPage() {
             >
                 <Typography variant='h3' sx={{
                     color: '#22703E',
+                    fontWeight: '600'
                 }}>
                     Projetos
                 </Typography>
@@ -59,7 +60,7 @@ export function ProjetosPage() {
                 {
                     projectData.map(
                         (project, index) => (
-                            <Grid2 key={index} size={6}>
+                            <Grid2 key={index} size={4}>
                                 <CardProject
                                     name={project.name}
                                     description={project.description}
@@ -68,7 +69,6 @@ export function ProjetosPage() {
                                     id={project.id}
                                 />
                             </Grid2>
-
                         )
                     )
                 }
