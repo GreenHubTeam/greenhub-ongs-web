@@ -10,8 +10,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, FormControl, InputLabel } from '@mui/material';
 
 const postFormSchema = z.object({
-    projectName: z.string().min(1, "Nome do projeto é obrigatório"),
+    name: z.string().min(1, "Nome do projeto é obrigatório"),
     description: z.string().min(1, "Descrição é obrigatória"),
+    categoryProjectId: z.number().min(1, "Categoria é obrigatória"),
     file: z
         .instanceof(FileList)
         .refine((files) => files?.length > 0, "Arquivo é obrigatório")
@@ -23,10 +24,11 @@ const postFormSchema = z.object({
 });
 
 export function CriarProjetos() {
-    const [image, setImage] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [file, setFile] = useState(null);
     const [category, setCategory] = useState([]);
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const [loading, setLoading] = useState(false);
+    const [imagePreview, setImagePreview] = useState(null);
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({
         resolver: zodResolver(postFormSchema),
         defaultValues: {
             categoryProjectId: '',
@@ -49,9 +51,11 @@ export function CriarProjetos() {
     }, []);
 
     async function handleCreateProject(data) {
+        setLoading(true);
+        console.log(data);
         const formData = new FormData();
         formData.append("description", data.description);
-        formData.append('name', data.projectName);
+        formData.append('name', data.name);
         formData.append('categoryProjectId', data.categoryProjectId);
 
         if (data.file) {
@@ -65,20 +69,21 @@ export function CriarProjetos() {
                 },
             });
             navigate('/projects');
-            toast.success("Projeto criado com sucesso, espere a aprovação de um administrador");
+            console.log(response)
+            toast.success("Projeto criado com sucesso, aguarde a confirmação do administrador");
         } catch (error) {
-            toast.error("Erro ao criar o projeto");
+            toast.error("Erro ao atualizar o projeto");
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImage(reader.result);
-            };
-            reader.readAsDataURL(file);
+        const selectedFile = e.target.files[0];
+        if (selectedFile) {
+            const previewURL = URL.createObjectURL(selectedFile);
+            setImagePreview(previewURL);
+            setFile(selectedFile);
         }
     };
 
@@ -98,35 +103,61 @@ export function CriarProjetos() {
             </Typography>
 
             <Grid2 container spacing={2}>
-                <Grid2 size={12}>
-                    <Box
-                        component='img'
-                        src={image}
-                        sx={{
-                            width: '100%',
-                            height: '200px',
-                            objectFit: 'cover',
-                        }}
+                <Grid2 size={6} sx={{ padding: '140px' }}>
+                    {imagePreview ? (
+                        <Box
+                            component="img"
+                            src={imagePreview}
+                            alt="Imagem de preview"
+                            sx={{
+                                display: 'flex',
+                                borderWidth: '1px',
+                                borderStyle: 'solid',
+                                objectFit: 'cover',
+                                borderRadius: '8px',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                width: '550px',
+                                height: '465px',
+                                padding: '150px',
+                            }}
+
+                        />
+                    ) : (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                borderWidth: '1px',
+                                borderStyle: 'solid',
+                                objectFit: 'cover',
+                                borderRadius: '8px',
+                                position: 'relative',
+                                width: '100%',
+                                padding: '150px',
+                            }}
+
+                        />
+                    )}
+
+                    <TextField
+                        type="file"
+                        fullWidth
+                        onChange={handleFileChange}
                     />
                 </Grid2>
 
-                <Grid2 size={12}>
+                <Grid2 size={6}>
                     <Box
                         component='form'
                         onSubmit={handleSubmit(handleCreateProject)}
                         sx={{
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: '1rem'
+                            gap: '1rem',
+                            padding: ' 40px 37px'
                         }}
                     >
-                        <TextField
-                            type="file"
-                            onChange={handleFileChange}
-                            {...register('file')}
-                        />
-
-                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', }}>
                             <Typography
                                 variant='h6'
                                 component='label'
@@ -141,9 +172,9 @@ export function CriarProjetos() {
                             </Typography>
 
                             <TextField
-                                {...register("projectName")}
-                                error={!!errors.projectName}
-                                helperText={errors?.projectName?.message}
+                                {...register("name")}
+                                error={!!errors.name}
+                                helperText={errors?.name?.message}
                                 fullWidth
                                 id="projectName"
                                 required
@@ -174,7 +205,7 @@ export function CriarProjetos() {
                                 required
                                 multiline
                                 id="description"
-                                placeholder='Uma breve descrição do seu projeto...'
+                                placeholder='Descreva o seu projeto'
                                 rows={6}
                             />
                         </Box>

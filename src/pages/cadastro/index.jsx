@@ -40,16 +40,16 @@ export function CadastroPage() {
   const { registerUser } = useContext(AuthContext);
 
   const checkCEP = (e) => {
-    const cep = e.target.value.replace(/\D/g, ''); 
+    const cep = e.target.value.replace(/\D/g, '');
     console.log(cep);
     fetch(`https://viacep.com.br/ws/${cep}/json/`).then(res => res.json()).then(data => {
       console.log(data);
-      setValue("rua", data.logradouro); 
-      setValue("bairro", data.bairro); 
-      setValue("cidade", data.localidade); 
-      setValue("estado", data.uf); 
+      setValue("rua", data.logradouro);
+      setValue("bairro", data.bairro);
+      setValue("cidade", data.localidade);
+      setValue("estado", data.uf);
     });
-}
+  }
 
   async function HandleRegister(data) {
     const body = {
@@ -83,7 +83,7 @@ export function CadastroPage() {
     } catch (error) {
       if (isAxiosError(error)) {
         toast.error(error.response?.data.message);
-    } else {
+      } else {
         toast.error("Error interno no servidor");
       }
     }
@@ -217,7 +217,7 @@ export function CadastroPage() {
           />
 
           <Grid2 container spacing={3}>
-          <Grid2 size={7}>
+            <Grid2 size={7}>
               <TextField
                 error={!!errors.cidade}
                 helperText={errors?.cidade?.message}
@@ -261,7 +261,7 @@ export function CadastroPage() {
                           gap: '0.5rem'
                         }}
                       >
-                        <ApartmentIcon/>
+                        <ApartmentIcon />
 
                         <Divider orientation="vertical" flexItem />
                       </InputAdornment>
@@ -288,7 +288,7 @@ export function CadastroPage() {
                           gap: '0.5rem'
                         }}
                       >
-                        <EditRoadIcon /> 
+                        <EditRoadIcon />
 
                         <Divider orientation="vertical" flexItem />
                       </InputAdornment>
@@ -380,7 +380,7 @@ export function CadastroPage() {
               />
             </Grid2>
           </Grid2>
-          
+
 
         </Box>
 
@@ -570,7 +570,7 @@ export function CadastroPage() {
               fullWidth
               variant='contained'
               sx={{
-                backgroundColor: '#f0f0f0',
+                backgroundColor: '#A3A2A2',
                 height: '3.5rem',
                 color: 'black',
               }}
