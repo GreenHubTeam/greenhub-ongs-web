@@ -4,9 +4,9 @@ import { api } from "../../libs/axios";
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from "react";
 import MenuItem from '@mui/material/MenuItem';
-import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate, useParams } from "react-router-dom";
 import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, FormControl, InputLabel } from '@mui/material';
 
 const postFormSchema = z.object({
@@ -24,10 +24,12 @@ const postFormSchema = z.object({
 });
 
 export function EditarProjetos() {
-    const [image, setImage] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [file, setFile] = useState(null);
     const [category, setCategory] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [deleting, setDeleting ] = useState(false);
     const [projectData, setProjectData] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
         resolver: zodResolver(postFormSchema),
         defaultValues: {
@@ -53,11 +55,26 @@ export function EditarProjetos() {
             const response = await api.get(`/project/one/${id}`)
             setProjectData(response.data);
 
+
         } catch (error) {
             console.log(error);
             toast.error("Projeto não existe para ser editado");
         }
     };
+
+    async function handleDeleteUser() {
+        setDeleting(true)
+        try{
+            await api.delete(`/project/delete/${id}`);
+
+            toast.success("Projeto deletado com sucesso");
+            navigate('/projects');
+        }catch (error){
+            toast.error("Erro ao deletar o projeto");
+        }finally {
+            setDeleting(false);
+        }
+    }
 
     useEffect(() => {
         fetchCategory();
@@ -74,6 +91,7 @@ export function EditarProjetos() {
     }, [projectData, reset]);
 
     async function handleEditProject(data) {
+        setLoading(true);
         console.log(data);
         const formData = new FormData();
         formData.append("description", data.description);
@@ -96,17 +114,17 @@ export function EditarProjetos() {
             toast.success("Projeto atualizado com sucesso");
         } catch (error) {
             toast.error("Erro ao atualizar o projeto");
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImage(reader.result);
-            };
-            reader.readAsDataURL(file);
+        const selectedFile = e.target.files[0];
+        if (selectedFile) {
+            const previewURL = URL.createObjectURL(selectedFile);
+            setImagePreview(previewURL);
+            setFile(selectedFile);
         }
     };
 
@@ -121,38 +139,68 @@ export function EditarProjetos() {
                 fontSize: '26px',
                 color: '#22703E',
                 fontWeight: '700',
+                gap: '1rem'
             }}>
                 Editar Projeto
             </Typography>
 
             <Grid2 container spacing={2}>
-                <Grid2 size={12}>
-                    <Box
-                        component='img'
-                        src={image}
-                        sx={{
-                            width: '100%',
-                            height: '200px',
-                            objectFit: 'cover',
-                        }}
+                <Grid2 size={6} sx={{ padding: '140px' }}>
+                    {imagePreview ? (
+                        <Box
+                            component="img"
+                            src={imagePreview}
+                            alt="Imagem de preview"
+                            sx={{
+                                display: 'flex',
+                                borderWidth: '1px',
+                                borderStyle: 'solid',
+                                objectFit: 'cover',
+                                borderRadius: '8px',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                width: '550px',
+                                height: '465px',
+                                padding: '150px',
+                            }}
+
+                        />
+                    ) : (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                borderWidth: '1px',
+                                borderStyle: 'solid',
+                                objectFit: 'cover',
+                                borderRadius: '8px',
+                                position: 'relative',
+                                width: '100%',
+                                padding: '150px',
+                            }}
+
+                        />
+                    )}
+
+                    <TextField
+                        type="file"
+                        fullWidth
+                        onChange={handleFileChange}
                     />
+
+
                 </Grid2>
 
-                <Grid2 size={12}>
+                <Grid2 size={6}>
                     <Box
                         component='form'
                         onSubmit={handleSubmit(handleEditProject)}
                         sx={{
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: '1rem'
+                            gap: '1rem',
+                            padding: ' 80px 37px',
                         }}
                     >
-                        <TextField
-                            type="file"
-                            onChange={handleFileChange}
-                            {...register('file')}
-                        />
 
                         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                             <Typography
@@ -202,7 +250,7 @@ export function EditarProjetos() {
                                 required
                                 multiline
                                 id="description"
-                                placeholder='Uma breve descrição do seu projeto...'
+                                placeholder='Descreva seu projeto'
                                 rows={6}
                             />
                         </Box>
@@ -244,19 +292,46 @@ export function EditarProjetos() {
                             )}
                         </Box>
 
-                        <Button
-                            disabled={loading}
-                            type="submit"
-                            variant='contained'
-                            sx={{
-                                backgroundColor: '#22703E',
-                                height: '3.5rem',
-                                width: '300px',
-                                borderRadius: '10px',
-                            }}
-                        >
-                            {loading ? <CircularProgress size={24} /> : "Salvar mudanças"}
-                        </Button>
+                        <Grid2 container spacing={2}>
+                            <Grid2 size={6}
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',   
+                                    gap: '2rem'   
+                                }}
+                            >
+                                <Button
+                                    disabled={loading}
+                                    type="submit"
+                                    variant='contained'
+                                    sx={{
+                                        backgroundColor: '#22703E',
+                                        height: '3.5rem',
+                                        width: '300px',
+                                        borderRadius: '10px',
+                                    }}
+                                >
+                                    {loading ? <CircularProgress size={24} /> : "Salvar mudanças"}
+                                </Button>
+
+
+                                <Button
+                                    disabled={deleting}
+                                    type="button"
+                                    onClick= {handleDeleteUser}
+                                    variant='contained'
+                                    sx={{
+                                        backgroundColor: '#A3A2A2',
+                                        height: '3.5rem',
+                                        width: '300px',
+                                        borderRadius: '10px',
+                                    }}
+                                >
+                                    {deleting ? <CircularProgress size={24} /> : "Excluir projetos"}
+                                </Button>
+                            </Grid2>
+                        </Grid2>
                     </Box>
                 </Grid2>
             </Grid2>
