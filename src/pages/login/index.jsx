@@ -7,7 +7,6 @@ import { useAuth } from "../../context/authContext";
 import PersonIcon from '@mui/icons-material/Person';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HeaderComponent } from "../../components/header";
-import { ModalLoginComponent } from "./modal";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { ModalLoginComponent } from "../../components/cardPolicies";
 import { Box, Divider, InputAdornment, TextField, Button, Typography, IconButton, CircularProgress, } from "@mui/material";
@@ -38,17 +37,16 @@ export function LoginPage() {
     }
 
     return (
-        <Box sx={{ display: "flex", minHeight: '100vh' }}>
-            <Box sx={{ width: '500px', overflowY: 'auto' }}>
+        <Box sx={{ display: "flex", minHeight: '100vh', maxHeight: '100vh' }}>
+            <Box sx={{ width: '500px', overflowY: 'auto', height: '100vh' }}>
                 <Box
                     sx={{
                         padding: '0.5rem',
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: '4rem',
                         justifyContent: 'space-between',
+                        height: '100%'
                     }}>
-
 
                     <HeaderComponent />
 
@@ -160,7 +158,7 @@ export function LoginPage() {
                                 margin: '0 auto',
                             }}
                         >
-                            {loading ? <CircularProgress size={24} /> : "Entrar"}
+                            {loading ? <CircularProgress color="success" size={24} /> : "Entrar"}
                         </Button>
 
                     </Box>
