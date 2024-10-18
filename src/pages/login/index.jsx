@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import KeyIcon from '@mui/icons-material/Key';
@@ -9,7 +8,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HeaderComponent } from "../../components/header";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Box, Divider, InputAdornment, TextField, Button, Typography, Link as MLink, IconButton, CircularProgress, } from "@mui/material";
+import { ModalLoginComponent } from "../../components/cardPolicies";
+import { Box, Divider, InputAdornment, TextField, Button, Typography, IconButton, CircularProgress, } from "@mui/material";
 
 const formularioLogin = z.object({
     email: z.string().min(4, "Minimo de 4 caracteres").email("Email invalido"),
@@ -32,14 +32,8 @@ export function LoginPage() {
 
     async function handleLogin(data) {
         setLoading(true);
-        try {
-            await loginUser(data.email, data.password);
-            toast.success("Login realizado com sucesso!");
-        } catch (error) {
-            toast.error("Erro ao fazer login. Verifique suas credenciais.");
-        } finally {
-            setLoading(false);
-        }
+        await loginUser(data.email, data.password);
+        setLoading(false);
     }
 
     return (
@@ -169,33 +163,7 @@ export function LoginPage() {
                         </Button>
 
                     </Box>
-                    <Box sx={{
-                        marginTop: '5rem',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        gap: '1rem'
-                    }}>
-                        <MLink
-                            href="#"
-                            sx={{
-                                color: '#22703E',
-                                cursor: 'pointer',
-                            }}
-                        >
-                            Termos de Uso
-                        </MLink>
-
-                        <MLink
-                            href="#"
-                            sx={{
-                                color: '#22703E',
-                                cursor: 'pointer',
-                                marginLeft: '2rem',
-                            }}
-                        >
-                            LGPD
-                        </MLink>
-                    </Box>
+                    <ModalLoginComponent />
 
                 </Box>
             </Box>

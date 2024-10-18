@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 
 export const AuthContext = createContext({});
 
+// eslint-disable-next-line react/prop-types
 export function AuthProvider({ children }) {
     const [token, setToken] = useState("");
     const [user, setUser] = useState("");
@@ -24,7 +25,7 @@ export function AuthProvider({ children }) {
 
             localStorage.setItem('@greenhubONG:token', resposta.data.token);
 
-            toast.success("Login efetuado com sucesso, seja bem vindo!")
+            toast.success("Login efetuado com sucesso, seja bem vindo!");
         } catch (error) {
             if (isAxiosError(error)) {
                 toast.error(error.response.data.message)
@@ -70,6 +71,7 @@ export function AuthProvider({ children }) {
         </AuthContext.Provider>
     )
 }
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (context === undefined) {
