@@ -8,6 +8,7 @@ import { useAuth } from "../../context/authContext";
 import PersonIcon from '@mui/icons-material/Person';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HeaderComponent } from "../../components/header";
+import { ModalLoginComponent } from "./modal";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Box, Divider, InputAdornment, TextField, Button, Typography, Link as MLink, IconButton, CircularProgress, } from "@mui/material";
 
@@ -169,33 +170,7 @@ export function LoginPage() {
                         </Button>
 
                     </Box>
-                    <Box sx={{
-                        marginTop: '5rem',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        gap: '1rem'
-                    }}>
-                        <MLink
-                            href="#"
-                            sx={{
-                                color: '#22703E',
-                                cursor: 'pointer',
-                            }}
-                        >
-                            Termos de Uso
-                        </MLink>
-
-                        <MLink
-                            href="#"
-                            sx={{
-                                color: '#22703E',
-                                cursor: 'pointer',
-                                marginLeft: '2rem',
-                            }}
-                        >
-                            LGPD
-                        </MLink>
-                    </Box>
+                    <ModalLoginComponent/>
 
                 </Box>
             </Box>
