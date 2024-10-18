@@ -12,9 +12,8 @@ export function AppRoutes() {
             <Route path="/" element={<AppPage />}>
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/projects" element={<ProjetosPage />} />
-                <Route path="/editar" element={<EditarProjetos />} />
-                <Route path="/editar/:id" element={<EditarProjetos />} />
-                <Route path="/criacao" element={<CriarProjetos />} />
+                <Route path="/edit-project/:id" element={<EditarProjetos />} />
+                <Route path="/create-project" element={<CriarProjetos />} />
                 <Route path="/perfil" element={<PerfilPage />} />
                 <Route path="/" element={<DashboardPage />} />
             </Route>

@@ -16,7 +16,7 @@ const linksNavs = [
         path: '/projects',
         icon: <CampaignIcon />
     },
-]
+];
 
 // eslint-disable-next-line react/prop-types
 export default function LayoutAppComponent({ children }) {
@@ -31,9 +31,8 @@ export default function LayoutAppComponent({ children }) {
 
     return (
         <>
-            <Grid2 container
-            >
-                <Grid2 size={2}>
+            <Grid2 container>
+                <Grid2 size={2.5}>
                     <Box
                         sx={{
                             display: 'flex',
@@ -77,7 +76,7 @@ export default function LayoutAppComponent({ children }) {
                         </List>
                     </Box >
                 </Grid2>
-                <Grid2 size={10}>
+                <Grid2 size={9.5}>
                     <Box
                         sx={{
                             display: 'flex',

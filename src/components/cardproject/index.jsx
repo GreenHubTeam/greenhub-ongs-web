@@ -1,11 +1,12 @@
-import { Box, Button, Typography, Chip, CardContent, Card, CardMedia, CardActions, Paper, } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import { env } from '../../env';
-
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Button, Typography, Chip, CardContent, Card, CardMedia, CardActions, Paper, } from '@mui/material';
 
 // eslint-disable-next-line react/prop-types
 export function CardProject({ name, description, status, imagePath, id }) {
     const navigate = useNavigate();
+    const [imagePathSrc, setImagePathSrc] = useState(imagePath ? `${env.api_url}/${imagePath}` : "/nomelogo.png");
 
     const getStatusChip = (status) => {
         switch (status) {
@@ -27,8 +28,11 @@ export function CardProject({ name, description, status, imagePath, id }) {
                     component='img'
                     alt='Project Image'
                     sx={{ height: 200 }}
-                    image={imagePath ? `${env.api_url}/${imagePath}` : "/ecofuturo.png"}
+                    image={imagePathSrc}
                     title='Project Image'
+                    onError={() => {
+                        setImagePathSrc("/nomelogo.png");
+                    }}
                 />
 
                 <CardContent>
@@ -65,7 +69,7 @@ export function CardProject({ name, description, status, imagePath, id }) {
                 <CardActions>
                     <Button
                         variant='contained'
-                        onClick={() => navigate(`/editar/${id}`)}
+                        onClick={() => navigate(`/edit-project/${id}`)}
                         sx={{
                             backgroundColor: 'green',
                             borderRadius: '8px',
