@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 
 export const AuthContext = createContext({});
 
-// eslint-disable-next-line react/prop-types
 export function AuthProvider({ children }) {
     const [token, setToken] = useState("");
     const [user, setUser] = useState("");
@@ -71,7 +70,7 @@ export function AuthProvider({ children }) {
         </AuthContext.Provider>
     )
 }
-// eslint-disable-next-line react-refresh/only-export-components
+
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (context === undefined) {

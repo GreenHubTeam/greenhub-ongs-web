@@ -74,7 +74,8 @@ export function ProjetosPage() {
                 </Box>
             )}
 
-            {!isLoading && projectData.length > 0 && (
+            <>
+                {!isLoading && projectData.length > 0 && (
                 <Grid2 container spacing={2}>
                     {
                         projectData.map(
@@ -94,6 +95,8 @@ export function ProjetosPage() {
                 </Grid2>
             )}
 
+            </>
+            
             {!isLoading && projectData.length <= 0 && (
                 <Box
                     sx={{

@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { toast } from "react-toastify";
 import { api } from "../../libs/axios";
+import { toast } from "react-toastify";
+import { ModalAiProject } from './modal';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from "react";
 import MenuItem from '@mui/material/MenuItem';
@@ -25,11 +26,11 @@ const postFormSchema = z.object({
 });
 
 export function CriarProjetos() {
+    const [open, setOpen] = useState(false);
     const [file, setFile] = useState(null);
     const [category, setCategory] = useState([]);
     const [loading, setLoading] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
-
 
     const {
         register,
@@ -40,9 +41,26 @@ export function CriarProjetos() {
         resolver: zodResolver(postFormSchema),
     });
 
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const navigate = useNavigate();
     const { user } = useAuth();
+
+    const modalSubmit = async () => {
+        try {
+            const response = await api.post('/gemini/createInfo', { description: data.description });
+            toast.success('Projeto criado com sucesso!');
+            handleClose();
+        } catch (error) {
+            console.log(error);
+            toast.error('Erro ao criar o projeto');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const fetchCategory = async () => {
         try {
@@ -55,6 +73,7 @@ export function CriarProjetos() {
 
     useEffect(() => {
         fetchCategory();
+        modalSubmit();
     }, []);
 
     async function handleCreateProject(data) {
@@ -110,10 +129,31 @@ export function CriarProjetos() {
                 Criar Projeto
             </Typography>
 
+            <Box sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: '2rem'
+            }}>
+                <Button
+                    variant="contained"
+                    onClick={handleOpen}
+                    sx={{
+                        height: '3rem',
+                        width: '250px',
+                        borderRadius: '10px',
+                    }}
+                >
+                    Criar o projeto com IA
+                </Button>
+            </Box>
+
             <Box
                 component='form'
                 onSubmit={handleSubmit(handleCreateProject)}
             >
+                
+                 <ModalAiProject open={open} handleClose={handleClose} onSubmit={modalSubmit} />
+
                 <Grid2 container spacing={2}>
                     <Grid2
                         size={6}
