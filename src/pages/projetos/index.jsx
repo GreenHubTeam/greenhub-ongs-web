@@ -14,19 +14,19 @@ export function ProjetosPage() {
 
     const { user } = useAuth();
 
-    useEffect(() => {
-        const fetchProjects = async () => {
-            setIsLoading(true);
-            try {
-                const response = await api.get(`/project/ong/${user.Ong.id}`);
-                setProjectData(response.data);
-            } catch {
-                toast.error("Error ao buscar os projetos")
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    async function fetchProjects () {
+        setIsLoading(true);
+        try {
+            const response = await api.get(`/project/ong/${user.Ong.id}`);
+            setProjectData(response.data);
+        } catch {
+            toast.error("Error ao buscar os projetos")
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchProjects();
     }, [user.Ong.id]);
 

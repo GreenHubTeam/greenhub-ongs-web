@@ -1,6 +1,7 @@
 import { HeaderComponent } from '../header';
 import { useAuth } from '../../context/authContext';
 import CampaignIcon from '@mui/icons-material/Campaign';
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Dashboard, ExitToApp, Person, } from "@mui/icons-material";
 import { Box, Grid2, IconButton, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
@@ -16,9 +17,13 @@ const linksNavs = [
         path: '/projects',
         icon: <CampaignIcon />
     },
+    {
+        name: 'Posts',
+        path: '/posts',
+        icon: <ChatBubbleIcon />
+    },
 ];
 
-// eslint-disable-next-line react/prop-types
 export default function LayoutAppComponent({ children }) {
     const { pathname: pathName } = useLocation();
     const navigate = useNavigate();
@@ -58,7 +63,7 @@ export default function LayoutAppComponent({ children }) {
                                                 borderRadius: '8px',
                                                 marginBottom: '.2rem',
                                                 '&:hover': {
-                                                    backgroundColor: pathName.includes(link.path) ? 'rgba(0, 128, 0, 0.5)' : '#F1F1F1', // Fundo verde transparente
+                                                    backgroundColor: pathName.includes(link.path) ? 'rgba(0, 128, 0, 0.5)' : '#F1F1F1', 
                                                 },
                                                 backgroundColor: pathName.includes(link.path) ? 'rgba(0, 128, 0, 0.1)' : '',
                                                 color: pathName.includes(link.path) ? 'green' : '',
