@@ -7,7 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, FormControl, InputLabel, Card, CardMedia } from '@mui/material';
+import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, InputLabel, Card, CardMedia } from '@mui/material';
 import { CloudUpload, Delete } from "@mui/icons-material";
 
 const postFormSchema = z.object({
@@ -25,11 +25,10 @@ const postFormSchema = z.object({
 });
 
 export function CriarProjetos() {
-    const [file, setFile] = useState(null);
+    const [, setFile] = useState(null);
     const [category, setCategory] = useState([]);
     const [loading, setLoading] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
-
 
     const {
         register,
@@ -48,7 +47,7 @@ export function CriarProjetos() {
         try {
             const response = await api.get('/category');
             setCategory(response.data);
-        } catch (error) {
+        } catch {
             toast.error("Erro ao carregar categorias");
         }
     };
@@ -78,7 +77,7 @@ export function CriarProjetos() {
             navigate('/projects');
             console.log(response)
             toast.success("Projeto criado com sucesso, aguarde a confirmação do administrador");
-        } catch (error) {
+        } catch {
             toast.error("Erro ao atualizar o projeto");
         } finally {
             setLoading(false);

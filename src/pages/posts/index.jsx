@@ -1,20 +1,15 @@
-import { z } from "zod";
 import { toast } from "react-toastify";
 import { api } from "../../libs/axios";
 import { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { PostCard } from '../../components/postcard';
 import { CardPost } from '../../components/cardpost';
-import { Box, Typography, Grid2 } from '@mui/material';
+import { Box, Typography, Grid2, Container } from '@mui/material';
 
 export function PostPage() {
-    const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(false);
-    const [postData, setPostData] = useState([]);
-
-
     const { user } = useAuth();
+    const [postData, setPostData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     async function fetchPost() {
         setIsLoading(true);
@@ -33,7 +28,6 @@ export function PostPage() {
         fetchPost();
     }, [user.Ong.id]);
 
-
     return (
         <Box>
             <Box sx={{
@@ -45,31 +39,31 @@ export function PostPage() {
 
             </Box>
 
-            <Box>
-                <PostCard fetchPost={fetchPost} />
+            <Container maxWidth='md'>
+                <PostCard
+                    fetchPost={fetchPost}
+                />
 
-                <>
-                    {!isLoading && postData.length > 0 && (
-                        <Grid2 container spacing={2} direction="column" justifyContent="center"alignItems="center">
-                            {
-                                postData.map(
-                                    (post, index) => (
-                                        <Grid2 key={index} size={6}>
-                                            <CardPost
-                                                description={post.description}
-                                                profilePath={post.imagePath}
-                                                createdAt={post.createdAt}
-                                                OngName={post.Ong.name}
-                                                postImagePath={post.Ong.imagePath}
-                                            />
-                                        </Grid2>
-                                    )
+                {!isLoading && postData.length > 0 && (
+                    <Grid2 container spacing={2} sx={{ marginTop: '3rem' }} >
+                        {
+                            postData.map(
+                                (post, index) => (
+                                    <Grid2 key={index} size={12}>
+                                        <CardPost
+                                            description={post.description}
+                                            createdAt={post.createdAt}
+                                            OngName={post.Ong.name}
+                                            postImagePath={post.imagePath}
+                                            profilePath={post.Ong.imagePath}
+                                        />
+                                    </Grid2>
                                 )
-                            }
-                        </Grid2>
-                    )}
-                </>
-            </Box>
-        </Box>
+                            )
+                        }
+                    </Grid2>
+                )}
+            </Container>
+        </Box >
     )
 }

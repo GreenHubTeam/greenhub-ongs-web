@@ -1,61 +1,71 @@
+import dayjs from 'dayjs';
+import 'dayjs/locale/pt-br';
+import { env } from '../../env';
 import { useState } from 'react';
-import { Box, Typography, } from '@mui/material';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { Box, Card, CardContent, Typography, } from '@mui/material';
 
+dayjs.locale('pt-br');
+dayjs.extend(relativeTime);
+
+// eslint-disable-next-line react/prop-types
 export function CardPost({ description, OngName, profilePath, createdAt, postImagePath }) {
+    const [profileSrc, setProfileSrc] = useState(profilePath ? `${env.api_url}/${profilePath}` : "/nomelogo.png");
+    const [postSrc, setPostSrc] = useState(postImagePath ? `${env.api_url}/${postImagePath}` : "/nomelogo.png");
+
     return (
-        <Box>
-            <Box
-                sx={{
-                    padding: '2rem',
-                    margin: '4.5rem',
-                    display: 'flex',
-                    gap: '1.5rem',
-                    flexDirection: 'column',
-                    height: 'auto',
-                    width: '95%',
-                    borderWidth: '2px',
-                    borderRadius: '8px',
-                    backgroundColor: '#E7E7E7',
-                    overflow: 'hidden',
-                    boxSizing: 'border-box',
-                }}
-            >
+        <Card>
+            <CardContent>
                 <Box
                     sx={{
                         display: 'flex',
-                        margin: '0 2rem'
+                        gap: '1.5rem',
+                        flexDirection: 'column',
                     }}
                 >
-                    <img
-                        src={profilePath}
-                        alt="Foto de perfil"
-                        style={{ width: '65px', height: '65px', borderRadius: '50%', marginRight: '1rem' }}
-                    />
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '2rem'
+                        }}
+                    >
+                        <Box
+                            component='img'
+                            src={profileSrc}
+                            alt="Foto de perfil"
+                            onError={() => {
+                                setProfileSrc("/nomelogo.png");
+                            }}
+                            sx={{ width: '65px', height: '65px', borderRadius: '50%', objectFit: 'cover' }}
+                        />
 
-                    <Typography variant='h6' sx={{}}> {OngName} </Typography>
-                </Box>
+                        <Typography variant='h6'>
+                            {OngName}
+                        </Typography>
 
-                <Typography
-                    sx={{
-                        margin: ' 0 7rem',
-                        marginTop: '-40px',
-                        marginBottom: '2rem'
-                    }}
-                >
-                    {description}
-                </Typography>
-                
-                <>
+                        <Typography variant="body2">
+                            Publicado {dayjs(createdAt).fromNow()}
+                        </Typography>
+                    </Box>
+
+                    <Typography>
+                        {description}
+                    </Typography>
                     {postImagePath && (
-                         <img
-                         src= {postImagePath}
-                         alt="Imagem do post"
-                         style={{ width: '65px', height: '65px', marginRight: '1rem' }}
-                     />
+                        <Box
+                            component='img'
+                            src={postSrc}
+                            onError={() => {
+                                setPostSrc("/nomelogo.png");
+                            }}
+                            alt="Imagem do post"
+                            sx={{}}
+                        />
                     )}
-                </>
-               
-            </Box>
-        </Box>
+
+                </Box>
+            </CardContent>
+        </Card>
     )
 }

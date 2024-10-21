@@ -14,7 +14,7 @@ export function ProjetosPage() {
 
     const { user } = useAuth();
 
-    async function fetchProjects () {
+    async function fetchProjects() {
         setIsLoading(true);
         try {
             const response = await api.get(`/project/ong/${user.Ong.id}`);
@@ -28,6 +28,7 @@ export function ProjetosPage() {
 
     useEffect(() => {
         fetchProjects();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user.Ong.id]);
 
     return (
