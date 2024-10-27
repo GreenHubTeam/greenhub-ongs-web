@@ -2,7 +2,7 @@ import { z } from "zod";
 import { toast } from "react-toastify";
 import { api } from "../../libs/axios";
 import { useForm } from 'react-hook-form';
-import { useState } from "react";
+import { useState, useEffect } from 'react';
 import { useAuth } from "../../context/authContext";
 import { CloudUpload } from "@mui/icons-material";
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,9 +27,23 @@ const postFormSchema = z.object({
 });
 
 export function PostCard({ fetchPost }) {
+    const [profileImage, setProfileImage] = useState();
     const [imagePreview, setImagePreview] = useState(null);
     const [loading, setLoading] = useState(false);
     const [, setFile] = useState(null);
+
+    const randomizeProfileImage = () => {
+        const profileImages = [
+            "/profile1.png",
+            "/profile2.png",
+            "/profile3.png",
+            "/profile4.png",
+            "/profile5.png",
+        ];
+
+        const randomImage = profileImages[Math.floor(Math.random() * profileImages.length)];
+        setProfileImage(randomImage);
+    };
 
     const {
         register,
@@ -80,6 +94,11 @@ export function PostCard({ fetchPost }) {
             setFile(selectedFile);
         }
     };
+
+    useEffect(() => {
+        randomizeProfileImage();
+    }, []); 
+
     return (
         <Card>
             <CardContent>
@@ -102,7 +121,7 @@ export function PostCard({ fetchPost }) {
 
                         <Box
                             component='img'
-                            src='/literalmente eu.png'
+                            src={profileImage}
                             alt="Foto de perfil"
                             sx={{ width: '35px', height: '35px', borderRadius: '50%' }}
                         />

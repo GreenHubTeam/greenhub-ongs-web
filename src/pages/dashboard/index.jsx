@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { api } from "../../libs/axios";
 import { useEffect, useState } from "react";
 import { Person } from "@mui/icons-material";
@@ -8,22 +9,31 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import { Badge, Box, Grid2, Paper, Skeleton, Typography, Select } from "@mui/material";
+import { Badge, Box, Grid2, Paper, Skeleton, Typography, Select, Avatar } from "@mui/material";
 
 export function DashboardPage() {
-    const [error, setError] = useState(null);
+    const { user } = useAuth();
     const [project, setProject] = useState('');
     const [userData, setUserData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [statistics, setStatistics] = useState(null);
     const [projectData, setProjectData] = useState([]);
+    const [profileImage, setProfileImage] = useState();
 
-    const { user } = useAuth();
+    const topVisualizadores = statistics?.topVisualizadores || [];
 
-    const handleChange = (event) => {
-        setProject(event.target.value);
-        fetchStatistics(event.target.value);
+    const randomizeProfileImage = () => {
+        const profileImages = [
+            "/profile1.png",
+            "/profile2.png",
+            "/profile3.png",
+            "/profile4.png",
+            "/profile5.png",
+        ];
+
+        const randomImage = profileImages[Math.floor(Math.random() * profileImages.length)];
+        setProfileImage(randomImage);
     };
 
     const fetchUsers = async () => {
@@ -35,27 +45,36 @@ export function DashboardPage() {
         }
     };
 
+    const randomProfileImages = useMemo(() => {
+        return topVisualizadores.map(() => randomizeProfileImage());
+    }, [topVisualizadores]);
+
     async function fetchProjects() {
         setIsLoading(true);
         try {
             const response = await api.get(`/project/ong/${user.Ong.id}`);
-            setProjectData(response.data);
-        } catch {
-            toast.error("Error ao buscar os projetos")
+            setProjectData(response.data.projects);
+
+            if (response.data.projects.length > 0) {
+                setProject(response.data.projects[0].id);
+                fetchStatistics(response.data.projects[0].id);
+            }
+        } catch (error) {
+            console.error("Erro ao buscar projetos:", error);
+            toast.error("Error ao buscar os projetos");
         } finally {
             setIsLoading(false);
         }
-    };
+    }
 
     const fetchStatistics = async (projectId) => {
         setLoading(true);
-        setError(null);
         try {
             const response = await api.get(`/dashboard/ong/${projectId}`);
             setStatistics(response.data);
         } catch (error) {
             setError("Erro ao buscar as estatísticas do projeto");
-            console.error("Erro:", error);
+            console.error(error);
         } finally {
             setLoading(false);
         }
@@ -66,9 +85,15 @@ export function DashboardPage() {
         fetchProjects();
     }, []);
 
+    const handleChange = (event) => {
+        const selectedProject = event.target.value;
+        setProject(selectedProject);
+        fetchStatistics(selectedProject);
+    };
+
     return (
         <Box>
-             <Grid2 container spacing={2}>
+            <Grid2 container spacing={2}>
                 <Grid2 size={8} sx={{ padding: '2rem' }}>
                     <Box
                         component="div"
@@ -205,7 +230,7 @@ export function DashboardPage() {
                         </MenuItem>
                         {Array.isArray(projectData) && projectData.map((project) => (
                             <MenuItem key={project.id} value={project.id}>
-                                {project.name} 
+                                {project.name}
                             </MenuItem>
                         ))}
                     </Select>
@@ -392,20 +417,43 @@ export function DashboardPage() {
                     >
                         <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '2rem' }}>
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <RemoveRedEyeIcon sx={{ marginRight: '0.5rem' }} />
-                                <Typography>Visualizações:</Typography>
-                                <Badge
-                                    sx={{ marginLeft: '0.5rem' }}
-                                    badgeContent={statistics?.totalVisualizacoes || 0}
-                                    color="success"
-                                />
+                                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                                    Top Visualizações
+                                </Typography>
                             </Box>
 
                             <Box sx={{ marginTop: '1rem' }}>
-                                {statistics?.topVisualizadores?.map((user, index) => (
-                                    <Typography key={index} sx={{ fontSize: '1rem' }}>
-                                        {user.nome} - {user.qtdVisualizacoes} visualizações
-                                    </Typography>
+                                {topVisualizadores.slice(0, 5).map((user, index) => (
+                                    <Box
+                                        key={index}
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            marginBottom: '0.5rem',
+                                        }}
+                                    >
+                                        <RemoveRedEyeIcon sx={{ marginRight: '0.5rem' }} />
+
+                                        <Avatar
+                                            src={profileImage}
+                                            alt='Foto de perfil'
+                                            sx={{
+                                                width: '35px',
+                                                height: '35px',
+                                                marginRight: '0.75rem',
+                                                backgroundColor: '#f0f0f0',
+                                            }}
+                                        />
+                                        <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>
+                                            {user.nome}
+                                        </Typography>
+
+                                        <Badge
+                                            sx={{ marginLeft: '1rem' }}
+                                            badgeContent={statistics?.totalVisualizacoes || 0}
+                                            color="success"
+                                        />
+                                    </Box>
                                 ))}
                             </Box>
                         </Box>

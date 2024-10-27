@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/authContext";
 import { CardPost } from '../../components/cardpost';
+import { CardProject } from '../../components/cardproject';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Email, Place, Person, LocationCity, Description } from '@mui/icons-material';
 import { Box, Grid2, Typography, Container, Tab, Tabs, Button, CircularProgress, TextField, InputAdornment, Divider, Select, InputLabel, MenuItem, FormControl } from "@mui/material";
@@ -24,9 +25,10 @@ export function PerfilPage() {
     const [postData, setPostData] = useState([]);
     const { user, setUser, setToken } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [projectData, setProjectData] = useState([]);
-    const [profileImage, setProfileImage] = useState("/profile1.png");
+    const [projectData, setProjectData] = useState({ projects: [] });
+    const [profileImage, setProfileImage] = useState();
 
 
     const {
@@ -47,7 +49,7 @@ export function PerfilPage() {
             "/profile4.png",
             "/profile5.png",
         ];
-
+    
         const randomImage = profileImages[Math.floor(Math.random() * profileImages.length)];
         setProfileImage(randomImage);
     };
@@ -80,7 +82,7 @@ export function PerfilPage() {
         setIsLoading(true);
         try {
             const response = await api.get(`/project/ong/${user.Ong.id}`);
-            setProjectData(response.data);
+            setProjectData({ projects: response.data.projects || [] });
         } catch {
             toast.error("Error ao buscar os projetos")
         } finally {
@@ -118,6 +120,19 @@ export function PerfilPage() {
         }
     };
 
+    async function handleDeletePost() {
+        setDeleting(true);
+        try {
+            await api.delete(`/post/${id}`);
+
+            toast.success("Post deletado com sucesso");
+        } catch {
+            toast.error("Erro ao deletar o post");
+        } finally {
+            setDeleting(false);
+        }
+    }
+
     async function fetchPost() {
         setIsLoading(true);
         try {
@@ -135,6 +150,7 @@ export function PerfilPage() {
         fetchPost();
         profileBio();
         fetchProjects();
+        randomizeProfileImage();
     }, [user.Ong.id]);
 
     const handleTabChange = (event, newValue) => {
@@ -169,6 +185,9 @@ export function PerfilPage() {
                     component='img'
                     src={profileImage}
                     alt='Foto de perfil da ONG'
+                    onError={() => {
+                        setProfileImage("/nomelogo.png"); 
+                    }}
                     sx={{
                         height: '150px',
                     }}
@@ -247,6 +266,7 @@ export function PerfilPage() {
                                                     createdAt={post.createdAt}
                                                     OngName={post.Ong.name}
                                                     id={post.id}
+                                                    onDelete={handleDeletePost}
                                                 />
                                             </Grid2>
                                         ))}
@@ -399,12 +419,12 @@ export function PerfilPage() {
 
                         {tabIndex === 2 && (
                             <Container maxWidth='md'>
-                                {!isLoading && projectData.length > 0 && (
+                                {!isLoading && projectData.projects.length > 0 && (
                                     <Grid2 container spacing={2}>
                                         {
-                                            projectData.map(
-                                                (project, index) => (
-                                                    <Grid2 key={index} size={6}>
+                                            projectData.projects.map(
+                                                (project) => (
+                                                    <Grid2 key={project.id} size={6}>
                                                         <CardProject
                                                             name={project.name}
                                                             description={project.description}
@@ -419,7 +439,7 @@ export function PerfilPage() {
                                     </Grid2>
                                 )}
 
-                                {!isLoading && projectData.length <= 0 && (
+                                {!isLoading && projectData.projects.length <= 0 && (
                                     <Box
                                         sx={{
                                             display: 'flex',

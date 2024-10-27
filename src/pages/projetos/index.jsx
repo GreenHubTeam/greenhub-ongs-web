@@ -8,17 +8,16 @@ import { toast } from "react-toastify";
 
 
 export function ProjetosPage() {
+    const { user } = useAuth();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
-    const [projectData, setProjectData] = useState([]);
-
-    const { user } = useAuth();
+    const [projectData, setProjectData] = useState({ projects: [] });
 
     async function fetchProjects() {
         setIsLoading(true);
         try {
             const response = await api.get(`/project/ong/${user.Ong.id}`);
-            setProjectData(response.data);
+            setProjectData({ projects: response.data.projects || [] });
         } catch {
             toast.error("Error ao buscar os projetos")
         } finally {
@@ -74,12 +73,12 @@ export function ProjetosPage() {
                 </Box>
             )}
 
-            {!isLoading && projectData.length > 0 && (
+            {!isLoading && projectData.projects.length > 0 && ( 
                 <Grid2 container spacing={2}>
                     {
-                        projectData.map(
-                            (project, index) => (
-                                <Grid2 key={index} size={6}>
+                        projectData.projects.map( 
+                            (project) => (
+                                <Grid2 key={project.id} size={6}>
                                     <CardProject
                                         name={project.name}
                                         description={project.description}
@@ -94,7 +93,7 @@ export function ProjetosPage() {
                 </Grid2>
             )}
 
-            {!isLoading && projectData.length <= 0 && (
+            {!isLoading && projectData.projects.length <= 0 && ( 
                 <Box
                     sx={{
                         display: 'flex',

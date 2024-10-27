@@ -1,15 +1,15 @@
 import { toast } from "react-toastify";
 import { api } from "../../libs/axios";
 import { useEffect, useState } from 'react';
-import { useParams } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { PostCard } from '../../components/postcard';
 import { CardPost } from '../../components/cardpost';
 import { Box, Typography, Grid2, Container } from '@mui/material';
 
 export function PostPage() {
+    const { user } = useAuth();
     const [postData, setPostData] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);    
+    const [isLoading, setIsLoading] = useState(false); 
 
     async function fetchPost() {
         setIsLoading(true);

@@ -1,13 +1,14 @@
 import { z } from "zod";
-import { toast } from "react-toastify";
 import { api } from "../../libs/axios";
+import { toast } from "react-toastify";
+import { ModalAiProject } from './modal';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from "react";
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, InputLabel, Card, CardMedia } from '@mui/material';
+import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, FormControl, InputLabel, Card, CardMedia } from '@mui/material';
 import { CloudUpload, Delete } from "@mui/icons-material";
 
 const postFormSchema = z.object({
@@ -25,7 +26,8 @@ const postFormSchema = z.object({
 });
 
 export function CriarProjetos() {
-    const [, setFile] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [file, setFile] = useState(null);
     const [category, setCategory] = useState([]);
     const [loading, setLoading] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
@@ -39,15 +41,30 @@ export function CriarProjetos() {
         resolver: zodResolver(postFormSchema),
     });
 
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
     const navigate = useNavigate();
     const { user } = useAuth();
+
+    const modalSubmit = async (data) => { // Adicione data como argumento
+        try {
+            const response = await api.post('/gemini/createInfo', { description: data.description });
+            toast.success('Projeto criado com sucesso!');
+            handleClose();
+        } catch (error) {
+            console.log(error);
+            toast.error('Erro ao criar o projeto');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const fetchCategory = async () => {
         try {
             const response = await api.get('/category');
             setCategory(response.data);
-        } catch {
+        } catch (error) {
             toast.error("Erro ao carregar categorias");
         }
     };
@@ -77,7 +94,7 @@ export function CriarProjetos() {
             navigate('/projects');
             console.log(response)
             toast.success("Projeto criado com sucesso, aguarde a confirmação do administrador");
-        } catch {
+        } catch (error) {
             toast.error("Erro ao atualizar o projeto");
         } finally {
             setLoading(false);
@@ -95,50 +112,40 @@ export function CriarProjetos() {
     };
 
     return (
-        <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '2rem',
-            marginTop: '2rem'
-        }}>
-            <Typography variant='h3' sx={{
-                fontSize: '26px',
-                color: '#22703E',
-                fontWeight: '700',
-            }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginTop: '2rem' }}>
+            <Typography variant='h3' sx={{ fontSize: '26px', color: '#22703E', fontWeight: '700' }}>
                 Criar Projeto
             </Typography>
 
-            <Box
-                component='form'
-                onSubmit={handleSubmit(handleCreateProject)}
-            >
+            <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: '2rem' }}>
+                <Button
+                    variant="contained"
+                    onClick={handleOpen}
+                    sx={{ height: '3rem', width: '250px', borderRadius: '10px' }}
+                >
+                    Criar o projeto com IA
+                </Button>
+            </Box>
+
+            <Box component='form' onSubmit={handleSubmit(handleCreateProject)}>
+
+                <ModalAiProject open={open} handleClose={handleClose} onSubmit={modalSubmit} />
+
                 <Grid2 container spacing={2}>
-                    <Grid2
-                        size={6}
-                        container
-                        spacing={2}
-                    >
+                    <Grid2 size={6} container spacing={2}>
                         <Grid2 size={12}>
-                            <Card
-                                variant="outlined"
-                                sx={{ height: '100%' }}
-                            >
+                            <Card variant="outlined" sx={{ height: '100%' }}>
                                 <CardMedia
-                                    image={imagePreview ? imagePreview : ""}
+                                    component="img" // Use component="img" para renderizar uma imagem
+                                    image={imagePreview || "/path/to/default/image.jpg"} // Imagem padrão se imagePreview for nulo
                                     sx={{ height: '100%' }}
+                                    alt="Preview do projeto"
                                 />
                             </Card>
                         </Grid2>
 
                         <Grid2 size={12}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    gap: '1rem',
-                                    alignItems: 'center'
-                                }}
-                            >
+                            <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                                 <Button
                                     component="label"
                                     role={undefined}
@@ -164,8 +171,6 @@ export function CriarProjetos() {
                                             whiteSpace: 'nowrap',
                                             width: 1,
                                         }}
-
-
                                     />
                                 </Button>
 
@@ -182,30 +187,18 @@ export function CriarProjetos() {
                                     Remover imagem
                                 </Button>
                             </Box>
-
                         </Grid2>
                     </Grid2>
 
                     <Grid2 size={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '1rem',
-                                padding: ' 40px 37px'
-                            }}
-                        >
-                            <Box sx={{ display: 'flex', flexDirection: 'column', }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '40px 37px' }}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                                 <Typography
                                     variant='h6'
                                     component='label'
                                     htmlFor="projectName"
-                                    sx={{
-                                        fontSize: '16px',
-                                        color: 'black',
-                                        fontWeight: '700',
-                                        marginBottom: '0.55rem',
-                                    }}>
+                                    sx={{ fontSize: '16px', color: 'black', fontWeight: '700', marginBottom: '0.55rem' }}
+                                >
                                     Nome do Projeto
                                 </Typography>
 
@@ -226,12 +219,8 @@ export function CriarProjetos() {
                                     variant='h6'
                                     component='label'
                                     htmlFor="description"
-                                    sx={{
-                                        fontSize: '16px',
-                                        marginBottom: '0.5rem',
-                                        color: 'black',
-                                        fontWeight: '700',
-                                    }}>
+                                    sx={{ fontSize: '16px', marginBottom: '0.5rem', color: 'black', fontWeight: '700' }}
+                                >
                                     Descrição do projeto
                                 </Typography>
 
@@ -249,41 +238,39 @@ export function CriarProjetos() {
                             </Box>
 
                             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-
                                 <Typography
                                     variant='h6'
                                     component='label'
                                     htmlFor="category"
-                                    sx={{
-                                        fontSize: '16px',
-                                        marginBottom: '0.5rem',
-                                        color: 'black',
-                                        fontWeight: '700',
-                                    }}>
+                                    sx={{ fontSize: '16px', marginBottom: '0.5rem', color: 'black', fontWeight: '700' }}
+                                >
                                     categorias
                                 </Typography>
-                                <InputLabel id="category-label"></InputLabel>
-                                <Select
-                                    labelId="category-label"
-                                    defaultValue=""
-                                    id="category"
-                                    {...register("categoryProjectId")}
-                                >
-                                    <MenuItem value="" disabled>
-                                        <Box
-                                            component='em'
-                                        >Selecionar uma categoria
-                                        </Box>
-                                    </MenuItem>
-                                    {Array.isArray(category) && category.map((cat) => (
-                                        <MenuItem key={cat.id} value={cat.id}>
-                                            {cat.name}
+                                <FormControl fullWidth error={!!errors.categoryProjectId}>
+                                    <InputLabel id="category-label">Selecionar uma categoria</InputLabel>
+                                    <Select
+                                        labelId="category-label"
+                                        id="category"
+                                        {...register("categoryProjectId")}
+                                        defaultValue="" // Define um valor padrão
+                                    >
+                                        <MenuItem value="" disabled>
+                                            <Box component='em'>Selecionar uma categoria</Box>
                                         </MenuItem>
-                                    ))}
-                                </Select>
-                                {errors.categoryProjectId && (
-                                    <Typography color="error">{errors.categoryProjectId.message}</Typography>
-                                )}
+                                        {Array.isArray(category) && category.length > 0 ? (
+                                            category.map((cat) => (
+                                                <MenuItem key={cat.id} value={cat.id}>
+                                                    {cat.name}
+                                                </MenuItem>
+                                            ))
+                                        ) : (
+                                            <MenuItem value="" disabled>Carregando categorias...</MenuItem>
+                                        )}
+                                    </Select>
+                                    {errors.categoryProjectId && (
+                                        <Typography color="error">{errors.categoryProjectId.message}</Typography>
+                                    )}
+                                </FormControl>
                             </Box>
 
                             <Button
@@ -303,8 +290,6 @@ export function CriarProjetos() {
                     </Grid2>
                 </Grid2>
             </Box>
-
-
         </Box>
     );
 }
