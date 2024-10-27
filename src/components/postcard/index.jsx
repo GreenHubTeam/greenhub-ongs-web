@@ -26,7 +26,6 @@ const postFormSchema = z.object({
         )
 });
 
-// eslint-disable-next-line react/prop-types
 export function PostCard({ fetchPost }) {
     const [imagePreview, setImagePreview] = useState(null);
     const [loading, setLoading] = useState(false);

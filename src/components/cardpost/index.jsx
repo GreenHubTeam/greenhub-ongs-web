@@ -3,16 +3,15 @@ import 'dayjs/locale/pt-br';
 import { env } from '../../env';
 import { useState } from 'react';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Box, Card, CardContent, Typography, } from '@mui/material';
+import { Box, Card, CardContent, Typography, Button } from '@mui/material';
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
 
-// eslint-disable-next-line react/prop-types
-export function CardPost({ description, OngName, profilePath, createdAt, postImagePath }) {
+export function CardPost({ description, OngName, profilePath, createdAt, postImagePath, id }) {
     const [profileSrc, setProfileSrc] = useState(profilePath ? `${env.api_url}/${profilePath}` : "/nomelogo.png");
     const [postSrc, setPostSrc] = useState(postImagePath ? `${env.api_url}/${postImagePath}` : "/nomelogo.png");
-
+    
     return (
         <Card>
             <CardContent>

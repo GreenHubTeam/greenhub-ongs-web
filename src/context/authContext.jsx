@@ -6,10 +6,10 @@ import { toast } from "react-toastify";
 
 export const AuthContext = createContext({});
 
-// eslint-disable-next-line react/prop-types
 export function AuthProvider({ children }) {
     const [token, setToken] = useState("");
     const [user, setUser] = useState("");
+    const [profileImage, setProfileImage] = useState("/fotop1.webp");
 
     async function loginUser(email, password) {
         try {
@@ -20,36 +20,39 @@ export function AuthProvider({ children }) {
 
             const decoded = jwtDecode(resposta.data.token);
             setUser(decoded);
-
             setToken(resposta.data.token);
-
             localStorage.setItem('@greenhubONG:token', resposta.data.token);
 
             toast.success("Login efetuado com sucesso, seja bem vindo!");
         } catch (error) {
             if (isAxiosError(error)) {
-                toast.error(error.response.data.message)
+                toast.error(error.response.data.message);
             } else {
-                toast.error("Error interno no servidor");
+                toast.error("Erro interno no servidor");
             }
         }
     }
 
+    const decodedToken = (token) => {
+        const userData = jwtDecode(token);
+        const baseUrl = import.meta.env.VITE_API_URL; 
+        setProfileImage(`${baseUrl}/${userData.imagePath}`);
+        setUser(userData);
+    };
+    
+
     async function registerUser(body) {
         const resposta = await api.post('/ong', body);
-
         setToken(resposta.data.token);
     }
 
     useEffect(() => {
         const token = localStorage.getItem('@greenhubONG:token');
-
         if (token) {
             setToken(token);
-            const decoded = jwtDecode(token);
-            setUser(decoded);
+            decodedToken(token);  
         }
-    }, [])
+    }, []);
 
     function logout() {
         setToken(null);
@@ -62,16 +65,19 @@ export function AuthProvider({ children }) {
             value={{
                 token,
                 user,
+                profileImage,  
                 loginUser,
                 registerUser,
-                logout
+                logout,
+                setUser,
+                setToken,
             }}
         >
             {children}
         </AuthContext.Provider>
-    )
+    );
 }
-// eslint-disable-next-line react-refresh/only-export-components
+
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (context === undefined) {

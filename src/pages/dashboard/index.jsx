@@ -11,44 +11,65 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { Badge, Box, Grid2, Paper, Skeleton, Typography, Select } from "@mui/material";
 
 export function DashboardPage() {
-    const [userData, setUserData] = useState([]);
+    const [error, setError] = useState(null);
     const [project, setProject] = useState('');
-
+    const [userData, setUserData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [statistics, setStatistics] = useState(null);
+    const [projectData, setProjectData] = useState([]);
 
     const { user } = useAuth();
 
     const handleChange = (event) => {
         setProject(event.target.value);
+        fetchStatistics(event.target.value);
     };
 
     const fetchUsers = async () => {
         try {
             const response = await api.get(`/user/${user.id}`);
             setUserData(response.data);
-            console.log(response.data);
         } catch (error) {
             console.error("Erro ao buscar os usuários:", error);
         }
     };
 
-    const fetchProfile = async () => {
+    async function fetchProjects() {
+        setIsLoading(true);
         try {
-            const response = await api.get(`/user/profile-image/${user.id}`);
-            setUserData(response.data);
+            const response = await api.get(`/project/ong/${user.Ong.id}`);
+            setProjectData(response.data);
+        } catch {
+            toast.error("Error ao buscar os projetos")
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchStatistics = async (projectId) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await api.get(`/dashboard/ong/${projectId}`);
+            setStatistics(response.data);
         } catch (error) {
-            console.error("Erro a foto de perfil:", error);
+            setError("Erro ao buscar as estatísticas do projeto");
+            console.error("Erro:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
         fetchUsers();
-        fetchProfile();
+        fetchProjects();
     }, []);
 
     return (
         <Box>
-            <Grid2 container spacing={2}>
-                <Grid2 size={8} sx={{ padding: '0rem' }}>
+             <Grid2 container spacing={2}>
+                <Grid2 size={8} sx={{ padding: '2rem' }}>
                     <Box
                         component="div"
                         sx={{
@@ -90,7 +111,7 @@ export function DashboardPage() {
                             sx={{
                                 position: 'absolute',
                                 zIndex: '2',
-                                padding: '0 2rem',
+                                padding: '2rem',
                             }}
                         >
                             <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '1rem' }}>
@@ -103,7 +124,7 @@ export function DashboardPage() {
                     </Box>
                 </Grid2>
 
-                <Grid2 size={4} sx={{ padding: '0 2rem' }}>
+                <Grid2 size={4} sx={{ padding: '2rem' }}>
                     <Box
                         component="div"
                         sx={{
@@ -163,25 +184,30 @@ export function DashboardPage() {
                 variant='div'
                 sx={{
                     display: 'flex',
+                    alignItems: 'flex-end',
                     flexDirection: 'column',
+                    padding: '0 2rem',
                     marginBottom: '1rem',
                 }}
             >
                 <FormControl sx={{ m: 1, width: '200px' }} size="small">
-                    <InputLabel id="demo-select-small-label">projetos</InputLabel>
+                    <InputLabel id="select-project-label">Projetos</InputLabel>
                     <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
+                        labelId="select-project-label"
+                        id="select-project"
                         value={project}
-                        label="Age"
+                        label="Projeto"
                         onChange={handleChange}
+                        disabled={isLoading}
                     >
                         <MenuItem value="">
-                            <em>None</em>
+                            <em>Nenhum</em>
                         </MenuItem>
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        {Array.isArray(projectData) && projectData.map((project) => (
+                            <MenuItem key={project.id} value={project.id}>
+                                {project.name} 
+                            </MenuItem>
+                        ))}
                     </Select>
                 </FormControl>
             </Box>
@@ -211,7 +237,7 @@ export function DashboardPage() {
                             }}
                         >
                             <Typography variant="h4" fontWeight="700">
-                                40
+                                {loading ? <Skeleton width={50} /> : statistics?.totalDoacoes || 0}
                             </Typography>
 
                             <GroupIcon
@@ -248,7 +274,7 @@ export function DashboardPage() {
                             }}
                         >
                             <Typography variant="h4" fontWeight="700">
-                                6.000
+                                {loading ? <Skeleton width={50} /> : `R$ ${statistics?.totalDoado || 0}`}
                             </Typography>
 
                             <GroupIcon
@@ -261,7 +287,7 @@ export function DashboardPage() {
                     </Paper>
                 </Grid2 >
 
-                <Grid2 size={4} sx={{ padding: '0 2rem ' }}>
+                <Grid2 size={4}>
                     <Paper
                         variant="outlined"
                         sx={{
@@ -285,7 +311,7 @@ export function DashboardPage() {
                             }}
                         >
                             <Typography variant="h4" fontWeight="700">
-                                1.000
+                                {loading ? <Skeleton width={50} /> : statistics?.totalVisualizacoes || 0}
                             </Typography>
 
                             <GroupIcon
@@ -313,7 +339,7 @@ export function DashboardPage() {
                         }}
                     >
                         <Typography variant="h6" sx={{ fontWeight: 'bold', margin: '1rem', justifyContent: 'flex-start', }}>
-                            Total de Usuarios
+                            Total de Usuários
                         </Typography>
 
                         <Box
@@ -327,15 +353,7 @@ export function DashboardPage() {
                             }}
                         >
                             <PieChart
-                                series={[
-                                    {
-                                        data: [
-                                            { id: 0, value: 10, color: '#0f4522' },
-                                            { id: 1, value: 15, color: '#1da03a' },
-                                            { id: 2, value: 20, color: '#59c065' },
-                                        ],
-                                    },
-                                ]}
+                                series={[{ data: statistics?.dadosGrafico || [] }]}
                                 width={350}
                                 height={350}
                             />
@@ -349,56 +367,14 @@ export function DashboardPage() {
                                 marginBottom: '1rem',
                             }}
                         >
-                            <Box
-                                sx={{
-                                    width: '20px',
-                                    height: '20px',
-                                    backgroundColor: '#0f4522',
-                                    margin: '0.8rem',
-                                }}
-                            />
-                            <Typography
-                                sx={{
-                                    fontSize: '1rem',
-                                    fontWeight: 'bold',
-                                }}
-                            >
-                                visualização
-                            </Typography>
-
-                            <Box
-                                sx={{
-                                    width: '20px',
-                                    height: '20px',
-                                    backgroundColor: '#1da03a',
-                                    margin: '0.8rem',
-                                }}
-                            />
-                            <Typography
-                                sx={{
-                                    fontSize: '1rem',
-                                    fontWeight: 'bold',
-                                }}
-                            >
-                                Total das doações
-                            </Typography>
-
-                            <Box
-                                sx={{
-                                    width: '20px',
-                                    height: '20px',
-                                    backgroundColor: '#59c065',
-                                    margin: '0.8rem',
-                                }}
-                            />
-                            <Typography
-                                sx={{
-                                    fontSize: '1rem',
-                                    fontWeight: 'bold',
-                                }}
-                            >
-                                doadores
-                            </Typography>
+                            {statistics?.dadosGrafico?.map((dado, index) => (
+                                <Box key={index} sx={{ display: 'flex', alignItems: 'center', margin: '0.8rem' }}>
+                                    <Box sx={{ width: '20px', height: '20px', backgroundColor: dado.color, marginRight: '0.5rem' }} />
+                                    <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>
+                                        {dado.id === 0 ? 'Visualizações' : dado.id === 1 ? 'Total das Doações' : 'Doações'}
+                                    </Typography>
+                                </Box>
+                            ))}
                         </Box>
                     </Paper>
                 </Grid2>
@@ -414,49 +390,28 @@ export function DashboardPage() {
                             overflow: 'hidden',
                         }}
                     >
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            marginTop: '2rem',
-                        }}>
-                            <Box sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                            }}>
-                                <RemoveRedEyeIcon sx={{ marginRight: '1rem' }} />
-                                <Typography variant='h5' sx={{ fontWeight: 'bold' }}>
-                                    Top Visualizações
-                                </Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '2rem' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <RemoveRedEyeIcon sx={{ marginRight: '0.5rem' }} />
+                                <Typography>Visualizações:</Typography>
+                                <Badge
+                                    sx={{ marginLeft: '0.5rem' }}
+                                    badgeContent={statistics?.totalVisualizacoes || 0}
+                                    color="success"
+                                />
                             </Box>
 
-                            {[
-                                { users: 40, name: "Ricardo Juarez" },
-                                { users: 37, name: "Rodrigo Marques" },
-                                { users: 17, name: "Marília Mendonça" },
-                                { users: 12, name: "Roberto Carlos" }
-                            ].map((user, index) => (
-                                <Box sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    marginTop: '3rem',
-                                }} key={index}>
-                                    <Typography sx={{ margin: '0.5rem', fontSize: '30px', fontWeight: 'bold' }}>
-                                        {user.users}
+                            <Box sx={{ marginTop: '1rem' }}>
+                                {statistics?.topVisualizadores?.map((user, index) => (
+                                    <Typography key={index} sx={{ fontSize: '1rem' }}>
+                                        {user.nome} - {user.qtdVisualizacoes} visualizações
                                     </Typography>
-                                    <img
-                                        src="/perfilong.png"
-                                        alt="Foto de perfil"
-                                        style={{ width: '65px', height: '65px', borderRadius: '50%', marginRight: '0.5rem' }}
-                                    />
-                                    <Typography sx={{ marginLeft: '0.5rem', fontSize: '20px', fontWeight: 'bold' }}>
-                                        {user.name}
-                                    </Typography>
-                                </Box>
-                            ))}
+                                ))}
+                            </Box>
                         </Box>
                     </Paper>
                 </Grid2>
             </Grid2>
-        </Box>
+        </Box >
     );
-};
+}

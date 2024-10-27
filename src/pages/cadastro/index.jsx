@@ -18,15 +18,19 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HeaderComponent } from "../../components/header";
 import { CardContained } from "../../components/cardcontained";
-import { Box, Divider, Grid2, InputAdornment, TextField, Button } from "@mui/material";
+import { Box, Divider, Grid2, InputAdornment, TextField, Button, Select, FormControl, InputLabel, MenuItem  } from "@mui/material";
 import { Link } from 'react-router-dom';
 import { api } from '../../libs/axios';
 import { toast } from 'react-toastify';
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import { isAxiosError } from 'axios';
+import { useState } from "react";
+
 
 export function CadastroPage() {
+  const [selectedState, setSelectedState] = useState("");
+
   const {
     register,
     handleSubmit,
@@ -38,6 +42,12 @@ export function CadastroPage() {
   });
 
   const { registerUser } = useContext(AuthContext);
+
+  const StatesBrazilList = [
+    "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
+    "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
+    "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+];
 
   const checkCEP = (e) => {
     const cep = e.target.value.replace(/\D/g, '');
@@ -76,6 +86,10 @@ export function CadastroPage() {
     }
 
     console.log(body)
+
+    const handleChange = (event) => {
+      setSelectedState(event.target.value);
+  };
 
     try {
       await registerUser(body);
@@ -326,31 +340,22 @@ export function CadastroPage() {
               />
             </Grid2>
             <Grid2 size={2}>
-              <TextField
-                error={!!errors.estado}
-                helperText={errors?.estado?.message}
-                {...register("estado")}
-                fullWidth
-                required
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment
-                        position="start"
-                        sx={{
-                          display: 'flex',
-                          gap: '0.5rem'
-                        }}
-                      >
-                        <MapIcon />
-
-                        <Divider orientation="vertical" flexItem />
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-                label="Estado"
-              />
+              <FormControl variant="outlined" error={!!errors.state}>
+                <InputLabel>Estado</InputLabel>
+                <Select
+                  {...register("state")}
+                  label="Estado"
+                  defaultValue=""
+                  sx={{
+                    width: '100px'
+                  }}
+                >
+                  {StatesBrazilList.map((state) => (
+                    <MenuItem key={state} value={state}>{state}</MenuItem>
+                  ))}
+                </Select>
+                {errors.state && <Typography color="error">{errors.state.message}</Typography>}
+              </FormControl>
             </Grid2>
             <Grid2 size={12}>
               <TextField
