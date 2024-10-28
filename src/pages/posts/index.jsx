@@ -9,13 +9,13 @@ import { Box, Typography, Grid2, Container } from '@mui/material';
 export function PostPage() {
     const { user } = useAuth();
     const [postData, setPostData] = useState([]);
-    const [isLoading, setIsLoading] = useState(false); 
+    const [isLoading, setIsLoading] = useState(false);
 
     async function fetchPost() {
         setIsLoading(true);
         try {
             const response = await api.get(`/post`);
-            setPostData(response.data);
+            setPostData(response.data.posts);
         } catch (error) {
             console.log(error)
             toast.error("Error ao buscar os post")
@@ -50,7 +50,7 @@ export function PostPage() {
                             postData.map(
                                 (post, index) => (
                                     <Grid2 key={index} size={12}>
-                                        <CardPost 
+                                        <CardPost
                                             profilePath={post.Ong.imagePath}
                                             description={post.description}
                                             postImagePath={post.imagePath}
