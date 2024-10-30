@@ -1,8 +1,10 @@
-import { useMemo } from "react";
 import { api } from "../../libs/axios";
+import { env } from '../../env/index';
+import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
+import { Person } from "@mui/icons-material";
+import GroupIcon from '@mui/icons-material/Group';
 import { PieChart } from '@mui/x-charts/PieChart';
-import { useAuth } from "../../context/authContext";
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import {RemoveRedEye, MonetizationOn, Group, VolunteerActivism} from '@mui/icons-material';
@@ -11,40 +13,39 @@ import { Badge, Box, Grid2, Paper, Skeleton, Typography, Select, Avatar, MenuIte
 export function DashboardPage() {
     const { user } = useAuth();
     const [project, setProject] = useState('');
-    const [userData, setUserData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [statistics, setStatistics] = useState(null);
     const [projectData, setProjectData] = useState([]);
-    const [profileImage, setProfileImage] = useState();
 
-    const topVisualizadores = statistics?.topVisualizadores || [];
-
-    const randomizeProfileImage = () => {
+    const getRandomProfileImage = () => {
         const profileImages = [
             "/profile1.png",
             "/profile2.png",
             "/profile3.png",
             "/profile4.png",
             "/profile5.png",
+            "/profile6.png"
         ];
-
-        const randomImage = profileImages[Math.floor(Math.random() * profileImages.length)];
-        setProfileImage(randomImage);
+        const randomIndex = Math.floor(Math.random() * profileImages.length);
+        return profileImages[randomIndex];
     };
 
-    const fetchUsers = async () => {
-        try {
-            const response = await api.get(`/user/${user.id}`);
-            setUserData(response.data);
-        } catch (error) {
-            console.error("Erro ao buscar os usuários:", error);
-        }
+    // eslint-disable-next-line react/prop-types
+    const CustomAvatar = ({ imagePath, name }) => {
+        const [avatarSrc, setAvatarSrc] = useState(`${env.base_url_api}/${imagePath}`);
+
+        return (
+            <Avatar
+                src={avatarSrc}
+                alt={name}
+                onError={() => setAvatarSrc(getRandomProfileImage())}
+                sx={{ cursor: 'pointer' }}
+            />
+        );
     };
 
-    const randomProfileImages = useMemo(() => {
-        return topVisualizadores.map(() => randomizeProfileImage());
-    }, [topVisualizadores]);
+
 
     async function fetchProjects() {
         setIsLoading(true);
@@ -69,17 +70,16 @@ export function DashboardPage() {
         try {
             const response = await api.get(`/dashboard/ong/${projectId}`);
             setStatistics(response.data);
-        } catch (error) {
-            setError("Erro ao buscar as estatísticas do projeto");
-            console.error(error);
+        } catch {
+            toast.error("Erro ao buscar as estatísticas do projeto");
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchUsers();
         fetchProjects();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleChange = (event) => {
@@ -89,130 +89,120 @@ export function DashboardPage() {
     };
 
     return (
-        <Box>
-            <Grid2 container spacing={2}>
-                <Grid2 size={8} sx={{ padding: '2rem' }}>
+        <Grid2 container spacing={2}>
+
+            <Grid2 size={8} >
+                <Box
+                    component="div"
+                    sx={{
+                        position: 'relative',
+                        height: '300px',
+                        display: 'flex',
+                        marginBottom: '1rem',
+                        alignItems: 'center',
+                        color: 'white',
+                        borderRadius: '1rem',
+                        overflow: 'hidden',
+                        '&::after': {
+                            content: '""',
+                            position: 'absolute',
+                            top: '0',
+                            left: '0',
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            zIndex: '1',
+                        },
+                    }}
+                >
+
                     <Box
-                        component="div"
+                        component='img'
+                        src='/pesovero.png'
+                        alt="Banner"
                         sx={{
-                            position: 'relative',
-                            height: '300px',
-                            display: 'flex',
-                            marginBottom: '1rem',
-                            alignItems: 'center',
-                            color: 'white',
-                            borderRadius: '1rem',
-                            overflow: 'hidden',
-                            '&::after': {
-                                content: '""',
-                                position: 'absolute',
-                                top: '0',
-                                left: '0',
-                                width: '100%',
-                                height: '100%',
-                                backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                                zIndex: '1',
-                            },
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            zIndex: '0',
+                            borderRadius: '1rem'
+                        }}
+                    />
+
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            zIndex: '2',
+                            padding: '2rem',
                         }}
                     >
-
-                        <Box
-                            component='img'
-                            src='/pesovero.png'
-                            alt="Banner"
-                            sx={{
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover',
-                                zIndex: '0',
-                                borderRadius: '1rem'
-                            }}
-                        />
-
-                        <Box
-                            sx={{
-                                position: 'absolute',
-                                zIndex: '2',
-                                padding: '2rem',
-                            }}
-                        >
-                            <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '1rem' }}>
-                                Seja bem-vindo ao Greenhub!
-                            </Typography>
-                            <Typography >
-                                Aqui você poderá gerenciar e acompanhar todas as doações e o progresso dos seus projetos sustentáveis.
-                            </Typography>
-                        </Box>
+                        <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '1rem' }}>
+                            Seja bem-vindo ao Greenhub!
+                        </Typography>
+                        <Typography >
+                            Aqui você poderá gerenciar e acompanhar todas as doações e o progresso dos seus projetos sustentáveis.
+                        </Typography>
                     </Box>
-                </Grid2>
-
-                <Grid2 size={4} sx={{ padding: '2rem' }}>
-                    <Box
-                        component="div"
-                        sx={{
-                            position: 'relative',
-                            height: '300px',
-                            display: 'flex',
-                            marginBottom: '1rem',
-                            alignItems: 'center',
-                            color: 'white',
-                            borderRadius: '1rem',
-                            overflow: 'hidden',
-                            '&::after': {
-                                content: '""',
-                                position: 'absolute',
-                                top: '0',
-                                left: '0',
-                                width: '100%',
-                                height: '100%',
-                                backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                                zIndex: '1',
-                            },
-                        }}
-                    >
-
-                        <Box
-                            component='img'
-                            src='/docas.png'
-                            alt="Banner"
-                            sx={{
-                                objectFit: 'cover',
-                                zIndex: '0',
-                                borderRadius: '1rem',
-                                width: '100%',
-                                height: '100%',
-                            }}
-                        />
-
-                        <Box
-                            sx={{
-                                position: 'absolute',
-                                zIndex: '2',
-                                padding: '0 2rem',
-                            }}
-                        >
-                            <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '1rem' }}>
-                                Faça a diferença!
-                            </Typography>
-                            <Typography >
-                                Seu apoio é essencial para um futuro mais sustentável.
-                            </Typography>
-                        </Box>
-                    </Box>
-                </Grid2>
+                </Box>
             </Grid2>
 
-            <Box
-                variant='div'
-                sx={{
-                    display: 'flex',
-                    alignItems: 'flex-end',
-                    flexDirection: 'column',
-                    padding: '0 2rem',
-                    marginBottom: '1rem',
-                }}
-            >
-                <FormControl sx={{ m: 1, width: '200px' }} size="small">
+            <Grid2 size={4}>
+                <Box
+                    component="div"
+                    sx={{
+                        position: 'relative',
+                        height: '300px',
+                        display: 'flex',
+                        marginBottom: '1rem',
+                        alignItems: 'center',
+                        color: 'white',
+                        borderRadius: '1rem',
+                        overflow: 'hidden',
+                        '&::after': {
+                            content: '""',
+                            position: 'absolute',
+                            top: '0',
+                            left: '0',
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            zIndex: '1',
+                        },
+                    }}
+                >
+
+                    <Box
+                        component='img'
+                        src='/docas.png'
+                        alt="Banner"
+                        sx={{
+                            objectFit: 'cover',
+                            zIndex: '0',
+                            borderRadius: '1rem',
+                            width: '100%',
+                            height: '100%',
+                        }}
+                    />
+
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            zIndex: '2',
+                            padding: '0 2rem',
+                        }}
+                    >
+                        <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '1rem' }}>
+                            Faça a diferença!
+                        </Typography>
+                        <Typography >
+                            Seu apoio é essencial para um futuro mais sustentável.
+                        </Typography>
+                    </Box>
+                </Box>
+            </Grid2>
+
+            <Grid2 size={12} container justifyContent='end'>
+                <FormControl sx={{ width: '200px' }}>
                     <InputLabel id="select-project-label">Projetos</InputLabel>
                     <Select
                         labelId="select-project-label"
@@ -221,10 +211,8 @@ export function DashboardPage() {
                         label="Projeto"
                         onChange={handleChange}
                         disabled={isLoading}
+                        size="medium"
                     >
-                        <MenuItem value="">
-                            <em>Nenhum</em>
-                        </MenuItem>
                         {Array.isArray(projectData) && projectData.map((project) => (
                             <MenuItem key={project.id} value={project.id}>
                                 {project.name}
@@ -232,9 +220,9 @@ export function DashboardPage() {
                         ))}
                     </Select>
                 </FormControl>
-            </Box>
+            </Grid2>
 
-            <Grid2 container spacing={4}>
+            <Grid2 size={12} container>
                 <Grid2 size={4}>
                     <Paper
                         variant="outlined"
@@ -347,13 +335,12 @@ export function DashboardPage() {
                 </Grid2 >
             </Grid2>
 
-            <Grid2 container spacing={2}>
-                <Grid2 size={8} sx={{ padding: '0' }}>
+            <Grid2 size={12} container spacing={2} alignItems='stretch'>
+                <Grid2 size={8}>
                     <Paper
                         variant="outlined"
                         sx={{
                             width: '100%',
-                            marginTop: '2rem',
                             padding: '1rem 2rem',
                             display: 'flex',
                             flexDirection: 'column',
@@ -401,18 +388,17 @@ export function DashboardPage() {
                     </Paper>
                 </Grid2>
 
-                <Grid2 size={4} sx={{ padding: '0 2rem' }}>
+                <Grid2 size={4}>
                     <Paper
                         variant="outlined"
                         sx={{
                             width: '100%',
-                            marginTop: '2rem',
                             padding: '1rem 2rem',
                             borderRadius: '12px',
                             overflow: 'hidden',
                         }}
                     >
-                        <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '2rem' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                                     Top Visualizações
@@ -420,13 +406,14 @@ export function DashboardPage() {
                             </Box>
 
                             <Box sx={{ marginTop: '1rem' }}>
-                                {topVisualizadores.slice(0, 5).map((user, index) => (
+                                {statistics?.topVisualizadores?.slice(0, 5).map((user, index) => (
                                     <Box
                                         key={index}
                                         sx={{
                                             display: 'flex',
                                             alignItems: 'center',
                                             marginBottom: '0.5rem',
+                                            gap: '.5rem'
                                         }}
                                     >
                                         <RemoveRedEye sx={{ marginRight: '0.5rem' }} />
@@ -441,13 +428,21 @@ export function DashboardPage() {
                                                 backgroundColor: '#f0f0f0',
                                             }}
                                         />
-                                        <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>
-                                            {user.nome}
-                                        </Typography>
+
+                                        <Stack spacing={0}>
+                                            <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>
+                                                {user.nome}
+                                            </Typography>
+                                            <Typography color="textSecondary" sx={{ fontSize: '.7rem' }}>
+                                                {user.email}
+                                            </Typography>
+                                        </Stack>
+
+
 
                                         <Badge
                                             sx={{ marginLeft: '1rem' }}
-                                            badgeContent={statistics?.totalVisualizacoes || 0}
+                                            badgeContent={user.visualizacoes || 0}
                                             color="success"
                                         />
                                     </Box>
@@ -457,6 +452,6 @@ export function DashboardPage() {
                     </Paper>
                 </Grid2>
             </Grid2>
-        </Box >
+        </Grid2 >
     );
 }
