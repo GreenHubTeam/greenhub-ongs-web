@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { api } from "../../libs/axios";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CircularProgress } from "@mui/material";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Box, Button, Modal, TextField, Typography } from "@mui/material";
@@ -10,7 +11,7 @@ const descriptionFormSchema = z.object({
     description: z.string().min(1, "Descrição é obrigatória")
 });
 
-export function ModalAiProject({ open, handleClose, setValue }) {
+export function ModalAiProject({ open, handleClose, onSubmit }) {
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: zodResolver(descriptionFormSchema),
     });
@@ -23,13 +24,10 @@ export function ModalAiProject({ open, handleClose, setValue }) {
                 description: data.description,
             });
 
-            const { name, description, categoryProjectId } = response.data; 
-
-            setValue('name', name); 
-            setValue('description', description);
-            setValue('categoryProjectId', categoryProjectId);
-
-            toast.success('Projeto criado com sucesso!');
+            const { title, description } = response.data.data; 
+            console.log(response.data);
+            onSubmit({  title, description });
+            toast.success('Projeto criado com sucesso! Preencha os detalhes para finalizar.');
             handleClose();
         } catch (error) {
             console.error(error);
@@ -42,7 +40,7 @@ export function ModalAiProject({ open, handleClose, setValue }) {
     return (
         <Modal
             open={open}
-            onClose={handleClose}
+            onClose={!loading ? handleClose : undefined}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
@@ -51,7 +49,10 @@ export function ModalAiProject({ open, handleClose, setValue }) {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: '400px',
+                width: {
+                    xs: '90%', 
+                    sm: '400px', 
+                },
                 bgcolor: 'background.paper',
                 boxShadow: 24,
                 p: 4,
@@ -59,6 +60,7 @@ export function ModalAiProject({ open, handleClose, setValue }) {
                 <Typography variant="h6" component="h2">
                     Descreva seu projeto
                 </Typography>
+
                 <form onSubmit={handleSubmit(modalSubmit)}>
                     <TextField
                         label="Descrição"
@@ -70,6 +72,7 @@ export function ModalAiProject({ open, handleClose, setValue }) {
                         rows={4}
                         margin="normal"
                     />
+
                     <Button
                         type="submit"
                         variant="contained"

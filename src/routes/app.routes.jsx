@@ -1,3 +1,4 @@
+import { VisualizarProjetos } from '../pages/visualizarprojetos';
 import { EditarProjetos } from '../pages/editarprojetos';
 import { CriarProjetos } from "../pages/criarprojetos";
 import { DashboardPage } from "../pages/dashboard";
@@ -15,6 +16,7 @@ export function AppRoutes() {
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/projects" element={<ProjetosPage />} />
                 <Route path="/edit-project/:id" element={<EditarProjetos />} />
+                <Route path="/show-project/:id" element={<VisualizarProjetos />} />
                 <Route path="/create-project" element={<CriarProjetos />} />
                 <Route path="/perfil" element={<PerfilPage />} />
                 <Route path="/" element={<DashboardPage />} />

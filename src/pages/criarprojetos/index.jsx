@@ -8,13 +8,17 @@ import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, FormControl, InputLabel, Card, CardMedia } from '@mui/material';
 import { CloudUpload, Delete } from "@mui/icons-material";
+import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, FormControl, InputLabel, Card, CardMedia } from '@mui/material';
 
 const postFormSchema = z.object({
     name: z.string().min(1, "Nome do projeto é obrigatório"),
-    description: z.string().min(1, "Descrição é obrigatória"),
-    categoryProjectId: z.number().min(1, "Categoria é obrigatória"),
+    description: z.string().min(300, "Descrição é obrigatória"),
+    categoryProjectId: z.union([
+        z.number().positive("Categoria é obrigatória se não for um projeto IA"),
+        z.undefined()
+    ])
+    .refine((value) => isAiProject || value !== undefined, "Categoria é obrigatória se não for um projeto IA"),
     file: z
         .instanceof(FileList)
         .refine((files) => files?.length > 0, "Arquivo é obrigatório")
@@ -24,12 +28,12 @@ const postFormSchema = z.object({
             "Formato de arquivo inválido. Apenas JPG, PNG ou JPEG são permitidos."
         )
 });
-
 export function CriarProjetos() {
     const [open, setOpen] = useState(false);
     const [file, setFile] = useState(null);
     const [category, setCategory] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isAiProject, setIsAiProject] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
 
     const {
@@ -47,19 +51,6 @@ export function CriarProjetos() {
     const navigate = useNavigate();
     const { user } = useAuth();
 
-    const modalSubmit = async (data) => { // Adicione data como argumento
-        try {
-            const response = await api.post('/gemini/createInfo', { description: data.description });
-            toast.success('Projeto criado com sucesso!');
-            handleClose();
-        } catch (error) {
-            console.log(error);
-            toast.error('Erro ao criar o projeto');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const fetchCategory = async () => {
         try {
             const response = await api.get('/category');
@@ -72,6 +63,29 @@ export function CriarProjetos() {
     useEffect(() => {
         fetchCategory();
     }, []);
+
+    const modalSubmit = async (data) => {
+        setLoading(true);
+        try {
+            const response = await api.post('/gemini/createInfo', {
+                description: data.description,
+            });
+    
+            console.log('Response from backend:', response.data);
+    
+            const { title, description } = response.data.data;
+    
+            setValue('name', title, { shouldValidate: true });
+            setValue('description', description, { shouldValidate: true });
+    
+            handleClose();  
+        } catch (error) {
+            console.error('Error:', error);
+            toast.error('Erro ao criar o projeto');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     async function handleCreateProject(data) {
         setLoading(true);
@@ -111,6 +125,12 @@ export function CriarProjetos() {
         }
     };
 
+    const handleAiProjectSubmit = (data) => {
+        setValue('name', data.title, { shouldValidate: true });
+        setValue('description', data.description, { shouldValidate: true });
+        handleClose();
+    };
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginTop: '2rem' }}>
             <Typography variant='h3' sx={{ fontSize: '26px', color: '#22703E', fontWeight: '700' }}>
@@ -129,17 +149,21 @@ export function CriarProjetos() {
 
             <Box component='form' onSubmit={handleSubmit(handleCreateProject)}>
 
-                <ModalAiProject open={open} handleClose={handleClose} onSubmit={modalSubmit} />
+                <ModalAiProject open={open} handleClose={handleClose} onSubmit={handleAiProjectSubmit} />
 
                 <Grid2 container spacing={2}>
-                    <Grid2 size={6} container spacing={2}>
+                    <Grid2 size={12} container spacing={2}>
                         <Grid2 size={12}>
-                            <Card variant="outlined" sx={{ height: '100%' }}>
+                            <Card variant="outlined" sx={{ height: '500px' }}>
                                 <CardMedia
-                                    component="img" // Use component="img" para renderizar uma imagem
-                                    image={imagePreview || "/path/to/default/image.jpg"} // Imagem padrão se imagePreview for nulo
-                                    sx={{ height: '100%' }}
-                                    alt="Preview do projeto"
+                                    component="img"
+                                    image={imagePreview}
+                                    sx=
+                                    {{
+                                        height: '100%',
+                                        objectFit: 'contain', 
+                                    }}
+                                alt="Preview do projeto"
                                 />
                             </Card>
                         </Grid2>
@@ -190,8 +214,8 @@ export function CriarProjetos() {
                         </Grid2>
                     </Grid2>
 
-                    <Grid2 size={6}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '40px 37px' }}>
+                    <Grid2 size={12}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                                 <Typography
                                     variant='h6'
@@ -232,8 +256,8 @@ export function CriarProjetos() {
                                     required
                                     multiline
                                     id="description"
-                                    placeholder='Descreva o seu projeto'
-                                    rows={6}
+                                    placeholder='Descrição do projeto (visivel aos doadores)'
+                                    rows={10}
                                 />
                             </Box>
 
@@ -252,7 +276,7 @@ export function CriarProjetos() {
                                         labelId="category-label"
                                         id="category"
                                         {...register("categoryProjectId")}
-                                        defaultValue="" // Define um valor padrão
+                                        defaultValue=""
                                     >
                                         <MenuItem value="" disabled>
                                             <Box component='em'>Selecionar uma categoria</Box>

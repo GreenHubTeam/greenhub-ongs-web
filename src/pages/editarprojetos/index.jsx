@@ -12,7 +12,7 @@ import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, Fo
 
 const postFormSchema = z.object({
     name: z.string().min(1, "Nome do projeto é obrigatório"),
-    description: z.string().min(1, "Descrição é obrigatória"),
+    description: z.string().min(300, "Descrição é obrigatória"),
     categoryProjectId: z.string().min(1, "Categoria é obrigatória"),
     file: z
         .instanceof(FileList)
@@ -165,226 +165,167 @@ export function EditarProjetos() {
                     onSubmit={handleSubmit(handleEditProject)}
                 >
                     <Grid2 container spacing={2}>
-                        <Grid2
-                            size={6}
-                            container
-                            spacing={2}
-                        >
-                            <Grid2 size={12}>
-                                <Card
-                                    variant="outlined"
-                                    sx={{ height: 400 }}
-                                >
-                                    <CardMedia
-                                        image={imagePreview}
-                                        sx={{ height: "100%" }}
-                                        component='img'
-                                        height='140px'
-                                        alt="FOTO DO PROJETO"
-                                        onError={() => {
-                                            setImagePreview('/nomelogo.png')
-                                        }}
-                                    />
-                                </Card>
-                            </Grid2>
-
-                            <Grid2 size={12}>
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        gap: '1rem',
-                                        alignItems: 'center'
+                    <Grid2 size={12} container spacing={2}>
+                        <Grid2 size={12}>
+                            <Card variant="outlined" sx={{ height: '500px' }}>
+                                <CardMedia
+                                    component="img"
+                                    image={imagePreview}
+                                    sx=
+                                    {{
+                                        height: '100%',
+                                        objectFit: 'contain', 
                                     }}
-                                >
-                                    <Button
-                                        component="label"
-                                        role={undefined}
-                                        variant="contained"
-                                        tabIndex={-1}
-                                        startIcon={<CloudUpload />}
-                                    >
-                                        Upload da Imagem
-                                        <Box
-                                            component='input'
-                                            type="file"
-                                            {...register('file')}
-                                            onInput={handleFileChange}
-                                            multiple
-                                            sx={{
-                                                clip: 'rect(0 0 0 0)',
-                                                clipPath: 'inset(50%)',
-                                                height: 1,
-                                                overflow: 'hidden',
-                                                position: 'absolute',
-                                                bottom: 0,
-                                                left: 0,
-                                                whiteSpace: 'nowrap',
-                                                width: 1,
-                                            }}
-
-
-                                        />
-                                    </Button>
-
-                                    <Button
-                                        variant="contained"
-                                        color="error"
-                                        startIcon={<Delete />}
-                                        onClick={() => {
-                                            setImagePreview(null);
-                                            setFile(null);
-                                            setValue('file', null)
-                                        }}
-                                    >
-                                        Remover imagem
-                                    </Button>
-                                </Box>
-
-                            </Grid2>
+                                alt="Preview do projeto"
+                                />
+                            </Card>
                         </Grid2>
 
-                        <Grid2 size={6}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: '1rem',
-                                }}
-                            >
-
-                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                    <Typography
-                                        variant='h6'
-                                        component='label'
-                                        htmlFor="name"
+                        <Grid2 size={12}>
+                            <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                                <Button
+                                    component="label"
+                                    role={undefined}
+                                    variant="contained"
+                                    tabIndex={-1}
+                                    startIcon={<CloudUpload />}
+                                >
+                                    Upload da Imagem
+                                    <Box
+                                        component='input'
+                                        type="file"
+                                        {...register('file')}
+                                        onInput={handleFileChange}
+                                        multiple
                                         sx={{
-                                            fontSize: '16px',
-                                            color: 'black',
-                                            fontWeight: '700',
-                                            marginBottom: '0.55rem',
-                                        }}>
-                                        Nome do Projeto
-                                    </Typography>
-
-                                    <TextField
-                                        {...register("name")}
-                                        error={!!errors.name}
-                                        helperText={errors?.name?.message}
-                                        fullWidth
-                                        id="name"
-                                        required
-                                        variant="outlined"
-                                        placeholder='Nome do seu projeto'
-                                    />
-                                </Box>
-
-                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                    <Typography
-                                        variant='h6'
-                                        component='label'
-                                        htmlFor="description"
-                                        sx={{
-                                            fontSize: '16px',
-                                            marginBottom: '0.5rem',
-                                            color: 'black',
-                                            fontWeight: '700',
-                                        }}>
-                                        Descrição do projeto
-                                    </Typography>
-
-                                    <TextField
-                                        {...register("description")}
-                                        error={!!errors.description}
-                                        helperText={errors?.description?.message}
-                                        fullWidth
-                                        required
-                                        multiline
-                                        id="description"
-                                        placeholder='Descreva seu projeto'
-                                        rows={6}
-                                    />
-                                </Box>
-
-                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-
-                                    <Typography
-                                        variant='h6'
-                                        component='label'
-                                        htmlFor="category"
-                                        sx={{
-                                            fontSize: '16px',
-                                            marginBottom: '0.5rem',
-                                            color: 'black',
-                                            fontWeight: '700',
-                                        }}>
-                                        categorias
-                                    </Typography>
-                                    <FormControl sx={{ width: '400px' }}>
-                                        <InputLabel id="category-label"></InputLabel>
-                                        <Select
-                                            labelId="category-label"
-                                            id="category"
-                                            defaultValue=""
-                                            {...register("categoryProjectId")}
-                                        >
-                                            <MenuItem value='0' disabled>
-                                                <Box component='em'>Selecionar uma categoria</Box>
-                                            </MenuItem>
-                                            {Array.isArray(category) && category.map((cat) => (
-                                                <MenuItem key={cat.id} value={String(cat.id)}>
-                                                    {cat.name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                    {errors.categoryProjectId && (
-                                        <Typography color="error">{errors.categoryProjectId.message}</Typography>
-                                    )}
-                                </Box>
-
-                                <Grid2 container spacing={2}>
-                                    <Grid2 size={6}
-                                        sx={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            gap: '2rem'
+                                            clip: 'rect(0 0 0 0)',
+                                            clipPath: 'inset(50%)',
+                                            height: 1,
+                                            overflow: 'hidden',
+                                            position: 'absolute',
+                                            bottom: 0,
+                                            left: 0,
+                                            whiteSpace: 'nowrap',
+                                            width: 1,
                                         }}
-                                    >
-                                        <Button
-                                            disabled={loading}
-                                            type="submit"
-                                            variant='contained'
-                                            sx={{
-                                                backgroundColor: '#22703E',
-                                                height: '3.5rem',
-                                                width: '300px',
-                                                borderRadius: '10px',
-                                            }}
-                                        >
-                                            {loading ? <CircularProgress size={24} /> : "Salvar mudanças"}
-                                        </Button>
+                                    />
+                                </Button>
 
-
-                                        <Button
-                                            disabled={deleting}
-                                            type="button"
-                                            onClick={handleDeleteProject}
-                                            variant='contained'
-                                            color="error"
-                                            sx={{
-                                                height: '3.5rem',
-                                                width: '300px',
-                                                borderRadius: '10px',
-                                            }}
-                                        >
-                                            {deleting ? <CircularProgress size={24} /> : "Excluir projetos"}
-                                        </Button>
-                                    </Grid2>
-                                </Grid2>
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    startIcon={<Delete />}
+                                    onClick={() => {
+                                        setImagePreview(null);
+                                        setFile(null);
+                                        setValue('file', null)
+                                    }}
+                                >
+                                    Remover imagem
+                                </Button>
                             </Box>
                         </Grid2>
                     </Grid2>
+
+                    <Grid2 size={12}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                <Typography
+                                    variant='h6'
+                                    component='label'
+                                    htmlFor="projectName"
+                                    sx={{ fontSize: '16px', color: 'black', fontWeight: '700', marginBottom: '0.55rem' }}
+                                >
+                                    Nome do Projeto
+                                </Typography>
+
+                                <TextField
+                                    {...register("name")}
+                                    error={!!errors.name}
+                                    helperText={errors?.name?.message}
+                                    fullWidth
+                                    id="projectName"
+                                    required
+                                    variant="outlined"
+                                    placeholder='Nome do seu projeto'
+                                />
+                            </Box>
+
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                <Typography
+                                    variant='h6'
+                                    component='label'
+                                    htmlFor="description"
+                                    sx={{ fontSize: '16px', marginBottom: '0.5rem', color: 'black', fontWeight: '700' }}
+                                >
+                                    Descrição do projeto
+                                </Typography>
+
+                                <TextField
+                                    {...register("description")}
+                                    error={!!errors.description}
+                                    helperText={errors?.description?.message}
+                                    fullWidth
+                                    required
+                                    multiline
+                                    id="description"
+                                    placeholder='Descrição do projeto (visivel aos doadores)'
+                                    rows={10}
+                                />
+                            </Box>
+
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                <Typography
+                                    variant='h6'
+                                    component='label'
+                                    htmlFor="category"
+                                    sx={{ fontSize: '16px', marginBottom: '0.5rem', color: 'black', fontWeight: '700' }}
+                                >
+                                    categorias
+                                </Typography>
+                                <FormControl fullWidth error={!!errors.categoryProjectId}>
+                                    <InputLabel id="category-label">Selecionar uma categoria</InputLabel>
+                                    <Select
+                                        labelId="category-label"
+                                        id="category"
+                                        {...register("categoryProjectId")}
+                                        defaultValue=""
+                                    >
+                                        <MenuItem value="" disabled>
+                                            <Box component='em'>Selecionar uma categoria</Box>
+                                        </MenuItem>
+                                        {Array.isArray(category) && category.length > 0 ? (
+                                            category.map((cat) => (
+                                                <MenuItem key={cat.id} value={cat.id}>
+                                                    {cat.name}
+                                                </MenuItem>
+                                            ))
+                                        ) : (
+                                            <MenuItem value="" disabled>Carregando categorias...</MenuItem>
+                                        )}
+                                    </Select>
+                                    {errors.categoryProjectId && (
+                                        <Typography color="error">{errors.categoryProjectId.message}</Typography>
+                                    )}
+                                </FormControl>
+                            </Box>
+
+                            <Button
+                                disabled={loading}
+                                type="submit"
+                                variant='contained'
+                                sx={{
+                                    backgroundColor: '#22703E',
+                                    height: '3.5rem',
+                                    width: '300px',
+                                    borderRadius: '10px',
+                                }}
+                            >
+                                {loading ? <CircularProgress size={24} /> : "Criar projeto"}
+                            </Button>
+                        </Box>
+                    </Grid2>
+                </Grid2>
                 </Box>
             )}
         </Box >

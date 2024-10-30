@@ -1,15 +1,12 @@
 import { useMemo } from "react";
 import { api } from "../../libs/axios";
 import { useEffect, useState } from "react";
-import { Person } from "@mui/icons-material";
-import GroupIcon from '@mui/icons-material/Group';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { useAuth } from "../../context/authContext";
 import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import { Badge, Box, Grid2, Paper, Skeleton, Typography, Select, Avatar } from "@mui/material";
+import {RemoveRedEye, MonetizationOn, Group, VolunteerActivism} from '@mui/icons-material';
+import { Badge, Box, Grid2, Paper, Skeleton, Typography, Select, Avatar, MenuItem } from "@mui/material";
 
 export function DashboardPage() {
     const { user } = useAuth();
@@ -265,7 +262,7 @@ export function DashboardPage() {
                                 {loading ? <Skeleton width={50} /> : statistics?.totalDoacoes || 0}
                             </Typography>
 
-                            <GroupIcon
+                            <VolunteerActivism
                                 sx={{
                                     color: 'green',
                                     fontSize: '2.5rem'
@@ -282,7 +279,7 @@ export function DashboardPage() {
                             height: '150px',
                             padding: '1rem 2rem',
                             display: 'flex',
-                            flexDirection: 'column',
+                            flexDirection: 'column', 
                             borderRadius: '12px'
                         }}
                     >
@@ -302,7 +299,7 @@ export function DashboardPage() {
                                 {loading ? <Skeleton width={50} /> : `R$ ${statistics?.totalDoado || 0}`}
                             </Typography>
 
-                            <GroupIcon
+                            <MonetizationOn
                                 sx={{
                                     color: 'green',
                                     fontSize: '2.5rem'
@@ -339,7 +336,7 @@ export function DashboardPage() {
                                 {loading ? <Skeleton width={50} /> : statistics?.totalVisualizacoes || 0}
                             </Typography>
 
-                            <GroupIcon
+                            <Group
                                 sx={{
                                     color: 'green',
                                     fontSize: '2.5rem'
@@ -432,7 +429,7 @@ export function DashboardPage() {
                                             marginBottom: '0.5rem',
                                         }}
                                     >
-                                        <RemoveRedEyeIcon sx={{ marginRight: '0.5rem' }} />
+                                        <RemoveRedEye sx={{ marginRight: '0.5rem' }} />
 
                                         <Avatar
                                             src={profileImage}

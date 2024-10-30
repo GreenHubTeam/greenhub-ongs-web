@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Button, Typography, Chip, CardContent, Card, CardMedia, CardActions, Paper, } from '@mui/material';
 
-// eslint-disable-next-line react/prop-types
 export function CardProject({ name, description, status, imagePath, id }) {
     const navigate = useNavigate();
     const [imagePathSrc, setImagePathSrc] = useState(imagePath ? `${env.api_url}/${imagePath}` : "/nomelogo.png");
@@ -77,6 +76,18 @@ export function CardProject({ name, description, status, imagePath, id }) {
                         size='medium'
                     >
                         Editar
+                    </Button>
+
+                    <Button
+                        variant='contained'
+                        onClick={() => navigate(`/show-project/${id}`)}
+                        sx={{
+                            backgroundColor: 'green',
+                            borderRadius: '8px',
+                        }}
+                        size='medium'
+                    >
+                        Ver mais
                     </Button>
                 </CardActions>
             </Card>
