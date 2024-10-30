@@ -1,21 +1,27 @@
 import { z } from "zod";
+import { useState } from "react";
 import { api } from "../../libs/axios";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { CircularProgress } from "@mui/material";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Box, Button, Modal, TextField, Typography } from "@mui/material";
+import { Button, DialogActions, TextField } from "@mui/material";
+import { CircularProgress, Dialog, DialogContent, DialogTitle } from "@mui/material";
 
 const descriptionFormSchema = z.object({
-    description: z.string().min(1, "Descrição é obrigatória")
+    description: z.string().min(100, "Minimo de 100 Caracteres")
 });
 
+// eslint-disable-next-line react/prop-types
 export function ModalAiProject({ open, handleClose, onSubmit }) {
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const [loading, setLoading] = useState(false);
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors }
+    } = useForm({
         resolver: zodResolver(descriptionFormSchema),
     });
-    const [loading, setLoading] = useState(false);
 
     const modalSubmit = async (data) => {
         setLoading(true);
@@ -24,13 +30,10 @@ export function ModalAiProject({ open, handleClose, onSubmit }) {
                 description: data.description,
             });
 
-            const { title, description } = response.data.data; 
-            console.log(response.data);
-            onSubmit({  title, description });
+            const { title, description } = response.data.data;
+            onSubmit({ title, description });
             toast.success('Projeto criado com sucesso! Preencha os detalhes para finalizar.');
-            handleClose();
-        } catch (error) {
-            console.error(error);
+        } catch {
             toast.error('Erro ao criar o projeto');
         } finally {
             setLoading(false);
@@ -38,52 +41,48 @@ export function ModalAiProject({ open, handleClose, onSubmit }) {
     };
 
     return (
-        <Modal
+        <Dialog
             open={open}
             onClose={!loading ? handleClose : undefined}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-        >
-            <Box sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: {
-                    xs: '90%', 
-                    sm: '400px', 
-                },
-                bgcolor: 'background.paper',
-                boxShadow: 24,
-                p: 4,
-            }}>
-                <Typography variant="h6" component="h2">
-                    Descreva seu projeto
-                </Typography>
+            fullWidth
 
-                <form onSubmit={handleSubmit(modalSubmit)}>
+        >
+            <form onSubmit={handleSubmit(modalSubmit)}>
+                <DialogTitle>
+                    Descreva seu Projeto
+                </DialogTitle>
+
+                <DialogContent>
                     <TextField
-                        label="Descrição"
+                        label="Descrição (Detalhe o maximo que puder)"
                         fullWidth
                         {...register('description')}
                         error={!!errors.description}
                         helperText={errors?.description?.message}
                         multiline
-                        rows={4}
+                        rows={6}
                         margin="normal"
                     />
+                </DialogContent>
 
+                <DialogActions>
+                    <Button
+                        variant="outlined"
+                        sx={{ border: '1px solid gray', color: 'black' }}
+                        onClick={handleClose}
+                    >
+                        Cancelar
+                    </Button>
                     <Button
                         type="submit"
                         variant="contained"
-                        sx={{ mt: 2 }}
-                        fullWidth
+                        sx={{ backgroundColor: 'green' }}
                         disabled={loading}
                     >
-                        {loading ? <CircularProgress size={24} /> : 'Enviar'}
+                        {loading ? <CircularProgress size={24} /> : 'Criar'}
                     </Button>
-                </form>
-            </Box>
-        </Modal>
+                </DialogActions>
+            </form>
+        </Dialog>
     );
 }

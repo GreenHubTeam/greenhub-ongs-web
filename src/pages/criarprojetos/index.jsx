@@ -8,20 +8,16 @@ import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CloudUpload, Delete } from "@mui/icons-material";
-import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, FormControl, InputLabel, Card, CardMedia } from '@mui/material';
+import { CloudUpload, Delete, SmartToy } from "@mui/icons-material";
+import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, FormControl, InputLabel, Card, CardMedia, Stack } from '@mui/material';
 
 const postFormSchema = z.object({
     name: z.string().min(1, "Nome do projeto é obrigatório"),
-    description: z.string().min(300, "Descrição é obrigatória"),
-    categoryProjectId: z.union([
-        z.number().positive("Categoria é obrigatória se não for um projeto IA"),
-        z.undefined()
-    ])
-    .refine((value) => isAiProject || value !== undefined, "Categoria é obrigatória se não for um projeto IA"),
+    description: z.string().min(300, "Minimo de 300 Caracteres"),
+    categoryProjectId: z.string().nonempty("A categoria é obrigatória"),
     file: z
-        .instanceof(FileList)
-        .refine((files) => files?.length > 0, "Arquivo é obrigatório")
+        .instanceof(FileList, "Imagem obrigatoria")
+        .refine((files) => files?.length > 0, "Imagem é obrigatória")
         .refine((files) => files[0]?.size <= 5 * 1024 * 1024, "O arquivo deve ter no máximo 5MB")
         .refine(
             (files) => ["image/jpg", "image/png", "image/jpeg"].includes(files[0]?.type),
@@ -30,10 +26,9 @@ const postFormSchema = z.object({
 });
 export function CriarProjetos() {
     const [open, setOpen] = useState(false);
-    const [file, setFile] = useState(null);
+    const [, setFile] = useState(null);
     const [category, setCategory] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [isAiProject, setIsAiProject] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
 
     const {
@@ -55,7 +50,7 @@ export function CriarProjetos() {
         try {
             const response = await api.get('/category');
             setCategory(response.data);
-        } catch (error) {
+        } catch {
             toast.error("Erro ao carregar categorias");
         }
     };
@@ -64,33 +59,11 @@ export function CriarProjetos() {
         fetchCategory();
     }, []);
 
-    const modalSubmit = async (data) => {
-        setLoading(true);
-        try {
-            const response = await api.post('/gemini/createInfo', {
-                description: data.description,
-            });
-    
-            console.log('Response from backend:', response.data);
-    
-            const { title, description } = response.data.data;
-    
-            setValue('name', title, { shouldValidate: true });
-            setValue('description', description, { shouldValidate: true });
-    
-            handleClose();  
-        } catch (error) {
-            console.error('Error:', error);
-            toast.error('Erro ao criar o projeto');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     async function handleCreateProject(data) {
         setLoading(true);
-        console.log(data);
+
         const formData = new FormData();
+
         formData.append("description", data.description);
         formData.append('name', data.name);
         formData.append('categoryProjectId', data.categoryProjectId);
@@ -100,16 +73,15 @@ export function CriarProjetos() {
         }
 
         try {
-            const response = await api.post(`/project/create/${user.Ong.id}`, formData, {
+            await api.post(`/project/create/${user.Ong.id}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
             navigate('/projects');
-            console.log(response)
             toast.success("Projeto criado com sucesso, aguarde a confirmação do administrador");
-        } catch (error) {
-            toast.error("Erro ao atualizar o projeto");
+        } catch {
+            toast.error("Erro ao criar o projeto");
         } finally {
             setLoading(false);
         }
@@ -132,43 +104,115 @@ export function CriarProjetos() {
     };
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginTop: '2rem' }}>
-            <Typography variant='h3' sx={{ fontSize: '26px', color: '#22703E', fontWeight: '700' }}>
-                Criar Projeto
-            </Typography>
-
-            <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: '2rem' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '2rem', my: '2rem' }}>
+            <Stack direction='row' justifyContent='space-between'>
+                <Typography variant='h3' sx={{ fontSize: '26px', color: '#22703E', fontWeight: '700' }}>
+                    Criar Projeto
+                </Typography>
                 <Button
                     variant="contained"
                     onClick={handleOpen}
-                    sx={{ height: '3rem', width: '250px', borderRadius: '10px' }}
+                    endIcon={<SmartToy />}
                 >
                     Criar o projeto com IA
                 </Button>
-            </Box>
+            </Stack>
 
             <Box component='form' onSubmit={handleSubmit(handleCreateProject)}>
-
-                <ModalAiProject open={open} handleClose={handleClose} onSubmit={handleAiProjectSubmit} />
-
                 <Grid2 container spacing={2}>
-                    <Grid2 size={12} container spacing={2}>
-                        <Grid2 size={12}>
-                            <Card variant="outlined" sx={{ height: '500px' }}>
-                                <CardMedia
-                                    component="img"
-                                    image={imagePreview}
-                                    sx=
-                                    {{
-                                        height: '100%',
-                                        objectFit: 'contain', 
-                                    }}
-                                alt="Preview do projeto"
+                    <Grid2 size={12}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                <TextField
+                                    {...register("name")}
+                                    error={!!errors.name}
+                                    helperText={errors?.name?.message}
+                                    fullWidth
+                                    id="projectName"
+                                    variant="outlined"
+                                    placeholder="Titulo do Projeto"
+                                    size="small"
                                 />
-                            </Card>
-                        </Grid2>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                {category && (
+                                    <FormControl fullWidth error={!!errors.categoryProjectId}>
+                                        <InputLabel id="category-label">Categoria</InputLabel>
+                                        <Select
+                                            label="Categoria"
+                                            labelId="category-label"
+                                            id="category"
+                                            defaultValue={""}
+                                            {...register("categoryProjectId", {
+                                                required: "A categoria é obrigatória",
+                                            })}
+                                            size="medium"
+                                        >
+                                            {Array.isArray(category) && category.length > 0 ? (
+                                                category.map((cat) => (
+                                                    <MenuItem key={cat.id} value={String(cat.id)}>
+                                                        {cat.name}
+                                                    </MenuItem>
+                                                ))
+                                            ) : (
+                                                <MenuItem value="" disabled>
+                                                    Carregando categorias...
+                                                </MenuItem>
+                                            )}
+                                        </Select>
+                                        {errors.categoryProjectId && (
+                                            <Typography color="error">{errors.categoryProjectId.message}</Typography>
+                                        )}
+                                    </FormControl>
+                                )}
+
+                            </Box>
+
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                <TextField
+                                    {...register("description")}
+                                    error={!!errors.description}
+                                    helperText={errors?.description?.message}
+                                    fullWidth
+                                    multiline
+                                    id="description"
+                                    placeholder="Descrição do projeto (visivel aos doadores)"
+                                    rows={5}
+                                    size="small"
+                                />
+                            </Box>
+
+                        </Box>
+                    </Grid2>
+
+                    <Grid2 size={12} container spacing={2}>
+                        {imagePreview && (
+                            <Grid2 size={12}>
+
+                                <Card variant="outlined" sx={{ height: '200px' }}>
+                                    <CardMedia
+                                        component="img"
+                                        image={imagePreview}
+                                        onError={() => {
+                                            setImagePreview('/semimg.png')
+                                        }}
+                                        sx={{
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                        }}
+                                        alt="Preview da imagem"
+                                    />
+
+
+                                </Card>
+
+                            </Grid2>
+                        )}
+
 
                         <Grid2 size={12}>
+                            <Typography color="error">{errors?.file?.message}</Typography>
                             <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                                 <Button
                                     component="label"
@@ -198,105 +242,24 @@ export function CriarProjetos() {
                                     />
                                 </Button>
 
-                                <Button
-                                    variant="contained"
-                                    color="error"
-                                    startIcon={<Delete />}
-                                    onClick={() => {
-                                        setImagePreview(null);
-                                        setFile(null);
-                                        setValue('file', null)
-                                    }}
-                                >
-                                    Remover imagem
-                                </Button>
+                                {imagePreview && (
+                                    <Button
+                                        variant="contained"
+                                        color="error"
+                                        startIcon={<Delete />}
+                                        onClick={() => {
+                                            setImagePreview(null);
+                                            setFile(null);
+                                            setValue('file', null)
+                                        }}
+                                    >
+                                        Remover imagem
+                                    </Button>
+                                )}
                             </Box>
                         </Grid2>
-                    </Grid2>
 
-                    <Grid2 size={12}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                <Typography
-                                    variant='h6'
-                                    component='label'
-                                    htmlFor="projectName"
-                                    sx={{ fontSize: '16px', color: 'black', fontWeight: '700', marginBottom: '0.55rem' }}
-                                >
-                                    Nome do Projeto
-                                </Typography>
-
-                                <TextField
-                                    {...register("name")}
-                                    error={!!errors.name}
-                                    helperText={errors?.name?.message}
-                                    fullWidth
-                                    id="projectName"
-                                    required
-                                    variant="outlined"
-                                    placeholder='Nome do seu projeto'
-                                />
-                            </Box>
-
-                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                <Typography
-                                    variant='h6'
-                                    component='label'
-                                    htmlFor="description"
-                                    sx={{ fontSize: '16px', marginBottom: '0.5rem', color: 'black', fontWeight: '700' }}
-                                >
-                                    Descrição do projeto
-                                </Typography>
-
-                                <TextField
-                                    {...register("description")}
-                                    error={!!errors.description}
-                                    helperText={errors?.description?.message}
-                                    fullWidth
-                                    required
-                                    multiline
-                                    id="description"
-                                    placeholder='Descrição do projeto (visivel aos doadores)'
-                                    rows={10}
-                                />
-                            </Box>
-
-                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                <Typography
-                                    variant='h6'
-                                    component='label'
-                                    htmlFor="category"
-                                    sx={{ fontSize: '16px', marginBottom: '0.5rem', color: 'black', fontWeight: '700' }}
-                                >
-                                    categorias
-                                </Typography>
-                                <FormControl fullWidth error={!!errors.categoryProjectId}>
-                                    <InputLabel id="category-label">Selecionar uma categoria</InputLabel>
-                                    <Select
-                                        labelId="category-label"
-                                        id="category"
-                                        {...register("categoryProjectId")}
-                                        defaultValue=""
-                                    >
-                                        <MenuItem value="" disabled>
-                                            <Box component='em'>Selecionar uma categoria</Box>
-                                        </MenuItem>
-                                        {Array.isArray(category) && category.length > 0 ? (
-                                            category.map((cat) => (
-                                                <MenuItem key={cat.id} value={cat.id}>
-                                                    {cat.name}
-                                                </MenuItem>
-                                            ))
-                                        ) : (
-                                            <MenuItem value="" disabled>Carregando categorias...</MenuItem>
-                                        )}
-                                    </Select>
-                                    {errors.categoryProjectId && (
-                                        <Typography color="error">{errors.categoryProjectId.message}</Typography>
-                                    )}
-                                </FormControl>
-                            </Box>
-
+                        <Grid2 size={12} container justifyContent='end'>
                             <Button
                                 disabled={loading}
                                 type="submit"
@@ -310,10 +273,16 @@ export function CriarProjetos() {
                             >
                                 {loading ? <CircularProgress size={24} /> : "Criar projeto"}
                             </Button>
-                        </Box>
+                        </Grid2>
                     </Grid2>
                 </Grid2>
             </Box>
+
+            <ModalAiProject
+                open={open}
+                onSubmit={handleAiProjectSubmit}
+                handleClose={handleClose}
+            />
         </Box>
     );
 }
