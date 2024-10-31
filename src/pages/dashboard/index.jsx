@@ -2,13 +2,12 @@ import { api } from "../../libs/axios";
 import { env } from '../../env/index';
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import { Person } from "@mui/icons-material";
-import GroupIcon from '@mui/icons-material/Group';
 import { PieChart } from '@mui/x-charts/PieChart';
 import InputLabel from '@mui/material/InputLabel';
+import { useAuth } from "../../context/authContext";
 import FormControl from '@mui/material/FormControl';
 import {RemoveRedEye, MonetizationOn, Group, VolunteerActivism} from '@mui/icons-material';
-import { Badge, Box, Grid2, Paper, Skeleton, Typography, Select, Avatar, MenuItem } from "@mui/material";
+import { Badge, Box, Grid2, Paper, Skeleton, Typography, Select, Avatar, MenuItem, Stack} from "@mui/material";
 
 export function DashboardPage() {
     const { user } = useAuth();
@@ -17,6 +16,7 @@ export function DashboardPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [statistics, setStatistics] = useState(null);
     const [projectData, setProjectData] = useState([]);
+    const [profileImage, setProfileImage] = useState();
 
     const getRandomProfileImage = () => {
         const profileImages = [
@@ -31,7 +31,6 @@ export function DashboardPage() {
         return profileImages[randomIndex];
     };
 
-    // eslint-disable-next-line react/prop-types
     const CustomAvatar = ({ imagePath, name }) => {
         const [avatarSrc, setAvatarSrc] = useState(`${env.base_url_api}/${imagePath}`);
 

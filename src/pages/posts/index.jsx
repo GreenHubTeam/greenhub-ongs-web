@@ -15,14 +15,15 @@ export function PostPage() {
         setIsLoading(true);
         try {
             const response = await api.get(`/post`);
-            setPostData(response.data.posts);
+            setPostData(response.data);
         } catch (error) {
             console.log(error)
-            toast.error("Error ao buscar os post")
+            toast.error("Erro ao buscar os posts");
         } finally {
             setIsLoading(false);
         }
     };
+    
 
     useEffect(() => {
         fetchPost();
@@ -44,24 +45,20 @@ export function PostPage() {
                     fetchPost={fetchPost}
                 />
 
-                {!isLoading && postData.length > 0 && (
+                {!isLoading && Array.isArray(postData) && postData.length > 0 && (
                     <Grid2 container spacing={2} sx={{ marginTop: '3rem' }} >
-                        {
-                            postData.map(
-                                (post, index) => (
-                                    <Grid2 key={index} size={12}>
-                                        <CardPost
-                                            profilePath={post.Ong.imagePath}
-                                            description={post.description}
-                                            postImagePath={post.imagePath}
-                                            createdAt={post.createdAt}
-                                            OngName={post.Ong.name}
-                                            id={post.id}
-                                        />
-                                    </Grid2>
-                                )
-                            )
-                        }
+                        {postData.map((post, index) => (
+                            <Grid2 key={index} size={12}>
+                                <CardPost
+                                    profilePath={post.Ong.imagePath}
+                                    description={post.description}
+                                    postImagePath={post.imagePath}
+                                    createdAt={post.createdAt}
+                                    OngName={post.Ong.name}
+                                    id={post.id}
+                                />
+                            </Grid2>
+                        ))}
                     </Grid2>
                 )}
             </Container>

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { zodResolver } from '@hookform/resolvers/zod';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Box, Grid2, Typography, CircularProgress, CardMedia, Card, Avatar } from '@mui/material';
 
 const postFormSchema = z.object({
@@ -19,10 +20,14 @@ const postFormSchema = z.object({
 export function VisualizarProjetos() {
     const { id } = useParams();
     const { user } = useAuth();
+    const [project, setProject] = useState(null);
     const [category, setCategory] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [userData, setUserData] = useState(null);
+    const [feedbacks, setFeedbacks] = useState([]);
     const [profileImage, setProfileImage] = useState();
     const [imagePreview, setImagePreview] = useState(null);
+    const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
 
     const {
         formState: { errors },
@@ -57,24 +62,41 @@ export function VisualizarProjetos() {
         }
     };
 
+    async function fetchFeedback() {
+        setIsLoadingFeedback(true);
+        try {
+            const response = await api.get(`/feedback/${id}`);
+            setFeedbacks(response.data);
+        } catch (error) {
+            console.error(error);
+            toast.error("Erro ao buscar os feedbacks");
+        } finally {
+            setIsLoadingFeedback(false);
+        }
+    }
+
     const fetchProjects = async () => {
         setLoading(true);
         try {
             const projects = await api.get(`/project/one/${id}`);
+            console.log("Dados do projeto:", projects.data);
+
+            setProject(projects.data);
+
             const categorys = await api.get('/category');
             setCategory(categorys.data);
-    
+
             if (projects.data.userId) {
-                await fetchUser(projects.data.userId); 
+                await fetchUser(projects.data.userId);
             }
-    
+
             reset({
                 user: projects.data.user || '',
                 name: projects.data.name || '',
                 description: projects.data.description || '',
                 categoryProjectId: String(projects.data.categoryProjectId)
             });
-    
+
             setImagePreview(`${env.api_url}/${projects.data.imagePath}`);
         } catch {
             toast.error("Erro ao buscar os dados do projeto");
@@ -86,10 +108,12 @@ export function VisualizarProjetos() {
     useEffect(() => {
         fetchUsers();
         fetchProjects();
+        fetchFeedback();
         randomizeProfileImage();
     }, [id, reset]);
 
     const { name, description } = getValues();
+
 
     return (
         <Box sx={{
@@ -131,7 +155,7 @@ export function VisualizarProjetos() {
                         width: '100%',
                     }}
                 >
-                    <Grid2 container spacing={2}>
+                    <Grid2 container spacing={4}>
                         <Grid2 size={12}>
                             <Card variant="outlined" sx={{ height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 <CardMedia
@@ -144,7 +168,7 @@ export function VisualizarProjetos() {
                             </Card>
                         </Grid2>
 
-                        <Grid2 size={12}>
+                        <Grid2 size={6}>
                             <Typography
                                 sx={{
                                     color: '#22703E',
@@ -161,7 +185,7 @@ export function VisualizarProjetos() {
                                     borderRadius: '10px',
                                     fontWeight: '700',
                                     fontSize: '26px',
-                                    padding: '2rem',
+                                    marginTop: '20px',
                                     height: '120px',
                                 }}
                             >
@@ -169,15 +193,13 @@ export function VisualizarProjetos() {
                                     {description}
                                 </Typography>
                             </Box>
-                        </Grid2>
 
-                        <Grid2 size={12}>
                             <Typography
                                 sx={{
                                     color: '#22703E',
-                                    marginTop: '20px',
+                                    marginTop: '44px',
                                     fontWeight: '700',
-                                    fontSize: '26px',
+                                    fontSize: '22px',
                                 }}
                             >
                                 Publicado por
@@ -186,9 +208,9 @@ export function VisualizarProjetos() {
                             <Box
                                 sx={{
                                     borderRadius: '10px',
-                                    padding: '2rem',
+                                    marginTop: '20px',
                                     height: '300px',
-                                    display: 'flex', 
+                                    display: 'flex',
                                 }}
                             >
                                 <Avatar
@@ -205,6 +227,69 @@ export function VisualizarProjetos() {
                                     {user.name}
                                 </Typography>
                             </Box>
+                        </Grid2>
+
+                        <Grid2 size={6}>
+                            <Typography
+                                sx={{
+                                    color: '#22703E',
+                                    fontWeight: '700',
+                                    fontSize: '26px',
+                                    marginTop: '20px',
+                                    marginBottom: '10px',
+                                }}
+                            >
+                                Feedbacks do projeto
+                            </Typography>
+
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                }}
+                            >
+                                <FavoriteIcon sx={{ color: 'red', marginRight: '0.5rem' }} />
+
+                                <Typography sx={{ color: '#22703E', fontWeight: '700', }}>
+                                    {project ? project._count.like : 0}
+                                </Typography>
+                            </Box>
+
+                            {isLoadingFeedback ? (
+                                <Box sx={{ display: 'flex', justifyContent: 'center', padding: '1rem' }}>
+                                    <CircularProgress />
+                                </Box>
+                            ) : feedbacks.length > 0 ? (
+                                <Box sx={{ marginTop: '20px'}}>
+                                    {feedbacks.map((feedback) => (
+                                        <Box key={feedback.id} sx={{ marginBottom: '1rem', padding: '1rem', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                <Avatar
+                                                    src={profileImage}
+                                                    alt='Foto de perfil'
+                                                    sx={{
+                                                        width: '40px',
+                                                        height: '40px',
+                                                        marginRight: '0.75rem',
+                                                    }}
+                                                />
+                                                <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>
+                                                    {feedback.user.name}
+                                                </Typography>
+                                            </Box>
+                                            <Typography variant="body2" sx={{ marginTop: '0.5rem' }}>
+                                                {feedback.message}
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ marginTop: '0.5rem', display: 'block' }}>
+                                                {new Date(feedback.createdAt).toLocaleDateString()}
+                                            </Typography>
+                                        </Box>
+                                    ))}
+                                </Box>
+                            ) : (
+                                <Typography variant="body2" sx={{ marginTop: '1rem' }}>
+                                    Nenhum feedback encontrado.
+                                </Typography>
+                            )}
                         </Grid2>
                     </Grid2>
                 </Box>
