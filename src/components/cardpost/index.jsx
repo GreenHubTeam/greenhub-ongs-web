@@ -11,7 +11,7 @@ import { Box, Card, CardContent, Typography, Button } from '@mui/material';
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
 
-export function CardPost({ description, OngName, profilePath, createdAt, postImagePath, id , onDelete }) {
+export function CardPost({ description, OngName, profilePath, createdAt, postImagePath, id, onDelete, showDeleteButton }) {
     const [deleting, setDeleting] = useState(false);
     const [profileSrc, setProfileSrc] = useState(profilePath ? `${env.api_url}/${profilePath}` : "/nomelogo.png");
     const [postSrc, setPostSrc] = useState(postImagePath ? `${env.api_url}/${postImagePath}` : "/nomelogo.png");
@@ -33,8 +33,10 @@ export function CardPost({ description, OngName, profilePath, createdAt, postIma
         setDeleting(true);
         try {
             await api.delete(`/post/${id}`);
-
             toast.success("Post deletado com sucesso");
+            if (onDelete) {
+                onDelete(id); // Chama a função de callback se for passada
+            }
         } catch {
             toast.error("Erro ao deletar o post");
         } finally {
@@ -83,21 +85,23 @@ export function CardPost({ description, OngName, profilePath, createdAt, postIma
                             Publicado {dayjs(createdAt).fromNow()}
                         </Typography>
 
-                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', }}>
-                        <Button
-                            variant="contained"
-                            color="error"
-                            startIcon={<Delete />}
-                            sx={{
-                                width: '150px',
-                                height: '55px',
-                            }}
-                            onClick={handleDeletePost}
-                        >
-                            Excluir post
-                        </Button>
-                    </Box>
-
+                        {showDeleteButton && ( // Renderiza o botão de excluir somente se showDeleteButton for true
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', flexGrow: 1 }}>
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    startIcon={<Delete />}
+                                    sx={{
+                                        width: '150px',
+                                        height: '55px',
+                                    }}
+                                    onClick={handleDeletePost}
+                                    disabled={deleting} // Desabilita o botão enquanto está deletando
+                                >
+                                    Excluir post
+                                </Button>
+                            </Box>
+                        )}
                     </Box>
 
                     <Typography>
@@ -114,7 +118,6 @@ export function CardPost({ description, OngName, profilePath, createdAt, postIma
                             sx={{ maxWidth: '100%', height: 'auto' }}
                         />
                     )}
-
                 </Box>
             </CardContent>
         </Card>

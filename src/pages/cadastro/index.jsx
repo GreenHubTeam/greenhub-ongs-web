@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { registerFormSchema } from './schema';
 import BadgeIcon from '@mui/icons-material/Badge';
@@ -9,7 +8,6 @@ import EditRoadIcon from '@mui/icons-material/EditRoad';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import NumbersIcon from '@mui/icons-material/Numbers';
-import MapIcon from '@mui/icons-material/Map';
 import EditLocationIcon from '@mui/icons-material/EditLocation';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import KeyIcon from '@mui/icons-material/Key';
@@ -18,7 +16,6 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HeaderComponent } from "../../components/header";
 import { CardContained } from "../../components/cardcontained";
-import { Box, Divider, Grid2, InputAdornment, TextField, Button, Select, FormControl, InputLabel, MenuItem  } from "@mui/material";
 import { Link } from 'react-router-dom';
 import { api } from '../../libs/axios';
 import { toast } from 'react-toastify';
@@ -26,10 +23,13 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import { isAxiosError } from 'axios';
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
+import { Box, Divider, Grid2, InputAdornment, TextField, Button, Select, FormControl, InputLabel, MenuItem, CircularProgress } from "@mui/material";
 
 export function CadastroPage() {
   const [selectedState, setSelectedState] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -47,7 +47,7 @@ export function CadastroPage() {
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
     "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
     "RS", "RO", "RR", "SC", "SP", "SE", "TO"
-];
+  ];
 
   const checkCEP = (e) => {
     const cep = e.target.value.replace(/\D/g, '');
@@ -62,6 +62,7 @@ export function CadastroPage() {
   }
 
   async function HandleRegister(data) {
+    setLoading(true);
     const body = {
       user: {
         name: data.nomeResponsavel,
@@ -89,11 +90,11 @@ export function CadastroPage() {
 
     const handleChange = (event) => {
       setSelectedState(event.target.value);
-  };
-
+    };
     try {
       await registerUser(body);
       toast.success("Cadastro realizado com sucesso!");
+      navigate('/');
     } catch (error) {
       if (isAxiosError(error)) {
         toast.error(error.response?.data.message);
@@ -587,6 +588,7 @@ export function CadastroPage() {
           </Grid2>
           <Grid2 size={6}>
             <Button
+              disabled={loading}
               fullWidth
               variant='contained'
               sx={{
@@ -595,7 +597,7 @@ export function CadastroPage() {
               }}
               onClick={handleSubmit(HandleRegister)}
             >
-              Confirmar
+              {loading ? <CircularProgress size={24} /> : "Confirmar"}
             </Button>
           </Grid2>
         </Grid2>

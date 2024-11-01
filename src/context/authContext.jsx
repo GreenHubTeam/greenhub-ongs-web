@@ -43,7 +43,6 @@ export function AuthProvider({ children }) {
 
     async function registerUser(body) {
         const resposta = await api.post('/ong', body);
-        setToken(resposta.data.token);
     }
 
     useEffect(() => {

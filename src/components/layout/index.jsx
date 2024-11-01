@@ -3,7 +3,7 @@ import { useAuth } from '../../context/authContext';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Dashboard, ExitToApp, Person, } from "@mui/icons-material";
+import { Dashboard, ExitToApp, Person } from "@mui/icons-material";
 import { Box, Grid2, IconButton, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 
 const linksNavs = [
@@ -31,7 +31,7 @@ export default function LayoutAppComponent({ children }) {
 
     function Logout() {
         logout();
-        navigate('/')
+        navigate('/');
     }
 
     return (
@@ -47,7 +47,8 @@ export default function LayoutAppComponent({ children }) {
                             padding: '1rem',
                             height: '100vh',
                             overflowY: 'auto',
-                        }}>
+                        }}
+                    >
                         <HeaderComponent />
 
                         <List sx={{ marginTop: '1rem' }}>
@@ -63,13 +64,13 @@ export default function LayoutAppComponent({ children }) {
                                                 borderRadius: '8px',
                                                 marginBottom: '.2rem',
                                                 '&:hover': {
-                                                    backgroundColor: pathName.includes(link.path) ? 'rgba(0, 128, 0, 0.5)' : '#F1F1F1', 
+                                                    backgroundColor: pathName.includes(link.path) ? 'rgba(0, 128, 0, 0.5)' : '#F1F1F1',
                                                 },
-                                                backgroundColor: pathName.includes(link.path) ? 'rgba(0, 128, 0, 0.1)' : '',
-                                                color: pathName.includes(link.path) ? 'green' : '',
+                                                backgroundColor: (pathName === link.path || (pathName === '/' && link.path === '/dashboard')) ? 'rgba(0, 128, 0, 0.1)' : '',
+                                                color: (pathName === link.path || (pathName === '/' && link.path === '/dashboard')) ? 'green' : '',
                                             }}
                                         >
-                                            <ListItemIcon sx={{ color: pathName.includes(link.path) ? 'rgba(0, 128, 0, 0.5)' : '' }}>
+                                            <ListItemIcon sx={{ color: (pathName === link.path || (pathName === '/' && link.path === '/dashboard')) ? 'rgba(0, 128, 0, 0.5)' : '' }}>
                                                 {link.icon}
                                             </ListItemIcon>
                                             <ListItemText primary={link.name} />
@@ -77,9 +78,8 @@ export default function LayoutAppComponent({ children }) {
                                     </Box>
                                 ))
                             }
-
                         </List>
-                    </Box >
+                    </Box>
                 </Grid2>
                 <Grid2 size={9.5}>
                     <Box
@@ -97,15 +97,10 @@ export default function LayoutAppComponent({ children }) {
                                 borderBottom: '1px solid #F0F0F0'
                             }}
                         >
-
-                            <IconButton
-                                onClick={Logout}
-                            >
+                            <IconButton onClick={Logout}>
                                 <ExitToApp />
                             </IconButton>
-                            <IconButton
-                                onClick={() => navigate('/perfil')}
-                            >
+                            <IconButton onClick={() => navigate('/perfil')}>
                                 <Person />
                             </IconButton>
                         </Box>
@@ -117,7 +112,7 @@ export default function LayoutAppComponent({ children }) {
                                 flex: 1
                             }}
                         >
-                            {children}
+                            {children} 
                         </Box>
                     </Box>
                 </Grid2>

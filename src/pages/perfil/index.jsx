@@ -137,7 +137,7 @@ export function PerfilPage() {
         setIsLoading(true);
         try {
             const response = await api.get(`/post`);
-            setPostData(response.data);
+            setPostData(response.data.posts);
         } catch (error) {
             console.log(error)
             toast.error("Erro ao buscar os posts");
@@ -267,6 +267,7 @@ export function PerfilPage() {
                                                     OngName={post.Ong.name}
                                                     id={post.id}
                                                     onDelete={handleDeletePost}
+                                                    showDeleteButton={true}
                                                 />
                                             </Grid2>
                                         ))}

@@ -15,7 +15,7 @@ export function PostPage() {
         setIsLoading(true);
         try {
             const response = await api.get(`/post`);
-            setPostData(response.data);
+            setPostData(response.data.posts);
         } catch (error) {
             console.log(error)
             toast.error("Erro ao buscar os posts");

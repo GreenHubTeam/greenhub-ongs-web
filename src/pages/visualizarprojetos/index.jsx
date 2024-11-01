@@ -186,14 +186,17 @@ export function VisualizarProjetos() {
                                     fontWeight: '700',
                                     fontSize: '26px',
                                     marginTop: '20px',
-                                    height: '120px',
+                                    alignItems: 'flex-start', // Para alinhar o texto à esquerda
+                                    overflow: 'visible',
                                 }}
                             >
-                                <Typography sx={{ fontWeight: '700', }}>
+                                <Typography sx={{ fontWeight: '700', wordBreak: 'break-word', overflowWrap: 'break-word', }}>
                                     {description}
                                 </Typography>
                             </Box>
+                        </Grid2>
 
+                        <Grid2 size={6}>
                             <Typography
                                 sx={{
                                     color: '#22703E',
@@ -209,7 +212,6 @@ export function VisualizarProjetos() {
                                 sx={{
                                     borderRadius: '10px',
                                     marginTop: '20px',
-                                    height: '300px',
                                     display: 'flex',
                                 }}
                             >
@@ -227,15 +229,12 @@ export function VisualizarProjetos() {
                                     {user.name}
                                 </Typography>
                             </Box>
-                        </Grid2>
-
-                        <Grid2 size={6}>
                             <Typography
                                 sx={{
                                     color: '#22703E',
                                     fontWeight: '700',
                                     fontSize: '26px',
-                                    marginTop: '20px',
+                                    marginTop: '50px',
                                     marginBottom: '10px',
                                 }}
                             >
@@ -259,7 +258,7 @@ export function VisualizarProjetos() {
                                     <CircularProgress />
                                 </Box>
                             ) : feedbacks.length > 0 ? (
-                                <Box sx={{ marginTop: '20px'}}>
+                                <Box sx={{ marginTop: '20px' }}>
                                     {feedbacks.map((feedback) => (
                                         <Box key={feedback.id} sx={{ marginBottom: '1rem', padding: '1rem', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
                                             <Box sx={{ display: 'flex', alignItems: 'center' }}>

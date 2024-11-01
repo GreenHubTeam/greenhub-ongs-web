@@ -14,20 +14,23 @@ import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, Fo
 const postFormSchema = z.object({
     name: z.string().min(1, "Nome do projeto é obrigatório"),
     description: z.string().min(300, "Descrição é obrigatória"),
-    categoryProjectId: z.union([
-        z.number().positive("Categoria é obrigatória se não for um projeto IA"),
-        z.undefined()
-    ])
-    .refine((value) => isAiProject || value !== undefined, "Categoria é obrigatória se não for um projeto IA"),
+    categoryProjectId: z.number().min(1, "Categoria é obrigatória"),
     file: z
         .instanceof(FileList)
-        .refine((files) => files?.length > 0, "Arquivo é obrigatório")
-        .refine((files) => files[0]?.size <= 5 * 1024 * 1024, "O arquivo deve ter no máximo 5MB")
+        .optional()
+        .refine((files) => {
+            if (files.length === 0) return true
+            return files[0]?.size <= 5 * 1024 * 1024
+        }, "O arquivo deve ter no máximo 5MB")
         .refine(
-            (files) => ["image/jpg", "image/png", "image/jpeg"].includes(files[0]?.type),
+            (files) => {
+                if (files.length === 0) return true
+                return ["image/jpg", "image/png", "image/jpeg"].includes(files[0]?.type)
+            },
             "Formato de arquivo inválido. Apenas JPG, PNG ou JPEG são permitidos."
         )
 });
+
 export function CriarProjetos() {
     const [open, setOpen] = useState(false);
     const [file, setFile] = useState(null);
@@ -147,9 +150,9 @@ export function CriarProjetos() {
                 </Button>
             </Box>
 
-            <Box component='form' onSubmit={handleSubmit(handleCreateProject)}>
+            <ModalAiProject open={open} handleClose={handleClose} onSubmit={handleAiProjectSubmit} />
 
-                <ModalAiProject open={open} handleClose={handleClose} onSubmit={handleAiProjectSubmit} />
+            <Box component='form' onSubmit={handleSubmit(handleCreateProject)}>
 
                 <Grid2 container spacing={2}>
                     <Grid2 size={12} container spacing={2}>
