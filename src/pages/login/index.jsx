@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { HeaderComponent } from "../../components/header";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { ModalLoginComponent } from "../../components/cardPolicies";
-import { Box, Divider, InputAdornment, TextField, Button, Typography, IconButton, CircularProgress, } from "@mui/material";
+import { Box, Divider, InputAdornment, TextField, Button, Typography, IconButton, CircularProgress, Grid2 } from "@mui/material";
 
 const formularioLogin = z.object({
     email: z.string().min(4, "Minimo de 4 caracteres").email("Email invalido"),
@@ -37,22 +37,31 @@ export function LoginPage() {
     }
 
     return (
-        <Box sx={{ display: "flex", minHeight: '100vh', maxHeight: '100vh' }}>
-            <Box sx={{ width: '500px', overflowY: 'auto', height: '100vh' }}>
+        <Grid2 container sx={{ minHeight: '100vh' }}>
+            {/* Coluna do formulário */}
+            <Grid2
+                size={{ xs: 12, md: 6 }}
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: 3,
+                }}
+            >
                 <Box
                     sx={{
-                        padding: '0.5rem',
+                        width: { xs: '100%', sm: '80%', md: '70%', lg: '60%' },
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'space-between',
-                        height: '100%'
-                    }}>
-
+                        height: '100%',
+                    }}
+                >
                     <HeaderComponent />
 
                     <Box
                         sx={{
-                            marginTop: '4rem',
+                            marginTop: '2rem',
                             display: 'flex',
                             flexDirection: 'column',
                             gap: '2rem',
@@ -61,11 +70,7 @@ export function LoginPage() {
                         component='form'
                         onSubmit={handleSubmit(handleLogin)}
                     >
-
-                        <Typography
-                            variant="h4"
-                            sx={{ fontWeight: 700 }}
-                        >
+                        <Typography variant="h4" sx={{ fontWeight: 700 }}>
                             Acesse sua conta
                         </Typography>
 
@@ -76,22 +81,13 @@ export function LoginPage() {
                             fullWidth
                             required
                             type='email'
-                            slotProps={{
-                                input: {
-                                    startAdornment: (
-                                        <InputAdornment
-                                            position="start"
-                                            sx={{
-                                                display: 'flex',
-                                                gap: '0.5rem'
-                                            }}
-                                        >
-                                            <PersonIcon />
-
-                                            <Divider orientation="vertical" flexItem />
-                                        </InputAdornment>
-                                    ),
-                                },
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <PersonIcon />
+                                        <Divider orientation="vertical" flexItem />
+                                    </InputAdornment>
+                                ),
                             }}
                             label="E-mail"
                         />
@@ -103,46 +99,25 @@ export function LoginPage() {
                             fullWidth
                             required
                             type={isShowPassword ? 'text' : "password"}
-                            slotProps={{
-                                input: {
-                                    startAdornment: (
-                                        <InputAdornment
-                                            position="start"
-                                            sx={{
-                                                display: 'flex',
-                                                gap: '0.5rem'
-                                            }}
-                                        >
-                                            <KeyIcon />
-
-                                            <Divider orientation="vertical" flexItem />
-                                        </InputAdornment>
-                                    ),
-                                    endAdornment: (
-                                        <IconButton
-                                            onClick={() => setIsShowPassword(prev => !prev)}
-                                        >
-                                            {isShowPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    )
-                                },
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <KeyIcon />
+                                        <Divider orientation="vertical" flexItem />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: (
+                                    <IconButton onClick={() => setIsShowPassword(prev => !prev)}>
+                                        {isShowPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                )
                             }}
                             label="Senha"
                         />
 
-                        <Box
-                            sx={{
-                                display: 'flex'
-                            }}
-                        >
+                        <Box sx={{ display: 'flex' }}>
                             <Typography>Você não tem conta? </Typography>
-                            <Box
-                                component={Link}
-                                to='/registro'
-                                sx={{
-                                    color: '#22703E'
-                                }}
-                            >
+                            <Box component={Link} to='/registro' sx={{ color: '#22703E', marginLeft: 1 }}>
                                 Cadastre-se
                             </Box>
                         </Box>
@@ -160,22 +135,21 @@ export function LoginPage() {
                         >
                             {loading ? <CircularProgress color="success" size={24} /> : "Entrar"}
                         </Button>
-
                     </Box>
                     <ModalLoginComponent />
-
                 </Box>
-            </Box>
+            </Grid2>
 
-            <Box
-                component='img'
-                src='/paraguaio.png'
-                alt='Imagem de floresta'
+            <Grid2
+                size={{ xs: false, md: 6 }}
                 sx={{
-                    objectFit: 'cover',
-                    flex: '1',
+                    display: { xs: 'none', md: 'block' },
+                    backgroundImage: 'url(/paraguaio.png)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    height: '100vh',
                 }}
             />
-        </Box>
+        </Grid2>
     )
 }

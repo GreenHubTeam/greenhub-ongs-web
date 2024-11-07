@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { api } from "../../libs/axios";
 import { toast } from "react-toastify";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import { ModalAiProject } from './modal';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from "react";
@@ -32,6 +34,7 @@ const postFormSchema = z.object({
 });
 
 export function CriarProjetos() {
+    const [content, setContent] = useState('');
     const [open, setOpen] = useState(false);
     const [file, setFile] = useState(null);
     const [category, setCategory] = useState([]);
@@ -54,6 +57,10 @@ export function CriarProjetos() {
     const navigate = useNavigate();
     const { user } = useAuth();
 
+    const handleContentChange = (value) => {
+        setContent(value);
+    };
+
     const fetchCategory = async () => {
         try {
             const response = await api.get('/category');
@@ -73,15 +80,15 @@ export function CriarProjetos() {
             const response = await api.post('/gemini/createInfo', {
                 description: data.description,
             });
-    
+
             console.log('Response from backend:', response.data);
-    
+
             const { title, description } = response.data.data;
-    
+
             setValue('name', title, { shouldValidate: true });
             setValue('description', description, { shouldValidate: true });
-    
-            handleClose();  
+
+            handleClose();
         } catch (error) {
             console.error('Error:', error);
             toast.error('Erro ao criar o projeto');
@@ -108,6 +115,7 @@ export function CriarProjetos() {
                     'Content-Type': 'multipart/form-data',
                 },
             });
+
             navigate('/projects');
             console.log(response)
             toast.success("Projeto criado com sucesso, aguarde a confirmação do administrador");
@@ -164,9 +172,9 @@ export function CriarProjetos() {
                                     sx=
                                     {{
                                         height: '100%',
-                                        objectFit: 'contain', 
+                                        objectFit: 'contain',
                                     }}
-                                alt="Preview do projeto"
+                                    alt="Preview do projeto"
                                 />
                             </Card>
                         </Grid2>
@@ -251,17 +259,21 @@ export function CriarProjetos() {
                                     Descrição do projeto
                                 </Typography>
 
-                                <TextField
-                                    {...register("description")}
-                                    error={!!errors.description}
-                                    helperText={errors?.description?.message}
-                                    fullWidth
-                                    required
-                                    multiline
-                                    id="description"
-                                    placeholder='Descrição do projeto (visivel aos doadores)'
-                                    rows={10}
+                                <ReactQuill
+                                    theme="snow"
+                                    value={content}
+                                    {...register('description')}
+                                    onChange={(value) => {
+                                        setContent(value); // Atualiza o estado local
+                                        setValue('description', value); 
+                                    }}
+                                    sx={{ height: '300px', }}
                                 />
+                                {errors.description && (
+                                    <Typography variant="caption" color="error">
+                                        {errors.description.message}
+                                    </Typography>
+                                )}
                             </Box>
 
                             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -269,7 +281,7 @@ export function CriarProjetos() {
                                     variant='h6'
                                     component='label'
                                     htmlFor="category"
-                                    sx={{ fontSize: '16px', marginBottom: '0.5rem', color: 'black', fontWeight: '700' }}
+                                    sx={{ fontSize: '16px', marginBottom: '0.5rem', marginTop: '1rem', color: 'black', fontWeight: '700' }}
                                 >
                                     categorias
                                 </Typography>

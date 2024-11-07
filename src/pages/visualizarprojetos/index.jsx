@@ -5,6 +5,7 @@ import { api } from "../../libs/axios";
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useMediaQuery } from '@mui/material';
 import { useAuth } from "../../context/authContext";
 import { zodResolver } from '@hookform/resolvers/zod';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -26,6 +27,7 @@ export function VisualizarProjetos() {
     const [userData, setUserData] = useState(null);
     const [feedbacks, setFeedbacks] = useState([]);
     const [profileImage, setProfileImage] = useState();
+    const isMobile = useMediaQuery('(max-width:600px)');
     const [imagePreview, setImagePreview] = useState(null);
     const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
 
@@ -156,7 +158,7 @@ export function VisualizarProjetos() {
                     }}
                 >
                     <Grid2 container spacing={4}>
-                        <Grid2 size={12}>
+                        <Grid2 size={{xs: 12, md: 6}}>
                             <Card variant="outlined" sx={{ height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 <CardMedia
                                     image={imagePreview}
@@ -168,7 +170,7 @@ export function VisualizarProjetos() {
                             </Card>
                         </Grid2>
 
-                        <Grid2 size={6}>
+                        <Grid2 size={{xs: 12, md: 6}}>
                             <Typography
                                 sx={{
                                     color: '#22703E',
@@ -184,19 +186,19 @@ export function VisualizarProjetos() {
                                 sx={{
                                     borderRadius: '10px',
                                     fontWeight: '700',
-                                    fontSize: '26px',
                                     marginTop: '20px',
-                                    alignItems: 'flex-start', // Para alinhar o texto à esquerda
+                                    alignItems: 'flex-start',
                                     overflow: 'visible',
                                 }}
                             >
-                                <Typography sx={{ fontWeight: '700', wordBreak: 'break-word', overflowWrap: 'break-word', }}>
-                                    {description}
-                                </Typography>
+                                <Box
+                                    component='div'
+                                    dangerouslySetInnerHTML={{ __html: project?.description }}
+                                />
                             </Box>
                         </Grid2>
 
-                        <Grid2 size={6}>
+                        <Grid2 size={{xs: 12, md: 6}}>
                             <Typography
                                 sx={{
                                     color: '#22703E',

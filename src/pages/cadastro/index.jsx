@@ -24,10 +24,11 @@ import { AuthContext } from "../../context/authContext";
 import { isAxiosError } from 'axios';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Divider, Grid2, InputAdornment, TextField, Button, Select, FormControl, InputLabel, MenuItem, CircularProgress } from "@mui/material";
+import { Box, Divider, Grid2, InputAdornment, TextField, Button, Select, FormControl, InputLabel, MenuItem, CircularProgress, useMediaQuery } from "@mui/material";
 
 export function CadastroPage() {
   const [selectedState, setSelectedState] = useState("");
+  const isMobile = useMediaQuery('(max-width:600px)');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -118,6 +119,7 @@ export function CadastroPage() {
           margin: '0 auto',
           gap: '4rem',
           paddingBottom: '2rem',
+          padding: isMobile ? '2rem' : '0',
         }}
       >
         <Box
@@ -232,7 +234,7 @@ export function CadastroPage() {
           />
 
           <Grid2 container spacing={3}>
-            <Grid2 size={7}>
+            <Grid2 size={{ xs: 12, md: 7 }}>
               <TextField
                 error={!!errors.cidade}
                 helperText={errors?.cidade?.message}
@@ -259,7 +261,7 @@ export function CadastroPage() {
                 label="cidade"
               />
             </Grid2>
-            <Grid2 size={5}>
+            <Grid2 size={{ xs: 12, md: 5 }}>
               <TextField
                 error={!!errors.bairro}
                 helperText={errors?.bairro?.message}
@@ -286,7 +288,9 @@ export function CadastroPage() {
                 label="Bairro"
               />
             </Grid2>
-            <Grid2 size={7}>
+          </Grid2>
+          <Grid2 container spacing={2}>
+            <Grid2 size={{xs:12 , md: 7}}>
               <TextField
                 error={!!errors.rua}
                 helperText={errors?.rua?.message}
@@ -296,60 +300,46 @@ export function CadastroPage() {
                 slotProps={{
                   input: {
                     startAdornment: (
-                      <InputAdornment
-                        position="start"
-                        sx={{
-                          display: 'flex',
-                          gap: '0.5rem'
-                        }}
-                      >
+                      <InputAdornment position="start" sx={{ display: 'flex', gap: '0.5rem' }}>
                         <EditRoadIcon />
-
                         <Divider orientation="vertical" flexItem />
                       </InputAdornment>
                     ),
                   },
                 }}
-                label="rua"
+                label="Rua"
               />
             </Grid2>
-            <Grid2 size={3}>
+
+            <Grid2 size={{xs:8 , md: 3}}>
               <TextField
                 error={!!errors.numero}
                 helperText={errors?.numero?.message}
                 {...register("numero")}
                 required
+                fullWidth
                 slotProps={{
                   input: {
                     startAdornment: (
-                      <InputAdornment
-                        position="start"
-                        sx={{
-                          display: 'flex',
-                          gap: '0.5rem'
-                        }}
-                      >
+                      <InputAdornment position="start" sx={{ display: 'flex', gap: '0.5rem' }}>
                         <NumbersIcon />
-
                         <Divider orientation="vertical" flexItem />
                       </InputAdornment>
                     ),
                   },
                 }}
-                fullWidth
                 label="Nº"
               />
             </Grid2>
-            <Grid2 size={2}>
-              <FormControl variant="outlined" error={!!errors.state}>
+
+            <Grid2 size={{xs:4 , md: 2}}>
+              <FormControl variant="outlined" error={!!errors.state} fullWidth>
                 <InputLabel>Estado</InputLabel>
                 <Select
                   {...register("state")}
                   label="Estado"
                   defaultValue=""
-                  sx={{
-                    width: '100px'
-                  }}
+                  sx={{ width: isMobile ? '127px' : '100%' }}
                 >
                   {StatesBrazilList.map((state) => (
                     <MenuItem key={state} value={state}>{state}</MenuItem>
@@ -358,6 +348,7 @@ export function CadastroPage() {
                 {errors.state && <Typography color="error">{errors.state.message}</Typography>}
               </FormControl>
             </Grid2>
+
             <Grid2 size={12}>
               <TextField
                 error={!!errors.complemento}
@@ -386,8 +377,6 @@ export function CadastroPage() {
               />
             </Grid2>
           </Grid2>
-
-
         </Box>
 
         <Box
@@ -454,7 +443,7 @@ export function CadastroPage() {
           />
 
           <Grid2 container spacing={2}>
-            <Grid2 size={7}>
+            <Grid2 size={{ xs: 12, md: 7 }}>
               <TextField
                 error={!!errors.nomeResponsavel}
                 helperText={errors?.nomeResponsavel?.message}
@@ -481,7 +470,7 @@ export function CadastroPage() {
                 label="Nome do responsável"
               />
             </Grid2>
-            <Grid2 size={5}>
+            <Grid2 size={{ xs: 12, md: 5 }}>
               <TextField
                 error={!!errors.cpfResponsavel}
                 helperText={errors?.cpfResponsavel?.message}
@@ -510,7 +499,7 @@ export function CadastroPage() {
 
             </Grid2>
 
-            <Grid2 size={6}>
+            <Grid2 size={{ xs: 12, md: 6 }}>
               <TextField
                 type='password'
                 error={!!errors.senha}
@@ -538,7 +527,7 @@ export function CadastroPage() {
                 label="Senha"
               />
             </Grid2>
-            <Grid2 size={6}>
+            <Grid2 size={{ xs: 12, md: 6 }}>
               <TextField
                 type='password'
                 error={!!errors.confirmarSenha}
@@ -571,7 +560,7 @@ export function CadastroPage() {
         </Box>
 
         <Grid2 container spacing={2}>
-          <Grid2 size={6}>
+          <Grid2 size={{ xs: 12, md: 6 }}>
             <Button
               fullWidth
               variant='contained'
@@ -586,7 +575,7 @@ export function CadastroPage() {
               Voltar
             </Button>
           </Grid2>
-          <Grid2 size={6}>
+          <Grid2 size={{ xs: 12, md: 6 }}>
             <Button
               disabled={loading}
               fullWidth

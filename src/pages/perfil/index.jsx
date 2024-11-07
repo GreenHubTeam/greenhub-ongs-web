@@ -8,7 +8,7 @@ import { CardPost } from '../../components/cardpost';
 import { CardProject } from '../../components/cardproject';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Email, Place, Person, LocationCity, Description } from '@mui/icons-material';
-import { Box, Grid2, Typography, Container, Tab, Tabs, Button, CircularProgress, TextField, InputAdornment, Divider, Select, InputLabel, MenuItem, FormControl } from "@mui/material";
+import { Box, Grid2, Typography, Container, Tab, Tabs, Button, CircularProgress, TextField, InputAdornment, Divider, Select, InputLabel, MenuItem, FormControl, useMediaQuery } from "@mui/material";
 
 const postFormSchema = z.object({
     email: z.string().toLowerCase().email('E-mail inválido'),
@@ -27,8 +27,9 @@ export function PerfilPage() {
     const [loading, setLoading] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [projectData, setProjectData] = useState({ projects: [] });
     const [profileImage, setProfileImage] = useState();
+    const isMobile = useMediaQuery('(max-width:600px)');
+    const [projectData, setProjectData] = useState({ projects: [] });
 
 
     const {
@@ -49,7 +50,7 @@ export function PerfilPage() {
             "/profile4.png",
             "/profile5.png",
         ];
-    
+
         const randomImage = profileImages[Math.floor(Math.random() * profileImages.length)];
         setProfileImage(randomImage);
     };
@@ -186,7 +187,7 @@ export function PerfilPage() {
                     src={profileImage}
                     alt='Foto de perfil da ONG'
                     onError={() => {
-                        setProfileImage("/nomelogo.png"); 
+                        setProfileImage("/nomelogo.png");
                     }}
                     sx={{
                         height: '150px',
@@ -201,7 +202,7 @@ export function PerfilPage() {
             </Box>
 
             <Grid2 container spacing={2}>
-                <Grid2 size={4}
+                <Grid2 size={{ xs: 12, md: 4 }}
                     sx={{
                         padding: '1rem',
                     }}>
@@ -245,7 +246,7 @@ export function PerfilPage() {
 
                 </Grid2>
 
-                <Grid2 size={8}>
+                <Grid2 size={{ xs: 12, md: 8 }}>
                     <Tabs value={tabIndex} onChange={handleTabChange} centered>
                         <Tab label="Postagens" />
                         <Tab label="Editar Perfil" />
@@ -355,7 +356,13 @@ export function PerfilPage() {
                                 />
 
                                 <Grid2 container spacing={2}>
-                                    <Grid2 xs={6}>
+                                    <Grid2
+                                        size={{ xs: isMobile ? 6 : 12, md: 6 }}
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: isMobile ? 'flex-end' : 'flex-start',
+                                        }}
+                                    >
                                         <TextField
                                             error={!!errors.city}
                                             helperText={errors?.city?.message}
@@ -379,16 +386,19 @@ export function PerfilPage() {
                                         />
                                     </Grid2>
 
-                                    <Grid2 xs={6}>
+                                    <Grid2
+                                        size={{ xs: isMobile ? 6 : 12, md: 6 }}
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: isMobile ? 'flex-start' : 'flex-end',
+                                        }}
+                                    >
                                         <FormControl fullWidth>
                                             <InputLabel>Estado</InputLabel>
                                             <Select
                                                 {...register("state")}
                                                 error={!!errors.state}
                                                 defaultValue=""
-                                                sx={{
-                                                    width: '100px',
-                                                }}
                                             >
                                                 {StatesBrazilList.map(state => (
                                                     <MenuItem key={state} value={state}>{state}</MenuItem>
@@ -396,7 +406,6 @@ export function PerfilPage() {
                                             </Select>
                                         </FormControl>
                                     </Grid2>
-
                                 </Grid2>
 
                                 <Button
@@ -425,7 +434,7 @@ export function PerfilPage() {
                                         {
                                             projectData.projects.map(
                                                 (project) => (
-                                                    <Grid2 key={project.id} size={6}>
+                                                    <Grid2 key={project.id} size={{ xs: 12, md: 6 }}>
                                                         <CardProject
                                                             name={project.name}
                                                             description={project.description}

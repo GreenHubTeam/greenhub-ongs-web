@@ -6,8 +6,8 @@ import { PieChart } from '@mui/x-charts/PieChart';
 import InputLabel from '@mui/material/InputLabel';
 import { useAuth } from "../../context/authContext";
 import FormControl from '@mui/material/FormControl';
-import {RemoveRedEye, MonetizationOn, Group, VolunteerActivism} from '@mui/icons-material';
-import { Badge, Box, Grid2, Paper, Skeleton, Typography, Select, Avatar, MenuItem, Stack} from "@mui/material";
+import { RemoveRedEye, MonetizationOn, Group, VolunteerActivism } from '@mui/icons-material';
+import { Badge, Box, Grid2, Paper, Skeleton, Typography, Select, Avatar, MenuItem, Stack } from "@mui/material";
 
 export function DashboardPage() {
     const { user } = useAuth();
@@ -78,7 +78,6 @@ export function DashboardPage() {
 
     useEffect(() => {
         fetchProjects();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleChange = (event) => {
@@ -90,7 +89,7 @@ export function DashboardPage() {
     return (
         <Grid2 container spacing={2}>
 
-            <Grid2 size={8} >
+            <Grid2 size={{ xs: 12, md: 8 }}>
                 <Box
                     component="div"
                     sx={{
@@ -145,7 +144,7 @@ export function DashboardPage() {
                 </Box>
             </Grid2>
 
-            <Grid2 size={4}>
+            <Grid2 size={{ xs: 12, md: 4 }}>
                 <Box
                     component="div"
                     sx={{
@@ -201,7 +200,7 @@ export function DashboardPage() {
             </Grid2>
 
             <Grid2 size={12} container justifyContent='end'>
-                <FormControl sx={{ width: '200px' }}>
+                <FormControl sx={{ width: '100%', maxWidth: '300px' }}>
                     <InputLabel id="select-project-label">Projetos</InputLabel>
                     <Select
                         labelId="select-project-label"
@@ -221,8 +220,8 @@ export function DashboardPage() {
                 </FormControl>
             </Grid2>
 
-            <Grid2 size={12} container>
-                <Grid2 size={4}>
+            <Grid2 size={12} container spacing={2}>
+                <Grid2 size={{ xs: 12, md: 4 }}  >
                     <Paper
                         variant="outlined"
                         sx={{
@@ -259,14 +258,14 @@ export function DashboardPage() {
                     </Paper>
                 </Grid2 >
 
-                <Grid2 size={4}>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                     <Paper
                         variant="outlined"
                         sx={{
                             height: '150px',
                             padding: '1rem 2rem',
                             display: 'flex',
-                            flexDirection: 'column', 
+                            flexDirection: 'column',
                             borderRadius: '12px'
                         }}
                     >
@@ -296,7 +295,7 @@ export function DashboardPage() {
                     </Paper>
                 </Grid2 >
 
-                <Grid2 size={4}>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                     <Paper
                         variant="outlined"
                         sx={{
@@ -335,7 +334,7 @@ export function DashboardPage() {
             </Grid2>
 
             <Grid2 size={12} container spacing={2} alignItems='stretch'>
-                <Grid2 size={8}>
+                <Grid2 size={{ xs: 12, md: 8 }} >
                     <Paper
                         variant="outlined"
                         sx={{
@@ -361,7 +360,17 @@ export function DashboardPage() {
                             }}
                         >
                             <PieChart
-                                series={[{ data: statistics?.dadosGrafico || [] }]}
+                                series={[
+                                    {
+                                        data: statistics?.dadosGrafico?.sort((a, b) => {
+                                            if (a.id === 0) return -1; // Doações em primeiro
+                                            if (b.id === 0) return 1;
+                                            if (a.id === 1) return -1; // Visualizações em segundo
+                                            if (b.id === 1) return 1;
+                                            return 0; // Total de Doações por último
+                                        }) || []
+                                    }
+                                ]}
                                 width={350}
                                 height={350}
                             />
@@ -371,15 +380,17 @@ export function DashboardPage() {
                             sx={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                justifyContent: 'center',
+                                flexWrap: 'wrap',
                                 marginBottom: '1rem',
+                                justifyContent: 'center',
+                                flexDirection: { xs: 'column', sm: 'row' }, // Flexibilidade de layout para mobile
                             }}
                         >
                             {statistics?.dadosGrafico?.map((dado, index) => (
                                 <Box key={index} sx={{ display: 'flex', alignItems: 'center', margin: '0.8rem' }}>
                                     <Box sx={{ width: '20px', height: '20px', backgroundColor: dado.color, marginRight: '0.5rem' }} />
                                     <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>
-                                        {dado.id === 0 ? 'Visualizações' : dado.id === 1 ? 'Total das Doações' : 'Doações'}
+                                        {dado.id === 0 ? 'Doações' : dado.id === 1 ? 'Visualizações' : 'Total das Doações'}
                                     </Typography>
                                 </Box>
                             ))}
@@ -387,7 +398,7 @@ export function DashboardPage() {
                     </Paper>
                 </Grid2>
 
-                <Grid2 size={4}>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                     <Paper
                         variant="outlined"
                         sx={{

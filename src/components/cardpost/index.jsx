@@ -35,7 +35,7 @@ export function CardPost({ description, OngName, profilePath, createdAt, postIma
             await api.delete(`/post/${id}`);
             toast.success("Post deletado com sucesso");
             if (onDelete) {
-                onDelete(id); // Chama a função de callback se for passada
+                onDelete(id);
             }
         } catch {
             toast.error("Erro ao deletar o post");
@@ -85,18 +85,18 @@ export function CardPost({ description, OngName, profilePath, createdAt, postIma
                             Publicado {dayjs(createdAt).fromNow()}
                         </Typography>
 
-                        {showDeleteButton && ( // Renderiza o botão de excluir somente se showDeleteButton for true
+                        {showDeleteButton && ( 
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', flexGrow: 1 }}>
                                 <Button
                                     variant="contained"
                                     color="error"
                                     startIcon={<Delete />}
                                     sx={{
-                                        width: '150px',
-                                        height: '55px',
+                                        width: { xs: '100px', sm: '150px' },
+                                        height: '50px',
                                     }}
                                     onClick={handleDeletePost}
-                                    disabled={deleting} // Desabilita o botão enquanto está deletando
+                                    disabled={deleting} 
                                 >
                                     Excluir post
                                 </Button>
