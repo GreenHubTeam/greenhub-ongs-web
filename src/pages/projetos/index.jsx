@@ -35,7 +35,6 @@ export function ProjetosPage() {
             padding: {isMobile} ? '1rem' : '2rem',
             display: 'flex',
             flexDirection: 'column',
-            padding: '2rem'
         }}>
 
            <Box

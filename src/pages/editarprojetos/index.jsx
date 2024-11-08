@@ -174,13 +174,13 @@ export function EditarProjetos() {
                             gap: isMobile ? '1rem' : '2rem',
                         }}>
                             <Grid2 size={12}>
-                                <Card variant="outlined" sx={{ height: '500px' }}>
+                                <Card variant="outlined" sx={{ height: '300px' }}>
                                     <CardMedia
                                         component="img"
                                         image={imagePreview}
                                         sx=
                                         {{
-                                            height: '100%',
+                                            width: '100%',
                                             objectFit: 'contain',
                                         }}
                                         alt="Preview do projeto"

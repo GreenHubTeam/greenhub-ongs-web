@@ -158,11 +158,11 @@ export function VisualizarProjetos() {
                     }}
                 >
                     <Grid2 container spacing={4}>
-                        <Grid2 size={{xs: 12, md: 6}}>
+                        <Grid2 size={12}>
                             <Card variant="outlined" sx={{ height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 <CardMedia
                                     image={imagePreview}
-                                    sx={{ height: "100%", maxWidth: '600px' }}
+                                    sx={{ height: "100%",  maxWidth: isMobile ? '100%' : '600px' }}
                                     component='img'
                                     alt="FOTO DO PROJETO"
                                     onError={() => setImagePreview('/nomelogo.png')}
@@ -174,9 +174,9 @@ export function VisualizarProjetos() {
                             <Typography
                                 sx={{
                                     color: '#22703E',
-                                    marginTop: '20px',
+                                    marginTop: isMobile ? '10px' : '20px',
                                     fontWeight: '700',
-                                    fontSize: '26px',
+                                    fontSize: isMobile ? '20px' : '26px',
                                 }}
                             >
                                 Sobre o projeto
@@ -204,7 +204,7 @@ export function VisualizarProjetos() {
                                     color: '#22703E',
                                     marginTop: '44px',
                                     fontWeight: '700',
-                                    fontSize: '22px',
+                                    fontSize: isMobile ? '20px' : '22px',
                                 }}
                             >
                                 Publicado por
@@ -215,6 +215,7 @@ export function VisualizarProjetos() {
                                     borderRadius: '10px',
                                     marginTop: '20px',
                                     display: 'flex',
+                                    flexDirection: isMobile ? 'column' : 'row',
                                 }}
                             >
                                 <Avatar
@@ -223,6 +224,7 @@ export function VisualizarProjetos() {
                                     sx={{
                                         width: '35px',
                                         height: '35px',
+                                        marginBottom: isMobile ? '10px' : 0,
                                         marginRight: '0.75rem',
                                         backgroundColor: '#f0f0f0',
                                     }}
@@ -235,7 +237,7 @@ export function VisualizarProjetos() {
                                 sx={{
                                     color: '#22703E',
                                     fontWeight: '700',
-                                    fontSize: '26px',
+                                    fontSize: isMobile ? '20px' : '26px',
                                     marginTop: '50px',
                                     marginBottom: '10px',
                                 }}

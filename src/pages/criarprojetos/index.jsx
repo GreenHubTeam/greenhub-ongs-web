@@ -165,13 +165,13 @@ export function CriarProjetos() {
                 <Grid2 container spacing={2}>
                     <Grid2 size={12} container spacing={2}>
                         <Grid2 size={12}>
-                            <Card variant="outlined" sx={{ height: '500px' }}>
+                            <Card variant="outlined" sx={{ height: '300px' }}>
                                 <CardMedia
                                     component="img"
                                     image={imagePreview}
                                     sx=
                                     {{
-                                        height: '100%',
+                                        width: '100%',
                                         objectFit: 'contain',
                                     }}
                                     alt="Preview do projeto"
@@ -264,7 +264,7 @@ export function CriarProjetos() {
                                     value={content}
                                     {...register('description')}
                                     onChange={(value) => {
-                                        setContent(value); // Atualiza o estado local
+                                        setContent(value); 
                                         setValue('description', value); 
                                     }}
                                     sx={{ height: '300px', }}

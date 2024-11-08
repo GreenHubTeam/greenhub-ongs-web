@@ -78,6 +78,7 @@ export function DashboardPage() {
 
     useEffect(() => {
         fetchProjects();
+        setProfileImage(getRandomProfileImage());
     }, []);
 
     const handleChange = (event) => {
@@ -363,11 +364,11 @@ export function DashboardPage() {
                                 series={[
                                     {
                                         data: statistics?.dadosGrafico?.sort((a, b) => {
-                                            if (a.id === 0) return -1; // Doações em primeiro
+                                            if (a.id === 0) return -1; 
                                             if (b.id === 0) return 1;
-                                            if (a.id === 1) return -1; // Visualizações em segundo
+                                            if (a.id === 1) return -1; 
                                             if (b.id === 1) return 1;
-                                            return 0; // Total de Doações por último
+                                            return 0; 
                                         }) || []
                                     }
                                 ]}
@@ -383,7 +384,7 @@ export function DashboardPage() {
                                 flexWrap: 'wrap',
                                 marginBottom: '1rem',
                                 justifyContent: 'center',
-                                flexDirection: { xs: 'column', sm: 'row' }, // Flexibilidade de layout para mobile
+                                flexDirection: { xs: 'column', sm: 'row' },
                             }}
                         >
                             {statistics?.dadosGrafico?.map((dado, index) => (
