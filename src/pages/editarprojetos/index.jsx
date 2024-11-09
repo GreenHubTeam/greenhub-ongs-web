@@ -14,7 +14,7 @@ import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, Fo
 
 const postFormSchema = z.object({
     name: z.string().min(1, "Nome do projeto é obrigatório"),
-    description: z.string().min(300, "Descrição é obrigatória"),
+    description: z.string().min(300, "Descrição precisa ser maior"),
     categoryProjectId: z.number().min(1, "Categoria é obrigatória"),
     file: z
         .instanceof(FileList)
