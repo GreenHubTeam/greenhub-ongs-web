@@ -1,7 +1,14 @@
 import { env } from '../../env';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Typography, Chip, CardContent, Card, CardMedia, CardActions, Paper, } from '@mui/material';
+import { Box, Button, Typography, Chip, CardContent, Card, CardMedia, CardActions, Paper } from '@mui/material';
+
+// Função para remover tags HTML
+const stripHtmlTags = (html) => {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+};
 
 export function CardProject({ name, description, status, imagePath, id }) {
     const navigate = useNavigate();
@@ -54,6 +61,7 @@ export function CardProject({ name, description, status, imagePath, id }) {
                         {getStatusChip(status)}
                     </Box>
 
+                    {/* Renderizar o texto sem tags HTML */}
                     <Typography
                         sx={{
                             overflow: 'hidden',
@@ -61,7 +69,7 @@ export function CardProject({ name, description, status, imagePath, id }) {
                             whiteSpace: 'nowrap'
                         }}
                     >
-                        {description}
+                        {stripHtmlTags(description)}
                     </Typography>
                 </CardContent>
 
@@ -92,6 +100,5 @@ export function CardProject({ name, description, status, imagePath, id }) {
                 </CardActions>
             </Card>
         </Paper>
-
-    )
+    );
 }
