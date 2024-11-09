@@ -267,7 +267,7 @@ export function CriarProjetos() {
                                     theme="snow"
                                     value={content}
                                     {...register('description')}
-                                    onChange={setContent}
+                                    onChange={handleContentChange}
                                     sx={{ height: '300px' }}
                                 />
                                 {errors.description && (
