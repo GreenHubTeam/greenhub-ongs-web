@@ -321,19 +321,40 @@ export function EditarProjetos() {
                                     </FormControl>
                                 </Box>
 
-                                <Button
-                                    disabled={loading}
-                                    type="submit"
-                                    variant='contained'
+                                <Box
                                     sx={{
-                                        backgroundColor: '#22703E',
-                                        height: '3.5rem',
-                                        width: isMobile ? '100%' : '300px',
-                                        borderRadius: '10px',
+                                        display: 'flex',
+                                        gap: '1rem',
                                     }}
                                 >
-                                    {loading ? <CircularProgress size={24} /> : "Salvar mudanças"}
-                                </Button>
+                                    <Button
+                                        disabled={loading}
+                                        type="submit"
+                                        variant='contained'
+                                        sx={{
+                                            backgroundColor: '#22703E',
+                                            height: '3.5rem',
+                                            width: isMobile ? '100%' : '300px',
+                                            borderRadius: '10px',
+                                        }}
+                                    >
+                                        {loading ? <CircularProgress size={24} /> : "Salvar mudanças"}
+                                    </Button>
+
+                                    <Button
+                                        variant="contained"
+                                        color="error"
+                                        sx={{
+                                            height: '3.5rem',
+                                            width: isMobile ? '100%' : '300px',
+                                            borderRadius: '10px',
+                                        }}
+                                        onClick={handleDeleteProject}
+                                        disabled={deleting}
+                                    >
+                                        {deleting ? <CircularProgress size={24} /> : "Excluir Projeto"}
+                                    </Button>
+                                </Box>
                             </Box>
                         </Grid2>
                     </Grid2>
