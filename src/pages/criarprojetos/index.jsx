@@ -15,7 +15,7 @@ import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, Fo
 
 const postFormSchema = z.object({
     name: z.string().min(1, "Nome do projeto é obrigatório"),
-    description: z.string().min(300, "Descrição precisa ser maior"),
+    description: z.string().min(300, "A descrição precisa ser maior"),
     categoryProjectId: z.number().min(1, "Categoria é obrigatória"),
     file: z
         .instanceof(FileList)
@@ -59,6 +59,7 @@ export function CriarProjetos() {
 
     const handleContentChange = (value) => {
         setContent(value);
+        setValue('description', value);  
     };
 
     const fetchCategory = async () => {
@@ -74,6 +75,10 @@ export function CriarProjetos() {
         fetchCategory();
     }, []);
 
+    useEffect(() => {
+        setValue('description', content);
+    }, [content, setValue]);
+
     const modalSubmit = async (data) => {
         setLoading(true);
         try {
@@ -86,8 +91,7 @@ export function CriarProjetos() {
             const { title, description } = response.data.data;
 
             setValue('name', title, { shouldValidate: true });
-            setValue('description', description, { shouldValidate: true });
-
+            setContent(description);
             handleClose();
         } catch (error) {
             console.error('Error:', error);
@@ -138,7 +142,7 @@ export function CriarProjetos() {
 
     const handleAiProjectSubmit = (data) => {
         setValue('name', data.title, { shouldValidate: true });
-        setValue('description', data.description, { shouldValidate: true });
+        setContent(data.description);
         handleClose();
     };
 
@@ -263,11 +267,8 @@ export function CriarProjetos() {
                                     theme="snow"
                                     value={content}
                                     {...register('description')}
-                                    onChange={(value) => {
-                                        setContent(value); 
-                                        setValue('description', value); 
-                                    }}
-                                    sx={{ height: '300px', }}
+                                    onChange={setContent}
+                                    sx={{ height: '300px' }}
                                 />
                                 {errors.description && (
                                     <Typography variant="caption" color="error">
