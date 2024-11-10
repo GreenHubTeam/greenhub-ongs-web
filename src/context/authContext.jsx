@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 
 export const AuthContext = createContext({});
 
+// eslint-disable-next-line react/prop-types
 export function AuthProvider({ children }) {
     const [token, setToken] = useState("");
     const [user, setUser] = useState("");
@@ -35,21 +36,21 @@ export function AuthProvider({ children }) {
 
     const decodedToken = (token) => {
         const userData = jwtDecode(token);
-        const baseUrl = import.meta.env.VITE_API_URL; 
+        const baseUrl = import.meta.env.VITE_API_URL;
         setProfileImage(`${baseUrl}/${userData.imagePath}`);
         setUser(userData);
     };
-    
+
 
     async function registerUser(body) {
-        const resposta = await api.post('/ong', body);
+        await api.post('/ong', body);
     }
 
     useEffect(() => {
         const token = localStorage.getItem('@greenhubONG:token');
         if (token) {
             setToken(token);
-            decodedToken(token);  
+            decodedToken(token);
         }
     }, []);
 
@@ -64,7 +65,7 @@ export function AuthProvider({ children }) {
             value={{
                 token,
                 user,
-                profileImage,  
+                profileImage,
                 loginUser,
                 registerUser,
                 logout,
