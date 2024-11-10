@@ -37,8 +37,7 @@ export function LoginPage() {
     }
 
     return (
-        <Grid2 container sx={{ minHeight: '100vh' }}>
-            {/* Coluna do formulário */}
+        <Grid2 container sx={{ minHeight: '100dvh' }}>
             <Grid2
                 size={{ xs: 12, md: 6 }}
                 sx={{
