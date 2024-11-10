@@ -1,7 +1,8 @@
 import { env } from '../../env';
 import { useState } from 'react';
+import { Create } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Typography, Chip, CardContent, Card, CardMedia, CardActions, Paper } from '@mui/material';
+import { Box, Button, Typography, Chip, CardContent, Card, CardMedia, CardActions, Paper, Stack, CardActionArea } from '@mui/material';
 
 // Função para remover tags HTML
 const stripHtmlTags = (html) => {
@@ -10,6 +11,7 @@ const stripHtmlTags = (html) => {
     return div.textContent || div.innerText || "";
 };
 
+// eslint-disable-next-line react/prop-types
 export function CardProject({ name, description, status, imagePath, id }) {
     const navigate = useNavigate();
     const [imagePathSrc, setImagePathSrc] = useState(imagePath ? `${env.api_url}/${imagePath}` : "/nomelogo.png");
@@ -30,73 +32,63 @@ export function CardProject({ name, description, status, imagePath, id }) {
     return (
         <Paper variant='outlined'>
             <Card elevation={0}>
-                <CardMedia
-                    component='img'
-                    alt='Project Image'
-                    sx={{ height: 200 }}
-                    image={imagePathSrc}
-                    title='Project Image'
-                    onError={() => {
-                        setImagePathSrc("/nomelogo.png");
-                    }}
-                />
-
-                <CardContent>
-                    <Box
-                        sx={{ display: 'flex', justifyContent: 'space-between' }}
-                    >
-                        <Typography
-                            sx={{
-                                fontWeight: '700',
-                                fontSize: '1.35rem',
-                                marginBottom: '.4rem',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap'
-                            }}
-                        >
-                            {name}
-                        </Typography>
-
-                        {getStatusChip(status)}
-                    </Box>
-
-                    {/* Renderizar o texto sem tags HTML */}
-                    <Typography
-                        sx={{
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap'
+                <CardActionArea onClick={() => navigate(`/show-project/${id}`)}>
+                    <CardMedia
+                        component='img'
+                        alt='Project Image'
+                        sx={{ height: 200 }}
+                        image={imagePathSrc}
+                        title='Project Image'
+                        onError={() => {
+                            setImagePathSrc("/nomelogo.png");
                         }}
-                    >
-                        {stripHtmlTags(description)}
-                    </Typography>
-                </CardContent>
+                    />
+
+                    <CardContent>
+                        <Box
+                            sx={{ display: 'flex', justifyContent: 'space-between' }}
+                        >
+                            <Typography
+                                sx={{
+                                    fontWeight: '700',
+                                    fontSize: '1.35rem',
+                                    marginBottom: '.4rem',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap'
+                                }}
+                            >
+                                {name}
+                            </Typography>
+
+                            {getStatusChip(status)}
+                        </Box>
+
+                        {/* Renderizar o texto sem tags HTML */}
+                        <Typography
+                            noWrap
+                        >
+                            {stripHtmlTags(description)}
+                        </Typography>
+                    </CardContent>
+                </CardActionArea>
+
 
                 <CardActions>
-                    <Button
-                        variant='contained'
-                        onClick={() => navigate(`/edit-project/${id}`)}
-                        sx={{
-                            backgroundColor: 'green',
-                            borderRadius: '8px',
-                        }}
-                        size='medium'
-                    >
-                        Editar
-                    </Button>
-
-                    <Button
-                        variant='contained'
-                        onClick={() => navigate(`/show-project/${id}`)}
-                        sx={{
-                            backgroundColor: 'green',
-                            borderRadius: '8px',
-                        }}
-                        size='medium'
-                    >
-                        Ver mais
-                    </Button>
+                    <Stack width='100%' direction='row' justifyContent='flex-end' spacing={2}>
+                        <Button
+                            startIcon={<Create />}
+                            variant='contained'
+                            onClick={() => navigate(`/edit-project/${id}`)}
+                            sx={{
+                                backgroundColor: 'green',
+                                borderRadius: '8px',
+                            }}
+                            size='medium'
+                        >
+                            Editar
+                        </Button>
+                    </Stack>
                 </CardActions>
             </Card>
         </Paper>

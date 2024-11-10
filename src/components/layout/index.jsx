@@ -4,7 +4,7 @@ import CampaignIcon from '@mui/icons-material/Campaign';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Dashboard, ExitToApp, Person, Menu } from "@mui/icons-material";
-import { Box, Grid2, IconButton, List, ListItemButton, ListItemIcon, ListItemText, Drawer, useMediaQuery } from "@mui/material";
+import { Box, Grid2, IconButton, List, ListItemButton, ListItemIcon, ListItemText, Drawer, useMediaQuery, AppBar, Toolbar, Stack } from "@mui/material";
 import { useState } from 'react';
 
 const linksNavs = [
@@ -25,11 +25,12 @@ const linksNavs = [
     },
 ];
 
+// eslint-disable-next-line react/prop-types
 export default function LayoutAppComponent({ children }) {
     const { pathname: pathName } = useLocation();
     const navigate = useNavigate();
     const { logout } = useAuth();
-    const isMobile = useMediaQuery('(max-width:600px)');
+    const isMobile = useMediaQuery('(max-width:768px)');
     const [drawerOpen, setDrawerOpen] = useState(false);
 
     function Logout() {
@@ -44,9 +45,9 @@ export default function LayoutAppComponent({ children }) {
     const drawerContent = (
         <Box
             sx={{
-                width: 250,
+                width: '70vw',
                 padding: '1rem',
-                height: '100vh',
+                height: '100dvh',
                 overflowY: 'auto',
             }}
             role="presentation"
@@ -87,35 +88,35 @@ export default function LayoutAppComponent({ children }) {
         <>
             {isMobile ? (
                 <>
-                    <Box
+                    <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
+                        {drawerContent}
+                    </Drawer>
+                    <AppBar
                         sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            padding: '1rem',
-                            borderBottom: '1px solid #F0F0F0',
+                            backgroundColor: 'white'
                         }}
+                        variant='outlined'
+                        position='sticky'
                     >
-                        <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
-                            {drawerContent}
-                        </Drawer>
-
-                        <IconButton onClick={toggleDrawer(true)}>
-                            <Menu />
-                        </IconButton>
-
-                        <Box sx={{
-                            display: 'flex', 
-                        }}>
-                            <IconButton onClick={Logout}>
-                                <ExitToApp />
+                        <Toolbar
+                            sx={{
+                                justifyContent: 'space-between'
+                            }}
+                        >
+                            <IconButton onClick={toggleDrawer(true)}>
+                                <Menu />
                             </IconButton>
-                            <IconButton onClick={() => navigate('/perfil')}>
-                                <Person />
-                            </IconButton>
-                        </Box>
 
-                    </Box>
+                            <Stack direction='row'>
+                                <IconButton onClick={Logout}>
+                                    <ExitToApp />
+                                </IconButton>
+                                <IconButton onClick={() => navigate('/perfil')}>
+                                    <Person />
+                                </IconButton>
+                            </Stack>
+                        </Toolbar>
+                    </AppBar>
 
                     <Box
                         sx={{
@@ -129,7 +130,7 @@ export default function LayoutAppComponent({ children }) {
                 </>
             ) : (
                 <Grid2 container>
-                    <Grid2 sm={3} md={2.5}>
+                    <Grid2 size={2.5}>
                         <Box
                             sx={{
                                 display: 'flex',
@@ -170,7 +171,7 @@ export default function LayoutAppComponent({ children }) {
                             </List>
                         </Box>
                     </Grid2>
-                    <Grid2 size={9.5} sm={9} md={9.5}>
+                    <Grid2 size={9.5} >
                         <Box
                             sx={{
                                 display: 'flex',

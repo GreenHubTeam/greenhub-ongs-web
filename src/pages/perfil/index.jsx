@@ -5,10 +5,10 @@ import { useForm } from 'react-hook-form';
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/authContext";
 import { CardPost } from '../../components/cardpost';
-import { CardProject } from '../../components/cardproject';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { CardProject } from '../../components/cardproject';
 import { Email, Place, Person, LocationCity, Description } from '@mui/icons-material';
-import { Box, Grid2, Typography, Container, Tab, Tabs, Button, CircularProgress, TextField, InputAdornment, Divider, Select, InputLabel, MenuItem, FormControl, useMediaQuery } from "@mui/material";
+import { Box, Grid2, Typography, Container, Tab, Tabs, Button, CircularProgress, TextField, InputAdornment, Divider, Select, InputLabel, MenuItem, FormControl, useMediaQuery, Stack, Avatar } from "@mui/material";
 
 const postFormSchema = z.object({
     email: z.string().toLowerCase().email('E-mail inválido'),
@@ -19,24 +19,20 @@ const postFormSchema = z.object({
 });
 
 export function PerfilPage() {
-    const [, setFile] = useState(null);
     const [ongData, setOngData] = useState([]);
     const [tabIndex, setTabIndex] = useState(0);
     const [postData, setPostData] = useState([]);
     const { user, setUser, setToken } = useAuth();
     const [loading, setLoading] = useState(false);
-    const [deleting, setDeleting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [profileImage, setProfileImage] = useState();
-    const isMobile = useMediaQuery('(max-width:600px)');
+    const isMobile = useMediaQuery('(max-width:768px)');
     const [projectData, setProjectData] = useState({ projects: [] });
-
 
     const {
         register,
         handleSubmit,
         formState: { errors },
-        reset,
         setValue,
     } = useForm({
         resolver: zodResolver(postFormSchema),
@@ -121,19 +117,6 @@ export function PerfilPage() {
         }
     };
 
-    async function handleDeletePost() {
-        setDeleting(true);
-        try {
-            await api.delete(`/post/${id}`);
-
-            toast.success("Post deletado com sucesso");
-        } catch {
-            toast.error("Erro ao deletar o post");
-        } finally {
-            setDeleting(false);
-        }
-    }
-
     async function fetchPost() {
         setIsLoading(true);
         try {
@@ -162,7 +145,8 @@ export function PerfilPage() {
         <Box
             sx={{
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                my: '1rem'
             }}
         >
             <Box
@@ -171,46 +155,49 @@ export function PerfilPage() {
                 alt='imagem de fundo do perfil'
                 sx={{
                     width: '100%',
-                    height: '280px',
+                    height: { xs: '150px', md: '280px' },
                     margin: '0',
+                    borderRadius: '8px',
+                    objectFit: 'cover'
                 }}
             />
             <Box
                 sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '1rem',
-                    marginTop: '-90px'
+                    gap: '.5rem',
+                    marginTop: { xs: '-50px', md: '-90px' }
                 }}>
-                <Box
-                    component='img'
+                <Avatar
                     src={profileImage}
                     alt='Foto de perfil da ONG'
                     onError={() => {
                         setProfileImage("/nomelogo.png");
                     }}
                     sx={{
-                        height: '150px',
+                        height: { xs: '90px', md: '150px' },
+                        width: 'auto',
+                        mx: '1rem'
                     }}
                 />
 
                 <Typography
-                    variant='h3'
+                    sx={{ fontSize: { xs: '2rem', md: '3rem' } }}
+                    noWrap
                 >
                     {ongData.name}
                 </Typography>
             </Box>
 
-            <Grid2 container spacing={2}>
+            <Grid2 container spacing={2} my={2}>
                 <Grid2 size={{ xs: 12, md: 4 }}
                     sx={{
-                        padding: '1rem',
+                        padding: { xs: 0, md: '1rem' },
                     }}>
                     <Box
                         sx={{
                             border: '1px solid #F0F0F0',
                             height: 'auto',
-                            width: '400px',
                             padding: '1rem',
                             borderRadius: '8px',
                         }}>
@@ -220,26 +207,24 @@ export function PerfilPage() {
                             <Box
                                 sx={{
                                     borderRadius: '8px',
-                                    marginTop: '1rem',
-                                    marginBottom: '1rem',
-                                }}
-                                id={ongData.id}
-                            >
-                                <Typography sx={{ marginBottom: '8px', fontWeight: 'bold' }}>{ongData.about}</Typography>
+                                    my: '1rem',
+                                }}>
+                                <Typography color="textSecondary" sx={{ marginBottom: '8px', fontWeight: 'bold' }}>{ongData.about}</Typography>
 
                                 <Box display="flex" sx={{ marginTop: '20px', marginBottom: '20px' }}>
                                     <Place sx={{ marginRight: '8px' }} />
-                                    <Typography sx={{ fontWeight: 'bold' }}>
+                                    <Typography color="textSecondary" >
                                         {ongData.state} - {ongData.city}
                                     </Typography>
                                 </Box>
 
-                                <Box display="flex" >
-                                    <Email sx={{ marginRight: '8px' }} />
-                                    <Typography sx={{ fontWeight: 'bold' }}>
+                                <Stack direction='row' spacing={1}>
+                                    <Email />
+                                    <Typography color="textSecondary" sx={{ fontWeight: 'bold' }} noWrap >
                                         {user.email}
                                     </Typography>
-                                </Box>
+                                </Stack>
+
                             </Box>
                         )}
                     </Box>
@@ -248,36 +233,13 @@ export function PerfilPage() {
 
                 <Grid2 size={{ xs: 12, md: 8 }}>
                     <Tabs value={tabIndex} onChange={handleTabChange} centered>
-                        <Tab label="Postagens" />
                         <Tab label="Editar Perfil" />
+                        <Tab label="Postagens" />
                         <Tab label="Projetos" />
                     </Tabs>
 
                     <Box>
                         {tabIndex === 0 && (
-                            <Container maxWidth='md'>
-                                {!isLoading && postData.length > 0 && (
-                                    <Grid2 container spacing={2} sx={{ marginTop: '3rem' }}>
-                                        {postData.map((post, index) => (
-                                            <Grid2 key={index} size={12}>
-                                                <CardPost
-                                                    profilePath={post.Ong.imagePath}
-                                                    description={post.description}
-                                                    postImagePath={post.imagePath}
-                                                    createdAt={post.createdAt}
-                                                    OngName={post.Ong.name}
-                                                    id={post.id}
-                                                    onDelete={handleDeletePost}
-                                                    showDeleteButton={true}
-                                                />
-                                            </Grid2>
-                                        ))}
-                                    </Grid2>
-                                )}
-                            </Container>
-                        )}
-
-                        {tabIndex === 1 && (
                             <Box
                                 component='form'
                                 onSubmit={handleSubmit(handleEditProfile)}
@@ -285,6 +247,7 @@ export function PerfilPage() {
                                     display: 'flex',
                                     flexDirection: 'column',
                                     gap: '1.5rem',
+                                    my: '2rem'
                                 }}
                             >
                                 <TextField
@@ -427,10 +390,33 @@ export function PerfilPage() {
                             </Box>
                         )}
 
-                        {tabIndex === 2 && (
+                        {tabIndex === 1 && (
                             <Container maxWidth='md'>
+                                {!isLoading && postData.length > 0 && (
+                                    <Grid2 container spacing={2} sx={{ marginTop: '3rem' }}>
+                                        {postData.map((post, index) => (
+                                            <Grid2 key={index} size={12}>
+                                                <CardPost
+                                                    fetchPost={fetchPost}
+                                                    profilePath={post.Ong.imagePath}
+                                                    description={post.description}
+                                                    postImagePath={post.imagePath}
+                                                    createdAt={post.createdAt}
+                                                    OngName={post.Ong.name}
+                                                    id={post.id}
+                                                    showDeleteButton={true}
+                                                />
+                                            </Grid2>
+                                        ))}
+                                    </Grid2>
+                                )}
+                            </Container>
+                        )}
+
+                        {tabIndex === 2 && (
+                            <Container maxWidth='md' >
                                 {!isLoading && projectData.projects.length > 0 && (
-                                    <Grid2 container spacing={2}>
+                                    <Grid2 container spacing={2} my={2}>
                                         {
                                             projectData.projects.map(
                                                 (project) => (
@@ -468,6 +454,6 @@ export function PerfilPage() {
                     </Box>
                 </Grid2>
             </Grid2>
-        </Box>
+        </Box >
     );
 }

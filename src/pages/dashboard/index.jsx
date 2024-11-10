@@ -6,7 +6,7 @@ import { PieChart } from '@mui/x-charts/PieChart';
 import InputLabel from '@mui/material/InputLabel';
 import { useAuth } from "../../context/authContext";
 import FormControl from '@mui/material/FormControl';
-import { RemoveRedEye, MonetizationOn, Group, VolunteerActivism } from '@mui/icons-material';
+import { MonetizationOn, Group, VolunteerActivism } from '@mui/icons-material';
 import { Badge, Box, Grid2, Paper, Skeleton, Typography, Select, Avatar, MenuItem, Stack } from "@mui/material";
 
 export function DashboardPage() {
@@ -16,7 +16,6 @@ export function DashboardPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [statistics, setStatistics] = useState(null);
     const [projectData, setProjectData] = useState([]);
-    const [profileImage, setProfileImage] = useState();
 
     const getRandomProfileImage = () => {
         const profileImages = [
@@ -31,8 +30,9 @@ export function DashboardPage() {
         return profileImages[randomIndex];
     };
 
+    // eslint-disable-next-line react/prop-types
     const CustomAvatar = ({ imagePath, name }) => {
-        const [avatarSrc, setAvatarSrc] = useState(`${env.base_url_api}/${imagePath}`);
+        const [avatarSrc, setAvatarSrc] = useState(`${env.api_url}/${imagePath}`);
 
         return (
             <Avatar
@@ -43,27 +43,6 @@ export function DashboardPage() {
             />
         );
     };
-
-
-
-    async function fetchProjects() {
-        setIsLoading(true);
-        try {
-            const response = await api.get(`/project/ong/${user.Ong.id}`);
-            setProjectData(response.data.projects);
-
-            if (response.data.projects.length > 0) {
-                setProject(response.data.projects[0].id);
-                fetchStatistics(response.data.projects[0].id);
-            }
-        } catch (error) {
-            console.error("Erro ao buscar projetos:", error);
-            toast.error("Error ao buscar os projetos");
-        } finally {
-            setIsLoading(false);
-        }
-    }
-
     const fetchStatistics = async (projectId) => {
         setLoading(true);
         try {
@@ -77,9 +56,26 @@ export function DashboardPage() {
     };
 
     useEffect(() => {
+        async function fetchProjects() {
+            setIsLoading(true);
+            try {
+                const response = await api.get(`/project/ong/${user.Ong.id}`);
+                setProjectData(response.data.projects);
+
+                if (response.data.projects.length > 0) {
+                    setProject(response.data.projects[0].id);
+                    fetchStatistics(response.data.projects[0].id);
+                }
+            } catch (error) {
+                console.error("Erro ao buscar projetos:", error);
+                toast.error("Error ao buscar os projetos");
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
         fetchProjects();
-        setProfileImage(getRandomProfileImage());
-    }, []);
+    }, [user?.Ong?.id]);
 
     const handleChange = (event) => {
         const selectedProject = event.target.value;
@@ -364,11 +360,11 @@ export function DashboardPage() {
                                 series={[
                                     {
                                         data: statistics?.dadosGrafico?.sort((a, b) => {
-                                            if (a.id === 0) return -1; 
+                                            if (a.id === 0) return -1;
                                             if (b.id === 0) return 1;
-                                            if (a.id === 1) return -1; 
+                                            if (a.id === 1) return -1;
                                             if (b.id === 1) return 1;
-                                            return 0; 
+                                            return 0;
                                         }) || []
                                     }
                                 ]}
@@ -416,49 +412,31 @@ export function DashboardPage() {
                                 </Typography>
                             </Box>
 
-                            <Box sx={{ marginTop: '1rem' }}>
+                            <Stack spacing={2} sx={{ marginTop: '1rem' }}>
                                 {statistics?.topVisualizadores?.slice(0, 5).map((user, index) => (
-                                    <Box
-                                        key={index}
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            marginBottom: '0.5rem',
-                                            gap: '.5rem'
-                                        }}
-                                    >
-                                        <RemoveRedEye sx={{ marginRight: '0.5rem' }} />
-
-                                        <Avatar
-                                            src={profileImage}
-                                            alt='Foto de perfil'
-                                            sx={{
-                                                width: '35px',
-                                                height: '35px',
-                                                marginRight: '0.75rem',
-                                                backgroundColor: '#f0f0f0',
-                                            }}
+                                    <Stack direction='row' spacing={1} alignItems='center' key={index} justifyContent='space-between'>
+                                        <CustomAvatar
+                                            imagePath={user.imagePath}
+                                            name={user.name}
                                         />
 
-                                        <Stack spacing={0}>
-                                            <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>
+                                        <Stack flexGrow={1}>
+                                            <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }} noWrap>
                                                 {user.nome}
                                             </Typography>
-                                            <Typography color="textSecondary" sx={{ fontSize: '.7rem' }}>
+                                            <Typography color="textSecondary" sx={{ fontSize: '.7rem' }} noWrap>
                                                 {user.email}
                                             </Typography>
                                         </Stack>
-
-
 
                                         <Badge
                                             sx={{ marginLeft: '1rem' }}
                                             badgeContent={user.visualizacoes || 0}
                                             color="success"
                                         />
-                                    </Box>
+                                    </Stack>
                                 ))}
-                            </Box>
+                            </Stack>
                         </Box>
                     </Paper>
                 </Grid2>

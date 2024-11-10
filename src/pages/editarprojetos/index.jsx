@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { useEffect, useState } from "react";
 import MenuItem from '@mui/material/MenuItem';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CloudUpload, Delete } from "@mui/icons-material";
+import { ArrowBack, CloudUpload, Delete } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom";
 import { Box, Grid2, TextField, Typography, Button, CircularProgress, Select, FormControl, InputLabel, CardMedia, Card, useMediaQuery } from '@mui/material';
 
@@ -38,7 +38,7 @@ export function EditarProjetos() {
     const [category, setCategory] = useState([]);
     const [loading, setLoading] = useState(false);
     const [deleting, setDeleting] = useState(false);
-    const isMobile = useMediaQuery('(max-width:600px)');
+    const isMobile = useMediaQuery('(max-width:768px)');
     const [imagePreview, setImagePreview] = useState(null);
 
     const {
@@ -47,6 +47,7 @@ export function EditarProjetos() {
         formState: { errors },
         reset,
         setValue,
+        watch
     } = useForm({
         resolver: zodResolver(postFormSchema),
         defaultValues: {
@@ -82,7 +83,7 @@ export function EditarProjetos() {
                 reset({
                     name: projects.data.name || '',
                     description: projects.data.description || '',
-                    categoryProjectId: String(projects.data.categoryProjectId)
+                    categoryProjectId: Number(projects.data.categoryProjectId)
                 });
 
                 setImagePreview(`${env.api_url}/${projects.data.imagePath}`);
@@ -141,6 +142,9 @@ export function EditarProjetos() {
             gap: '2rem',
             marginTop: '2rem',
         }}>
+            <Button startIcon={<ArrowBack />} sx={{ width: 'min-content' }} onClick={() => navigate('/projects')} color='inherit' variant='outlined'>
+                Voltar
+            </Button>
             <Typography variant='h3' sx={{
                 fontSize: '26px',
                 color: '#22703E',
@@ -175,16 +179,22 @@ export function EditarProjetos() {
                         }}>
                             <Grid2 size={12}>
                                 <Card variant="outlined" sx={{ height: '300px' }}>
-                                    <CardMedia
-                                        component="img"
-                                        image={imagePreview}
-                                        sx=
-                                        {{
-                                            width: '100%',
-                                            objectFit: 'contain',
-                                        }}
-                                        alt="Preview do projeto"
-                                    />
+                                    {imagePreview && (
+                                        <CardMedia
+                                            component="img"
+                                            image={imagePreview}
+                                            sx=
+                                            {{
+                                                width: '100%',
+                                                objectFit: 'contain',
+                                            }}
+                                            onError={() => {
+                                                setImagePreview('/nomelogo.png')
+                                            }}
+                                            alt="Preview do projeto"
+                                        />
+                                    )}
+
                                 </Card>
                             </Grid2>
 
@@ -285,41 +295,45 @@ export function EditarProjetos() {
                                     )}
                                 </Box>
 
-                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                    <Typography
-                                        variant='h6'
-                                        component='label'
-                                        htmlFor="category"
-                                        sx={{ fontSize: '16px', marginBottom: '0.5rem', color: 'black', fontWeight: '700' }}
-                                    >
-                                        categorias
-                                    </Typography>
-                                    <FormControl fullWidth error={!!errors.categoryProjectId}>
-                                        <InputLabel id="category-label">Selecionar uma categoria</InputLabel>
-                                        <Select
-                                            labelId="category-label"
-                                            id="category"
-                                            {...register("categoryProjectId")}
-                                            defaultValue=""
+                                {category && (
+                                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                        <Typography
+                                            variant='h6'
+                                            component='label'
+                                            htmlFor="category"
+                                            sx={{ fontSize: '16px', marginBottom: '0.5rem', color: 'black', fontWeight: '700' }}
                                         >
-                                            <MenuItem value="" disabled>
-                                                <Box component='em'>Selecionar uma categoria</Box>
-                                            </MenuItem>
-                                            {Array.isArray(category) && category.length > 0 ? (
-                                                category.map((cat) => (
-                                                    <MenuItem key={cat.id} value={cat.id}>
-                                                        {cat.name}
-                                                    </MenuItem>
-                                                ))
-                                            ) : (
-                                                <MenuItem value="" disabled>Carregando categorias...</MenuItem>
+                                            categorias
+                                        </Typography>
+
+                                        <FormControl fullWidth error={!!errors.categoryProjectId}>
+                                            <InputLabel id="category-label">Selecionar uma categoria</InputLabel>
+                                            <Select
+                                                labelId="category-label"
+                                                id="category"
+                                                {...register("categoryProjectId")}
+                                                defaultValue={watch("categoryProjectId")}
+                                                value={watch("categoryProjectId")}
+                                            >
+                                                <MenuItem value={0} disabled>
+                                                    <Typography component='em' color="textDisabled">Selecionar uma categoria</Typography>
+                                                </MenuItem>
+                                                {Array.isArray(category) && category.length > 0 ? (
+                                                    category.map((cat) => (
+                                                        <MenuItem key={cat.id} value={cat.id}>
+                                                            {cat.name}
+                                                        </MenuItem>
+                                                    ))
+                                                ) : (
+                                                    <MenuItem value="" disabled>Carregando categorias...</MenuItem>
+                                                )}
+                                            </Select>
+                                            {errors.categoryProjectId && (
+                                                <Typography color="error">{errors.categoryProjectId.message}</Typography>
                                             )}
-                                        </Select>
-                                        {errors.categoryProjectId && (
-                                            <Typography color="error">{errors.categoryProjectId.message}</Typography>
-                                        )}
-                                    </FormControl>
-                                </Box>
+                                        </FormControl>
+                                    </Box>
+                                )}
 
                                 <Box
                                     sx={{

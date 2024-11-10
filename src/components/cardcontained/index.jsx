@@ -1,5 +1,6 @@
-import { Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 
+// eslint-disable-next-line react/prop-types
 export function CardContained({ title, description, img }) {
     return (
         <Paper
@@ -28,11 +29,18 @@ export function CardContained({ title, description, img }) {
                     />
                 </Box>
             )}
-            
+
             <Typography
-                variant='h3'
                 fontWeight='500'
-            >{title}</Typography>
+                sx={{
+                    fontSize: {
+                        xs: '1.5rem',
+                        md: '2rem'
+                    }
+                }}
+            >
+                {title}
+            </Typography>
             <Typography>{description}</Typography>
         </Paper >
     )

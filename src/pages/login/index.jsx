@@ -65,7 +65,7 @@ export function LoginPage() {
                             display: 'flex',
                             flexDirection: 'column',
                             gap: '2rem',
-                            padding: '2rem',
+                            padding: { xs: 0, md: '2rem' },
                         }}
                         component='form'
                         onSubmit={handleSubmit(handleLogin)}

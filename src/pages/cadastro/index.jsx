@@ -1,36 +1,33 @@
+import { useState } from "react";
+import { isAxiosError } from 'axios';
+import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import KeyIcon from '@mui/icons-material/Key';
 import { registerFormSchema } from './schema';
+import { useNavigate } from "react-router-dom";
 import BadgeIcon from '@mui/icons-material/Badge';
 import EmailIcon from '@mui/icons-material/Email';
+import { useAuth } from "../../context/authContext";
 import PersonIcon from '@mui/icons-material/Person';
 import FmdGoodIcon from '@mui/icons-material/FmdGood';
-import EditRoadIcon from '@mui/icons-material/EditRoad';
-import LocationCityIcon from '@mui/icons-material/LocationCity';
-import ApartmentIcon from '@mui/icons-material/Apartment';
-import NumbersIcon from '@mui/icons-material/Numbers';
-import EditLocationIcon from '@mui/icons-material/EditLocation';
-import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
-import KeyIcon from '@mui/icons-material/Key';
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { zodResolver } from '@hookform/resolvers/zod';
+import NumbersIcon from '@mui/icons-material/Numbers';
+import EditRoadIcon from '@mui/icons-material/EditRoad';
 import { HeaderComponent } from "../../components/header";
+import ApartmentIcon from '@mui/icons-material/Apartment';
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { CardContained } from "../../components/cardcontained";
-import { Link } from 'react-router-dom';
-import { api } from '../../libs/axios';
-import { toast } from 'react-toastify';
-import { useContext } from "react";
-import { AuthContext } from "../../context/authContext";
-import { isAxiosError } from 'axios';
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, Divider, Grid2, InputAdornment, TextField, Button, Select, FormControl, InputLabel, MenuItem, CircularProgress, useMediaQuery } from "@mui/material";
+import EditLocationIcon from '@mui/icons-material/EditLocation';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import { Box, Divider, Grid2, InputAdornment, TextField, Button, Select, FormControl, InputLabel, MenuItem, CircularProgress, useMediaQuery, Typography } from "@mui/material";
 
 export function CadastroPage() {
-  const [selectedState, setSelectedState] = useState("");
-  const isMobile = useMediaQuery('(max-width:600px)');
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const isMobile = useMediaQuery('(max-width:768px)');
 
   const {
     register,
@@ -42,7 +39,7 @@ export function CadastroPage() {
     mode: 'onChange'
   });
 
-  const { registerUser } = useContext(AuthContext);
+  const { registerUser } = useAuth();
 
   const StatesBrazilList = [
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
@@ -86,12 +83,6 @@ export function CadastroPage() {
         city: data.cidade,
       }
     }
-
-    console.log(body)
-
-    const handleChange = (event) => {
-      setSelectedState(event.target.value);
-    };
     try {
       await registerUser(body);
       toast.success("Cadastro realizado com sucesso!");
@@ -120,6 +111,7 @@ export function CadastroPage() {
           gap: '4rem',
           paddingBottom: '2rem',
           padding: isMobile ? '2rem' : '0',
+          marginBottom: '2rem'
         }}
       >
         <Box
@@ -290,7 +282,7 @@ export function CadastroPage() {
             </Grid2>
           </Grid2>
           <Grid2 container spacing={2}>
-            <Grid2 size={{xs:12 , md: 7}}>
+            <Grid2 size={{ xs: 12, md: 7 }}>
               <TextField
                 error={!!errors.rua}
                 helperText={errors?.rua?.message}
@@ -311,7 +303,7 @@ export function CadastroPage() {
               />
             </Grid2>
 
-            <Grid2 size={{xs:8 , md: 3}}>
+            <Grid2 size={{ xs: 12, md: 3 }}>
               <TextField
                 error={!!errors.numero}
                 helperText={errors?.numero?.message}
@@ -332,14 +324,14 @@ export function CadastroPage() {
               />
             </Grid2>
 
-            <Grid2 size={{xs:4 , md: 2}}>
+            <Grid2 size={{ xs: 12, md: 2 }}>
               <FormControl variant="outlined" error={!!errors.state} fullWidth>
                 <InputLabel>Estado</InputLabel>
                 <Select
+                  fullWidth
                   {...register("state")}
                   label="Estado"
                   defaultValue=""
-                  sx={{ width: isMobile ? '127px' : '100%' }}
                 >
                   {StatesBrazilList.map((state) => (
                     <MenuItem key={state} value={state}>{state}</MenuItem>
@@ -563,12 +555,11 @@ export function CadastroPage() {
           <Grid2 size={{ xs: 12, md: 6 }}>
             <Button
               fullWidth
-              variant='contained'
+              variant='outlined'
               sx={{
-                backgroundColor: '#A3A2A2',
                 height: '3.5rem',
-                color: 'black',
               }}
+              color="inherit"
               component={Link}
               to='/'
             >

@@ -6,14 +6,15 @@ import { toast } from "react-toastify";
 import { useState, useEffect } from 'react';
 import { Delete } from "@mui/icons-material";
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Box, Card, CardContent, Typography, Button } from '@mui/material';
+import { Box, Card, CardContent, Typography, Button, Avatar, Stack, useMediaQuery, CardMedia } from '@mui/material';
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
 
-export function CardPost({ description, OngName, profilePath, createdAt, postImagePath, id, onDelete, showDeleteButton }) {
+// eslint-disable-next-line react/prop-types
+export function CardPost({ description, OngName, profilePath, createdAt, postImagePath, id, fetchPost, showDeleteButton }) {
     const [deleting, setDeleting] = useState(false);
-    const [profileSrc, setProfileSrc] = useState(profilePath ? `${env.api_url}/${profilePath}` : "/nomelogo.png");
+    const [profileSrc] = useState(profilePath ? `${env.api_url}/${profilePath}` : "/nomelogo.png");
     const [postSrc, setPostSrc] = useState(postImagePath ? `${env.api_url}/${postImagePath}` : "/nomelogo.png");
     const [profileImage, setProfileImage] = useState(profileSrc);
 
@@ -29,14 +30,14 @@ export function CardPost({ description, OngName, profilePath, createdAt, postIma
         return randomImage;
     };
 
-    async function handleDeletePost() {
+    const isMobile = useMediaQuery('(max-width:768px)');
+
+    async function handleDeletePost(id) {
         setDeleting(true);
         try {
             await api.delete(`/post/${id}`);
             toast.success("Post deletado com sucesso");
-            if (onDelete) {
-                onDelete(id);
-            }
+            fetchPost()
         } catch {
             toast.error("Erro ao deletar o post");
         } finally {
@@ -64,41 +65,43 @@ export function CardPost({ description, OngName, profilePath, createdAt, postIma
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '2rem'
+                            gap: { xs: '.5rem', md: '2rem' }
                         }}
                     >
-                        <Box
-                            component='img'
+                        <Avatar
                             src={profileImage}
                             alt="Foto de perfil"
                             onError={() => {
                                 setProfileImage("/nomelogo.png");
                             }}
-                            sx={{ width: '65px', height: '65px', borderRadius: '50%', objectFit: 'cover' }}
+                            sx={{
+                                width: 'auto',
+                                height: { xs: '2rem', md: '65px' },
+                            }}
                         />
 
-                        <Typography variant='h6'>
-                            {OngName}
-                        </Typography>
+                        <Stack>
+                            <Typography variant='h6' noWrap>
+                                {OngName}
+                            </Typography>
+                            <Typography variant="body2" noWrap>
+                                Publicado {dayjs(createdAt).fromNow()}
+                            </Typography>
+                        </Stack>
 
-                        <Typography variant="body2">
-                            Publicado {dayjs(createdAt).fromNow()}
-                        </Typography>
-
-                        {showDeleteButton && ( 
+                        {showDeleteButton && (
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', flexGrow: 1 }}>
                                 <Button
                                     variant="contained"
                                     color="error"
                                     startIcon={<Delete />}
                                     sx={{
-                                        width: { xs: '100px', sm: '150px' },
-                                        height: '50px',
+                                        width: { xs: 'auto', sm: '150px' },
                                     }}
-                                    onClick={handleDeletePost}
-                                    disabled={deleting} 
+                                    onClick={() => handleDeletePost(id)}
+                                    disabled={deleting}
                                 >
-                                    Excluir post
+                                    {isMobile ? "" : "Excluir"}
                                 </Button>
                             </Box>
                         )}
@@ -107,19 +110,21 @@ export function CardPost({ description, OngName, profilePath, createdAt, postIma
                     <Typography>
                         {description}
                     </Typography>
-                    {postImagePath && (
-                        <Box
-                            component='img'
-                            src={postSrc}
-                            onError={() => {
-                                setPostSrc("/nomelogo.png");
-                            }}
-                            alt="Imagem do post"
-                            sx={{ maxWidth: '100%', height: 'auto' }}
-                        />
-                    )}
                 </Box>
             </CardContent>
+
+            {postImagePath && (
+                <CardMedia
+                    component='img'
+                    alt='Project Image'
+                    sx={{ height: 200 }}
+                    image={postSrc}
+                    title='Project Image'
+                    onError={() => {
+                        setPostSrc("/nomelogo.png");
+                    }}
+                />
+            )}
         </Card>
     );
 }

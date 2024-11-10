@@ -53,20 +53,21 @@ export function ModalLoginComponent() {
                     display: 'flex',
                     gap: '1rem',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+
                 }}
             >
-                <Button variant="text" sx={{ color: 'gray' }} onClick={() => handleClickOpen('policies')}>
+                <Button variant="text" sx={{ color: 'gray', fontSize: { xs: '.6rem', md: '1rem' } }} onClick={() => handleClickOpen('policies')}>
                     POLITICAS
                 </Button>
 
                 <Divider orientation="vertical" flexItem variant="middle" />
-                <Button variant="text" sx={{ color: 'gray' }} onClick={() => handleClickOpen('terms')}>
+                <Button variant="text" sx={{ color: 'gray', fontSize: { xs: '.6rem', md: '1rem' } }} onClick={() => handleClickOpen('terms')}>
                     TERMOS DE USO
                 </Button>
 
                 <Divider orientation="vertical" flexItem variant="middle" />
-                <Button variant="text" sx={{ color: 'gray' }} onClick={() => handleClickOpen('lgpd')}>
+                <Button variant="text" sx={{ color: 'gray', fontSize: { xs: '.6rem', md: '1rem' } }} onClick={() => handleClickOpen('lgpd')}>
                     LGPD
                 </Button>
             </Box>
