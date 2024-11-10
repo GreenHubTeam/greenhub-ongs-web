@@ -7,6 +7,7 @@ import { ProjetosPage } from '../pages/projetos';
 import { Route, Routes } from "react-router-dom";
 import { PerfilPage } from '../pages/perfil';
 import { AppPage } from "../pages/app";
+import { NotFoundPage } from '../pages/notfound';
 
 export function AppRoutes() {
     return (
@@ -21,6 +22,7 @@ export function AppRoutes() {
                 <Route path="/perfil" element={<PerfilPage />} />
                 <Route path="/" element={<DashboardPage />} />
             </Route>
+            <Route path="*" element={< NotFoundPage />} />
         </Routes>
     )
 }
