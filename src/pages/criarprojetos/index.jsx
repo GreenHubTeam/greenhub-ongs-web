@@ -59,7 +59,7 @@ export function CriarProjetos() {
 
     const handleContentChange = (value) => {
         setContent(value);
-        setValue('description', value);  
+        setValue('description', value);
     };
 
     const fetchCategory = async () => {
@@ -176,7 +176,8 @@ export function CriarProjetos() {
                                     sx=
                                     {{
                                         width: '100%',
-                                        objectFit: 'contain',
+                                        height: '100%',
+                                        objectFit: 'cover',
                                     }}
                                     alt="Preview do projeto"
                                 />
