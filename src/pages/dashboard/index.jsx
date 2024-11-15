@@ -30,7 +30,6 @@ export function DashboardPage() {
         return profileImages[randomIndex];
     };
 
-    // eslint-disable-next-line react/prop-types
     const CustomAvatar = ({ imagePath, name }) => {
         const [avatarSrc, setAvatarSrc] = useState(`${env.api_url}/${imagePath}`);
 
@@ -55,26 +54,45 @@ export function DashboardPage() {
         }
     };
 
-    useEffect(() => {
-        async function fetchProjects() {
-            setIsLoading(true);
-            try {
-                const response = await api.get(`/project/ong/${user.Ong.id}`);
-                setProjectData(response.data.projects);
+    async function fetchSelectProjects() {
+        setIsLoading(true);
+        try {
+            const response = await api.get(`/dashboard/projects/ong/${user.Ong.id}`);
+            setProjectData(response.data);
 
-                if (response.data.projects.length > 0) {
-                    setProject(response.data.projects[0].id);
-                    fetchStatistics(response.data.projects[0].id);
-                }
-            } catch (error) {
-                console.error("Erro ao buscar projetos:", error);
-                toast.error("Error ao buscar os projetos");
-            } finally {
-                setIsLoading(false);
+            if (response.data.length > 0) {
+                setProject(response.data[0].id);
+                fetchStatistics(response.data[0].id);
             }
+        } catch (error) {
+            console.error("Erro ao buscar projetos:", error);
+            toast.error("Erro ao buscar os projetos");
+        } finally {
+            setIsLoading(false);
         }
+    }
 
+    async function fetchProjects() {
+        setIsLoading(true);
+        try {
+            const response = await api.get(`/project/ong/${user.Ong.id}`);
+            setProjectData(response.data.projects);
+
+            if (response.data.projects.length > 0) {
+                setProject(response.data.projects[0].id);
+                fetchStatistics(response.data.projects[0].id);
+            }
+        } catch (error) {
+            console.error("Erro ao buscar projetos:", error);
+            toast.error("Erro ao buscar os projetos");
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    useEffect(() => {
         fetchProjects();
+        fetchSelectProjects();
     }, [user?.Ong?.id]);
 
     const handleChange = (event) => {

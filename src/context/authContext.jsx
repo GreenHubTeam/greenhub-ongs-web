@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 
 export const AuthContext = createContext({});
 
-// eslint-disable-next-line react/prop-types
 export function AuthProvider({ children }) {
     const [token, setToken] = useState("");
     const [user, setUser] = useState("");
@@ -18,8 +17,16 @@ export function AuthProvider({ children }) {
                 email: email,
                 password: password
             });
-
             const decoded = jwtDecode(resposta.data.token);
+
+            console.log(decoded);
+
+            if (decoded.type !== "ONG") {
+                toast.error("Acesso restrito. Apenas usuários cadastrados como ONG podem acessar.");
+                return; 
+            }
+    
+
             setUser(decoded);
             setToken(resposta.data.token);
             localStorage.setItem('@greenhubONG:token', resposta.data.token);

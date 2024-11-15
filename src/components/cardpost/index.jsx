@@ -11,7 +11,6 @@ import { Box, Card, CardContent, Typography, Button, Avatar, Stack, useMediaQuer
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
 
-// eslint-disable-next-line react/prop-types
 export function CardPost({ description, OngName, profilePath, createdAt, postImagePath, id, fetchPost, showDeleteButton }) {
     const [deleting, setDeleting] = useState(false);
     const [profileSrc] = useState(profilePath ? `${env.api_url}/${profilePath}` : "/nomelogo.png");

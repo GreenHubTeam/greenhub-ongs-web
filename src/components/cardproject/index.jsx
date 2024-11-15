@@ -4,14 +4,12 @@ import { Create } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { Box, Button, Typography, Chip, CardContent, Card, CardMedia, CardActions, Paper, Stack, CardActionArea } from '@mui/material';
 
-// Função para remover tags HTML
 const stripHtmlTags = (html) => {
     const div = document.createElement("div");
     div.innerHTML = html;
     return div.textContent || div.innerText || "";
 };
 
-// eslint-disable-next-line react/prop-types
 export function CardProject({ name, description, status, imagePath, id }) {
     const navigate = useNavigate();
     const [imagePathSrc, setImagePathSrc] = useState(imagePath ? `${env.api_url}/${imagePath}` : "/nomelogo.png");
@@ -64,7 +62,6 @@ export function CardProject({ name, description, status, imagePath, id }) {
                             {getStatusChip(status)}
                         </Box>
 
-                        {/* Renderizar o texto sem tags HTML */}
                         <Typography
                             noWrap
                         >

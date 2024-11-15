@@ -26,11 +26,14 @@ const postFormSchema = z.object({
         )
 });
 
+const MAX_CHAR_COUNT = 250;
+
 export function PostCard({ fetchPost }) {
+    const [, setFile] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [charCount, setCharCount] = useState(0);
     const [profileImage, setProfileImage] = useState();
     const [imagePreview, setImagePreview] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [, setFile] = useState(null);
 
     const randomizeProfileImage = () => {
         const profileImages = [
@@ -55,6 +58,10 @@ export function PostCard({ fetchPost }) {
     });
 
     const { user } = useAuth();
+
+    const handleTextChange = (event) => {
+        setCharCount(event.target.value.length);
+    };
 
     async function handleCreatePost(data) {
         setLoading(true);
@@ -87,17 +94,17 @@ export function PostCard({ fetchPost }) {
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
-
         if (selectedFile) {
             const previewURL = URL.createObjectURL(selectedFile);
             setImagePreview(previewURL);
             setFile(selectedFile);
+            console.log(previewURL);
         }
     };
 
     useEffect(() => {
         randomizeProfileImage();
-    }, []); 
+    }, []);
 
     return (
         <Card>
@@ -118,15 +125,12 @@ export function PostCard({ fetchPost }) {
                             gap: '1rem',
                         }}
                     >
-
                         <Box
                             component='img'
                             src={profileImage}
                             alt="Foto de perfil"
                             sx={{ width: '35px', height: '35px', borderRadius: '50%' }}
                         />
-
-
                         <Box
                             sx={{
                                 display: 'flex',
@@ -136,51 +140,61 @@ export function PostCard({ fetchPost }) {
                             }}
                         >
                             {imagePreview && (
-                                <Grid2 size={12}>
-                                    <Card
+                                <Card
+                                    sx={{
+                                        height: 'auto',
+                                        boxShadow: 'none',
+                                        border: 'none',
+                                        padding: 0,
+                                        marginBottom: '0.5rem',  
+                                        width: '100%',  
+                                    }}
+                                >
+                                    <CardMedia
+                                        component="img" 
+                                        image={imagePreview}
                                         sx={{
-                                            height: '100%',
-                                            boxShadow: 'none',
+                                            width: '100%',
+                                            height: 'auto',
+                                            objectFit: 'contain',
                                             border: 'none',
-                                            padding: 0,
-                                            margin: 0,
                                         }}
-                                    >
-                                        <CardMedia
-                                            image={imagePreview}
-                                            sx={{
-                                                width: '100%',
-                                                height: '200px',
-                                                objectFit: 'cover',
-                                                border: 'none',
-                                            }}
-                                        />
-                                    </Card>
-                                </Grid2>
+                                        alt="Imagem do post"
+                                    />
+                                </Card>
                             )}
 
                             <TextField
                                 fullWidth
-                                {...register('description')}
+                                {...register("description")}
                                 error={!!errors.description && errors.description}
                                 variant="filled"
                                 slotProps={{
-                                    disableUnderline: true,
-                                    startAdornment: (
-                                        <InputAdornment
-                                            position="start"
-                                            sx={{
-                                                display: 'flex',
-                                                gap: '0.5rem'
-                                            }}
-                                        >
-                                        </InputAdornment>
-                                    ),
+                                    input: {
+                                        maxLength: MAX_CHAR_COUNT,
+                                    },
                                 }}
-                                label='Escreva seu post'
+                                label="Escreva seu post"
                                 multiline
-                                rows={2}
+                                minRows={3}
+                                maxRows={15}
+                                onChange={(e) => {
+                                    handleTextChange(e);
+                                }}
+                                sx={{
+                                    resize: 'none',
+                                }}
                             />
+
+                            <Box
+                                sx={{
+                                    textAlign: "right",
+                                    fontSize: "0.875rem",
+                                    color: charCount >= MAX_CHAR_COUNT * 0.8 ? "red" : "gray",
+                                }}
+                            >
+                                {MAX_CHAR_COUNT - charCount} caracteres restantes
+                            </Box>
                         </Box>
                     </Box>
 
@@ -240,6 +254,6 @@ export function PostCard({ fetchPost }) {
                     </Box>
                 </Box>
             </CardContent>
-        </Card >
+        </Card>
     )
 }

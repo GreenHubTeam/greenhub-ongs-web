@@ -128,10 +128,29 @@ export function EditarProjetos() {
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
+
         if (selectedFile) {
-            const previewURL = URL.createObjectURL(selectedFile);
-            setImagePreview(previewURL);
-            setFile(selectedFile);
+            const img = new Image();
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                img.src = event.target.result;
+            };
+
+            img.onload = () => {
+                const { width, height } = img;
+
+                if (width > 1500 || height > 1500) {
+                    toast.error("A imagem deve ter no máximo 1500 pixels em qualquer direção.");
+                    return;
+                }
+
+                const previewURL = URL.createObjectURL(selectedFile);
+                setImagePreview(previewURL);
+                setFile(selectedFile);
+            };
+
+            reader.readAsDataURL(selectedFile);
         }
     };
 
@@ -186,6 +205,7 @@ export function EditarProjetos() {
                                             sx=
                                             {{
                                                 width: '100%',
+                                                height: '100%',
                                                 objectFit: 'contain',
                                             }}
                                             onError={() => {

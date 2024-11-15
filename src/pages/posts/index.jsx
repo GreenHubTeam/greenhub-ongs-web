@@ -23,7 +23,7 @@ export function PostPage() {
             setIsLoading(false);
         }
     };
-    
+
 
     useEffect(() => {
         fetchPost();

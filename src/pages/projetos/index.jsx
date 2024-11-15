@@ -27,7 +27,6 @@ export function ProjetosPage() {
 
     useEffect(() => {
         fetchProjects();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user.Ong.id]);
 
     return (

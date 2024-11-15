@@ -120,7 +120,7 @@ export function PerfilPage() {
     async function fetchPost() {
         setIsLoading(true);
         try {
-            const response = await api.get(`/post`);
+            const response = await api.get(`/post/ong/${user.Ong.id}`);
             setPostData(response.data.posts);
         } catch (error) {
             console.log(error)
