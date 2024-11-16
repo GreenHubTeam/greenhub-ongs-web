@@ -116,7 +116,7 @@ export function CardPost({ description, OngName, profilePath, createdAt, postIma
                 <CardMedia
                     component='img'
                     alt='Project Image'
-                    sx={{ height: 200 }}
+                    sx={{ height: 'auto' }}
                     image={postSrc}
                     title='Project Image'
                     onError={() => {
