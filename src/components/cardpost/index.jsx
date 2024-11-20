@@ -73,10 +73,6 @@ export function CardPost({ description, OngName, profilePath, createdAt, postIma
                             onError={() => {
                                 setProfileImage("/nomelogo.png");
                             }}
-                            sx={{
-                                width: 'auto',
-                                height: { xs: '2rem', md: '65px' },
-                            }}
                         />
 
                         <Stack>
