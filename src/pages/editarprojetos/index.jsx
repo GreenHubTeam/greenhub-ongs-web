@@ -86,6 +86,7 @@ export function EditarProjetos() {
                     categoryProjectId: Number(projects.data.categoryProjectId)
                 });
 
+                setContent(projects.data.description);
                 setImagePreview(`${env.api_url}/${projects.data.imagePath}`);
             } catch {
                 toast.error("Error ao buscar os dados do projeto");

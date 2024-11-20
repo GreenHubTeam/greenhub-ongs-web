@@ -7,7 +7,7 @@ import InputLabel from '@mui/material/InputLabel';
 import { useAuth } from "../../context/authContext";
 import FormControl from '@mui/material/FormControl';
 import { MonetizationOn, Group, VolunteerActivism } from '@mui/icons-material';
-import { Badge, Box, Grid2, Paper, Skeleton, Typography, Select, Avatar, MenuItem, Stack, Pagination } from "@mui/material";
+import { Badge, Box, Grid2, Paper, Skeleton, Typography, Select, Avatar, MenuItem, Stack } from "@mui/material";
 
 const PAGE_SIZE = 6;
 
@@ -468,28 +468,6 @@ export function DashboardPage() {
                         </Box>
                     </Paper>
                 </Grid2>
-            </Grid2>
-            <Grid2 size={12} container justifyContent="center" sx={{ marginTop: '1rem' }}>
-                <Pagination
-                    count={Math.ceil(count / PAGE_SIZE)} 
-                    page={page}
-                    onChange={(_, value) => {
-                        setPage(value);
-                    }}
-                    sx={{
-                        "& .MuiPaginationItem-root": {
-                            color: "#22703E",  
-                            borderRadius: "50%",  
-                        },
-                        "& .MuiPaginationItem-root.Mui-selected": {
-                            backgroundColor: "#22703E",  
-                            color: "#fff",  
-                        },
-                        "& .MuiPaginationItem-root:hover": {
-                            backgroundColor: "#d3e7d3", 
-                        },
-                    }}
-                />
             </Grid2>
         </Grid2 >
     );
