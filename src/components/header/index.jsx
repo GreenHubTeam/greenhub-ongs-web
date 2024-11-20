@@ -14,7 +14,7 @@ export function HeaderComponent() {
         >
             <Box
                 component='img'
-                src='/logogreenhub.png'
+                src='/logosemfundo.png'
                 alt='Logo do Greenhub'
                 sx={{
                     width: 80,

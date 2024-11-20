@@ -139,7 +139,7 @@ export function PerfilPage() {
             setIsLoading(true);
 
             try {
-                const { data } = await api.put(`/user/profile-image/${user?.id}`, formData, {
+                const { data } = await api.put(`/ong/profile-image/${user.Ong.id}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
