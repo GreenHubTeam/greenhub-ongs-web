@@ -145,7 +145,7 @@ export function PerfilPage() {
                     },
                 });
 
-                setProfileImage(`${env.api_url}/${data.user.imagePath}`);
+                setProfileImage(`${env.api_url}/${data.ong.imagePath}`);
 
                 toast.success("Foto de perfil atualizada com sucesso");
             } catch (error){
